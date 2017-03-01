@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/context/spring-context-2.5.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-    <context:component-scan base-package="org.qfox"/>
+    <context:component-scan base-package="org.qfox.wectrl"/>
     <context:annotation-config/>
 
     <context:property-placeholder location="classpath:jdbc.properties"/>
@@ -31,7 +31,7 @@
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="org.qfox.wecontrol.core"/>
+        <property name="packagesToScan" value="org.qfox.wectrl.core"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">${jdbc.mysql.hibernate.dialect}</prop>
