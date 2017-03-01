@@ -3,8 +3,7 @@ package org.qfox.wecontrol.core.base;
 import org.qfox.wecontrol.common.base.ApplicationType;
 import org.qfox.wecontrol.core.Domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by yangchangpei on 17/2/27.
@@ -26,6 +25,7 @@ public class Application extends Domain {
     private String originalID;
     private Encoding encoding;
 
+    @Column(unique = true, nullable = false)
     public String getAppID() {
         return appID;
     }
@@ -34,6 +34,7 @@ public class Application extends Domain {
         this.appID = appID;
     }
 
+    @Column(nullable = false)
     public String getAppSecret() {
         return appSecret;
     }
@@ -42,6 +43,7 @@ public class Application extends Domain {
         this.appSecret = appSecret;
     }
 
+    @Column(unique = true, nullable = false)
     public String getAppNumber() {
         return appNumber;
     }
@@ -50,6 +52,7 @@ public class Application extends Domain {
         this.appNumber = appNumber;
     }
 
+    @Column(unique = true, nullable = false)
     public String getAppName() {
         return appName;
     }
@@ -58,6 +61,7 @@ public class Application extends Domain {
         this.appName = appName;
     }
 
+    @Column(nullable = false)
     public String getPushURL() {
         return pushURL;
     }
@@ -66,6 +70,7 @@ public class Application extends Domain {
         this.pushURL = pushURL;
     }
 
+    @Column(nullable = false)
     public String getToken() {
         return token;
     }
@@ -74,6 +79,7 @@ public class Application extends Domain {
         this.token = token;
     }
 
+    @Column(nullable = false)
     public String getPortraitURL() {
         return portraitURL;
     }
@@ -82,6 +88,7 @@ public class Application extends Domain {
         this.portraitURL = portraitURL;
     }
 
+    @Column(nullable = false)
     public String getQRCodeURL() {
         return QRCodeURL;
     }
@@ -90,6 +97,7 @@ public class Application extends Domain {
         this.QRCodeURL = QRCodeURL;
     }
 
+    @Enumerated(EnumType.STRING)
     public ApplicationType getType() {
         return type;
     }
@@ -98,6 +106,7 @@ public class Application extends Domain {
         this.type = type;
     }
 
+    @Column(unique = true, nullable = false)
     public String getOriginalID() {
         return originalID;
     }
@@ -106,6 +115,12 @@ public class Application extends Domain {
         this.originalID = originalID;
     }
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "mode", column = @Column(name = "encoding_mode")),
+            @AttributeOverride(name = "algorithm", column = @Column(name = "encoding_algorithm")),
+            @AttributeOverride(name = "password", column = @Column(name = "encoding_password"))
+    })
     public Encoding getEncoding() {
         return encoding;
     }
