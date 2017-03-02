@@ -18,6 +18,7 @@ public class Merchant extends Domain {
     private String email;
     private String cellphone;
     private Picture logo;
+    private boolean activated = false;
 
     @Column(nullable = false)
     public String getName() {
@@ -70,5 +71,13 @@ public class Merchant extends Domain {
 
     public void setLogo(Picture logo) {
         this.logo = logo;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 }

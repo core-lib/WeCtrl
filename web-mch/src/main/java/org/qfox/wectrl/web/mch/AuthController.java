@@ -19,12 +19,12 @@ import java.util.Enumeration;
  */
 @Jestful("/auth")
 @Controller
+@Authorized(required = false)
 public class AuthController {
 
     @Resource
     private MerchantService merchantServiceBean;
 
-    @Authorized(required = false)
     @GET("/login")
     public String login(@Session(SessionKey.MERCHANT) Merchant merchant,
                         @Query("redirectURI") String redirectURI,
@@ -40,24 +40,27 @@ public class AuthController {
         return "forward:/view/auth/login.jsp";
     }
 
-    @Authorized(required = false)
     @POST("/login")
     public String login(@Body("username") String username,
                         @Body("password") String password,
                         @Body("redirectURI") String redirectURI,
                         HttpSession session) throws UnsupportedEncodingException {
+        redirectURI = redirectURI == null || redirectURI.trim().isEmpty() ? "/" : redirectURI.trim();
+
         Merchant merchant = merchantServiceBean.login(username, password);
         if (merchant == null || merchant.isDeleted()) {
-            redirectURI = redirectURI == null || redirectURI.trim().isEmpty() ? "/" : redirectURI.trim();
             return "redirect:/auth/login?redirectURI=" + URLEncoder.encode(redirectURI, "UTF-8") + "&error=" + URLEncoder.encode("用户名或密码错误", "UTF-8");
+        }
+
+        if (merchant.isActivated() == false) {
+            return "redirect:/auth/login?redirectURI=" + URLEncoder.encode(redirectURI, "UTF-8") + "&error=" + URLEncoder.encode("用户未激活, 请登录邮箱激活!", "UTF-8");
         }
 
         session.setAttribute(SessionKey.MERCHANT, merchant);
 
-        return "redirect:/";
+        return "redirect:" + redirectURI;
     }
 
-    @Authorized(required = false)
     @GET("/logout")
     public String logout(HttpSession session) throws UnsupportedEncodingException {
         Enumeration<String> enumeration = session.getAttributeNames();
@@ -66,6 +69,37 @@ public class AuthController {
             session.removeAttribute(name);
         }
         return "redirect:/";
+    }
+
+    @GET("/register")
+    public String register(@Query("error") String error, HttpServletRequest request) {
+        request.setAttribute("error", error);
+        return "forward:/view/auth/register.jsp";
+    }
+
+    @POST("/register")
+    public String register(@Body("name") String name,
+                           @Body("username") String username,
+                           @Body("password") String password,
+                           @Body("email") String email,
+                           HttpServletRequest request) throws UnsupportedEncodingException {
+
+        if (name == null || !name.matches("\\w{1,12}")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度在1到12位的名称, 不能包括特殊字符!", "UTF-8");
+        }
+
+        if (username == null || !username.matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写", "UTF-8");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("密码格式错误", "UTF-8");
+        }
+        if (email == null || email.trim().isEmpty()) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("邮箱格式错误", "UTF-8");
+        }
+
+
+        return "forward:/view/auth/register.jsp";
     }
 
 }

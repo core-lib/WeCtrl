@@ -3,6 +3,8 @@ package org.qfox.wectrl.core.base;
 import org.qfox.wectrl.common.base.EncodingMode;
 
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.io.Serializable;
 
 /**
@@ -16,6 +18,7 @@ public class Encoding implements Serializable {
     private String algorithm;
     private String password;
 
+    @Enumerated(EnumType.STRING)
     public EncodingMode getMode() {
         return mode;
     }

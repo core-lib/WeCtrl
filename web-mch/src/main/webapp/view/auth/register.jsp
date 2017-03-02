@@ -9,7 +9,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>登录 - WeCtrl</title>
+    <title>注册 - WeCtrl</title>
     <!-- Custom Theme files -->
     <link href="/view/auth/style.css" rel="stylesheet" type="text/css" media="all"/>
     <!-- Custom Theme files -->
@@ -20,21 +20,22 @@
 <div class="login">
     <h2>WeCtrl</h2>
     <div class="login-top">
-        <h1>登录</h1>
-        <form action="/auth/login" method="POST">
+        <h1>注册</h1>
+        <form action="/auth/register" method="POST">
             <input type="hidden" name="redirectURI" value="${redirectURI}">
+            <input type="text" name="name" value="名称" onfocus="if (this.value == '名称') {this.value = '';}" onblur="if (this.value == '') {this.value = '名称';}">
             <input type="text" name="username" value="用户名" onfocus="if (this.value == '用户名') {this.value = '';}" onblur="if (this.value == '') {this.value = '用户名';}">
             <input type="password" name="password" value="密码密码密码" onfocus="if (this.value == '密码密码密码') {this.value = '';}" onblur="if (this.value == '') {this.value = '密码密码密码';}">
+            <input type="text" name="email" value="邮箱" onfocus="if (this.value == '邮箱') {this.value = '';}" onblur="if (this.value == '') {this.value = '邮箱';}">
             <div class="forgot">
                 <span style="float: left; color: orangered; margin-top: 10px;">${error}</span>
-                <a href="/auth/forgot">忘记密码</a>
-                <input type="submit" value="登录">
+                <input type="submit" value="注册">
                 &nbsp;
             </div>
         </form>
     </div>
     <div class="login-bottom">
-        <h3>新用户点这里&nbsp;&nbsp;<a href="/auth/register">注册</a>&nbsp;&nbsp;</h3>
+        <h3>已有账户点这里&nbsp;&nbsp;<a href="/auth/login">登录</a>&nbsp;&nbsp;</h3>
     </div>
 </div>
 <jsp:include page="/view/include/copyright.jsp"/>
