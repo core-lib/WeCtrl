@@ -88,8 +88,8 @@ public class AuthController {
             return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度在1到12位的名称, 不能包括特殊字符!", "UTF-8");
         }
 
-        if (username == null || !username.matches("[a-zA-Z]+[a-zA-Z0-9_-]*")) {
-            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写", "UTF-8");
+        if (username == null || !username.matches("^(?![0-9_-])[a-zA-Z0-9_-]{6,12}$")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度为6到12位以字母开头的字母,数字,-,_的用户名", "UTF-8");
         }
         if (password == null || password.trim().isEmpty()) {
             return "redirect:/auth/register?error=" + URLEncoder.encode("密码格式错误", "UTF-8");
