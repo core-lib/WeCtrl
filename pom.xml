@@ -17,6 +17,7 @@
         <module>service</module>
         <module>service-bean</module>
         <module>web</module>
+        <module>web-mch</module>
     </modules>
 
     <repositories>
