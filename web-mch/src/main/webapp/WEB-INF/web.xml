@@ -59,7 +59,7 @@
         <filter-class>org.qfox.jestful.server.JestfulFilterSupport</filter-class>
         <init-param>
             <param-name>plugin</param-name>
-            <param-value>jestful</param-value>
+            <param-value>jestful, sessionRebuildPlugin</param-value>
         </init-param>
     </filter>
     <filter-mapping>
