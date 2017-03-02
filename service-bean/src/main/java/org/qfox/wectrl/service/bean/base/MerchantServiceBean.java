@@ -3,6 +3,7 @@ package org.qfox.wectrl.service.bean.base;
 import org.apache.commons.codec.binary.Hex;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.qfox.wectrl.core.base.Merchant;
 import org.qfox.wectrl.dao.GenericDAO;
@@ -46,5 +47,32 @@ public class MerchantServiceBean extends GenericServiceBean<Merchant, Long> impl
             criteria.setFetchMode(fetch, FetchMode.JOIN);
         }
         return (Merchant) criteria.uniqueResult();
+    }
+
+    @Override
+    public boolean isUsernameUsed(String username) {
+        Criteria criteria = merchantDAO.createCriteria();
+        criteria.setProjection(Projections.count("id"));
+        criteria.add(Restrictions.eq("username", username));
+        Object count = criteria.uniqueResult();
+        return count != null && Integer.valueOf(count.toString()) > 0;
+    }
+
+    @Override
+    public boolean isEmailBound(String email) {
+        Criteria criteria = merchantDAO.createCriteria();
+        criteria.setProjection(Projections.count("id"));
+        criteria.add(Restrictions.eq("email", email));
+        Object count = criteria.uniqueResult();
+        return count != null && Integer.valueOf(count.toString()) > 0;
+    }
+
+    @Override
+    public boolean isCellphoneBound(String cellphone) {
+        Criteria criteria = merchantDAO.createCriteria();
+        criteria.setProjection(Projections.count("id"));
+        criteria.add(Restrictions.eq("cellphone", cellphone));
+        Object count = criteria.uniqueResult();
+        return count != null && Integer.valueOf(count.toString()) > 0;
     }
 }

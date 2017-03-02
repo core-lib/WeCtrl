@@ -10,4 +10,10 @@ public interface MerchantService extends GenericService<Merchant, Long> {
 
     Merchant login(String username, String password, String... fetchs);
 
+    boolean isUsernameUsed(String username);
+
+    boolean isEmailBound(String email);
+
+    boolean isCellphoneBound(String cellphone);
+
 }

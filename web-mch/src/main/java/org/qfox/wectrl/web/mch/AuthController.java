@@ -1,5 +1,6 @@
 package org.qfox.wectrl.web.mch;
 
+import org.apache.commons.codec.binary.Hex;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.jestful.server.annotation.Session;
 import org.qfox.wectrl.core.base.Merchant;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 
 /**
@@ -21,6 +24,12 @@ import java.util.Enumeration;
 @Controller
 @Authorized(required = false)
 public class AuthController {
+
+    private final MessageDigest MD5;
+
+    public AuthController() throws NoSuchAlgorithmException {
+        this.MD5 = MessageDigest.getInstance("MD5");
+    }
 
     @Resource
     private MerchantService merchantServiceBean;
@@ -53,7 +62,7 @@ public class AuthController {
         }
 
         if (merchant.isActivated() == false) {
-            return "redirect:/auth/login?redirectURI=" + URLEncoder.encode(redirectURI, "UTF-8") + "&error=" + URLEncoder.encode("用户未激活, 请登录邮箱激活!", "UTF-8");
+            return "redirect:/auth/login?redirectURI=" + URLEncoder.encode(redirectURI, "UTF-8") + "&error=" + URLEncoder.encode("账户未激活, 请登录邮箱激活!", "UTF-8");
         }
 
         session.setAttribute(SessionKey.MERCHANT, merchant);
@@ -84,22 +93,35 @@ public class AuthController {
                            @Body("email") String email,
                            HttpServletRequest request) throws UnsupportedEncodingException {
 
-        if (name == null || !name.matches("\\w{1,12}")) {
-            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度在1到12位的名称, 不能包括特殊字符!", "UTF-8");
+        if (name == null || !name.matches("^[a-zA-Z0-9\\u4e00-\\u9fa5]{1,24}$")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度在1到24位的名称且不能包括特殊字符!", "UTF-8");
+        }
+        if (username == null || !username.matches("^(?![0-9_])[a-zA-Z0-9_]{6,12}$")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度为6到12位以字母开头且只包含字母,数字,下划线的用户名!", "UTF-8");
+        }
+        if (password == null || !password.matches("\\w{6,12}")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写6到12位且只包含字母,数字,下划线的密码!", "UTF-8");
+        }
+        if (email == null || !email.matches("^[a-zA-Z0-9]+([._\\\\-]*[a-zA-Z0-9])*@([a-zA-Z0-9]+[-a-zA-Z0-9]*[a-zA-Z0-9]+.){1,63}[a-zA-Z0-9]+$")) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写正确的邮箱地址因为需要验证!", "UTF-8");
         }
 
-        if (username == null || !username.matches("^(?![0-9_-])[a-zA-Z0-9_-]{6,12}$")) {
-            return "redirect:/auth/register?error=" + URLEncoder.encode("请填写长度为6到12位以字母开头的字母,数字,-,_的用户名", "UTF-8");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            return "redirect:/auth/register?error=" + URLEncoder.encode("密码格式错误", "UTF-8");
-        }
-        if (email == null || email.trim().isEmpty()) {
-            return "redirect:/auth/register?error=" + URLEncoder.encode("邮箱格式错误", "UTF-8");
+        if (merchantServiceBean.isUsernameUsed(username)) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("用户名已存在!", "UTF-8");
         }
 
+        if (merchantServiceBean.isEmailBound(email)) {
+            return "redirect:/auth/register?error=" + URLEncoder.encode("用户名已存在邮箱已经被使用!", "UTF-8");
+        }
 
-        return "forward:/view/auth/register.jsp";
+        Merchant merchant = new Merchant();
+        merchant.setName(name);
+        merchant.setUsername(username);
+        merchant.setPassword(Hex.encodeHexString(MD5.digest(password.getBytes())));
+        merchant.setEmail(email);
+        merchantServiceBean.save(merchant);
+
+        return "redirect:/";
     }
 
 }
