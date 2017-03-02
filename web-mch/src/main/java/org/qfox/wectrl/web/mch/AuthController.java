@@ -47,7 +47,7 @@ public class AuthController {
                         @Body("redirectURI") String redirectURI,
                         HttpSession session) throws UnsupportedEncodingException {
         Merchant merchant = merchantServiceBean.login(username, password);
-        if (merchant == null) {
+        if (merchant == null || merchant.isDeleted()) {
             redirectURI = redirectURI == null || redirectURI.trim().isEmpty() ? "/" : redirectURI.trim();
             return "redirect:/auth/login?redirectURI=" + URLEncoder.encode(redirectURI, "UTF-8") + "&error=" + URLEncoder.encode("用户名或密码错误", "UTF-8");
         }

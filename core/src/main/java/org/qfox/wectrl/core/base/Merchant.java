@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Merchant extends Domain {
     private static final long serialVersionUID = 1852209583520216208L;
 
-    private String nickname;
+    private String name;
     private String username;
     private String password;
     private String email;
@@ -20,12 +20,12 @@ public class Merchant extends Domain {
     private Picture logo;
 
     @Column(nullable = false)
-    public String getNickname() {
-        return nickname;
+    public String getName() {
+        return name;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Column(nullable = false, unique = true, updatable = false)

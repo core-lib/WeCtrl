@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <ul class="nav navbar-nav side-nav">
     <li class="active"><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li><a href="/application"><i class="fa fa-table"></i> 我的应用</a></li>
+    <li><a href="/applications?capacity=20"><i class="fa fa-table"></i> 我的应用</a></li>
     <li><a href="tables.html"><i class="fa fa-table"></i> Tables</a></li>
     <li><a href="forms.html"><i class="fa fa-edit"></i> Forms</a></li>
     <li><a href="typography.html"><i class="fa fa-font"></i> Typography</a></li>

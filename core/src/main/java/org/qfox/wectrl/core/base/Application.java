@@ -24,6 +24,7 @@ public class Application extends Domain {
     private ApplicationType type;
     private String originalID;
     private Encoding encoding;
+    private Mch merchant;
 
     @Column(unique = true, nullable = false)
     public String getAppID() {
@@ -127,5 +128,19 @@ public class Application extends Domain {
 
     public void setEncoding(Encoding encoding) {
         this.encoding = encoding;
+    }
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "merchant_id")),
+            @AttributeOverride(name = "name", column = @Column(name = "merchant_name")),
+            @AttributeOverride(name = "username", column = @Column(name = "merchant_username"))
+    })
+    public Mch getMerchant() {
+        return merchant;
+    }
+
+    public void setMerchant(Mch merchant) {
+        this.merchant = merchant;
     }
 }
