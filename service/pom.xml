@@ -17,6 +17,30 @@
             <artifactId>dao</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.core-lib.jestful</groupId>
+            <artifactId>jestful-xml</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
