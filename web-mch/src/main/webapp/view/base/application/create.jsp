@@ -80,7 +80,7 @@
                             <button class="btn btn-default" type="button"><i class="fa fa-copy"></i></button>
                         </span>
                     </div>
-                    <p class="help-block">请添加好应用后将该地址复制到微信公众号基本配置的URL(服务器地址)中</p>
+                    <p class="help-block">公众号基本配置的URL(服务器地址)</p>
                 </div>
                 <div class="form-group">
                     <label>Token</label>
