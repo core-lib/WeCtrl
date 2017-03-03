@@ -6,6 +6,8 @@ import org.qfox.jestful.core.annotation.POST;
 import org.qfox.jestful.core.annotation.Query;
 import org.springframework.stereotype.Controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by yangchangpei on 17/3/1.
  */
@@ -14,7 +16,13 @@ import org.springframework.stereotype.Controller;
 public class MessageController {
 
     @GET("/")
-    public String validate(@Query("echostr") String echostr) {
+    public String validate(@Query("signature") String signature,
+                           @Query("timestamp") String timestamp,
+                           @Query("nonce") String nonce,
+                           @Query("echostr") String echostr,
+                           HttpServletRequest request) {
+
+
         return "@:" + echostr;
     }
 
