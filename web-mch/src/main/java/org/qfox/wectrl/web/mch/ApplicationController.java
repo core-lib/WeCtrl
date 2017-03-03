@@ -200,4 +200,11 @@ public class ApplicationController {
         return JsonResult.OK;
     }
 
+    @DELETE("/{appID:(?!new)\\w+}")
+    public JsonResult delete(@Path("appID") String appID) {
+        Application app = applicationServiceBean.getApplicationByAppID(appID);
+        applicationServiceBean.delete(app);
+        return JsonResult.OK;
+    }
+
 }

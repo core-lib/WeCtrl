@@ -26,6 +26,9 @@
     <link rel="stylesheet" href="/res/font-awesome/css/font-awesome.min.css">
     <!-- Page Specific CSS -->
     <link rel="stylesheet" href="/res/css/morris-0.4.3.min.css">
+
+    <link rel="stylesheet" href="/jq-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="/jq-weui/css/jquery-weui.css">
 </head>
 
 <body>
@@ -70,7 +73,7 @@
                         </thead>
                         <tbody>
                             <c:forEach items="${page.entities}" var="application">
-                                <tr>
+                                <tr id="application-tr-${application.appID}">
                                     <td><a href="/applications/${application.appID}">${application.appID}</a></td>
                                     <td>${application.appName}</td>
                                     <td>${application.type.name}</td>
@@ -79,14 +82,10 @@
                                     <td>${application.verified ? '是' : '否'}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-default">Default</button>
-                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                            <button type="button" class="btn btn-danger" onclick="javascript: onDeleteButtonTap('${application.appID}');">删除</button>
+                                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                                             <ul class="dropdown-menu">
-                                                <li><a href="#">Action</a></li>
-                                                <li><a href="#">Another action</a></li>
-                                                <li><a href="#">Something else here</a></li>
-                                                <li class="divider"></li>
-                                                <li><a href="#">Separated link</a></li>
+                                                <li><a href="/applications/${application.appID}">编辑</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -108,5 +107,33 @@
     <script src="/res/js/morris/chart-data-morris.js"></script>
     <script src="/res/js/tablesorter/jquery.tablesorter.js"></script>
     <script src="/res/js/tablesorter/tables.js"></script>
+    <script src="/jq-weui/lib/jquery-2.1.4.js"></script>
+    <script src="/jq-weui/lib/fastclick.js"></script>
+    <script src="/jq-weui/js/jquery-weui.js"></script>
+    <script src="/mustache/mustache.js"></script>
 </body>
+<script>
+    function onDeleteButtonTap(appID) {
+        $.confirm("确定删除该应用?", "注意", function () {
+            $.showLoading("正在删除...");
+            $.ajax({
+                type: "DELETE",
+                url: "/applications/" + appID,
+                success: function (res) {
+                    $.hideLoading();
+                    if (res.success) {
+                        $("#application-tr-" + appID).remove();
+                    } else {
+                        $.alert(res.message ? res.message : "删除失败", "注意");
+                    }
+                },
+                error: function (res) {
+                    $.alert("删除失败", "注意");
+                }
+            })
+        }, function () {
+
+        });
+    }
+</script>
 </html>
