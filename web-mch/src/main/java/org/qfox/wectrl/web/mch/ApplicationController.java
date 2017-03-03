@@ -74,24 +74,6 @@ public class ApplicationController {
                        @Body("originalID") String originalID,
                        HttpSession session) {
 
-        Application app = new Application();
-        app.setAppID(appID);
-        app.setAppSecret(appSecret);
-        app.setPushURL("https://" + appID + ".wectrl.com/message");
-        app.setToken(token);
-
-        Encoding encoding = new Encoding();
-        encoding.setMode(mode);
-        encoding.setPassword(password);
-        app.setEncoding(encoding);
-
-        app.setPortraitURL(portraitURL);
-        app.setQRCodeURL(QRCodeURL);
-        app.setAppName(appName);
-        app.setAppNumber(appNumber);
-        app.setType(type);
-        app.setOriginalID(originalID);
-
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(appID)) {
             errors.add("App ID 不能为空");
@@ -122,6 +104,24 @@ public class ApplicationController {
             errors.add("原始ID已存在");
         }
 
+        Application app = new Application();
+        app.setAppID(appID);
+        app.setAppSecret(appSecret);
+        app.setPushURL("https://" + appID + ".wectrl.com/message");
+        app.setToken(token);
+
+        Encoding encoding = new Encoding();
+        encoding.setMode(mode);
+        encoding.setPassword(password);
+        app.setEncoding(encoding);
+
+        app.setPortraitURL(portraitURL);
+        app.setQRCodeURL(QRCodeURL);
+        app.setAppName(appName);
+        app.setAppNumber(appNumber);
+        app.setType(type);
+        app.setOriginalID(originalID);
+
         if (!errors.isEmpty()) {
             session.setAttribute("app", app);
             session.setAttribute("errors", errors);
@@ -135,11 +135,92 @@ public class ApplicationController {
         return "redirect:/applications";
     }
 
-    @GET("/{appID:^(?!new)\\w+$}")
-    public String detail(@Path("appID") String appID, HttpServletRequest request) {
+    @GET("/{appID:(?!new)\\w+}")
+    public String edit(@Path("appID") String appID,
+                       @Session("errors") List<String> errors,
+                       HttpServletRequest request,
+                       HttpSession session) {
         Application application = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", application);
-        return "forward:/view/base/application/detail.jsp";
+
+        session.removeAttribute("errors");
+        request.setAttribute("errors", errors);
+
+        return "forward:/view/base/application/edit.jsp";
+    }
+
+    @PUT(value = "/{oldAppID:(?!new)\\w+}", produces = "application/json")
+    public JsonResult update(@Path("oldAppID") String oldAppID,
+                             @Body("appID") String newAppID,
+                             @Body("appSecret") String appSecret,
+                             @Body("token") String token,
+                             @Body("mode") EncodingMode mode,
+                             @Body("password") String password,
+                             @Body("portraitURL") String portraitURL,
+                             @Body("QRCodeURL") String QRCodeURL,
+                             @Body("appName") String appName,
+                             @Body("appNumber") String appNumber,
+                             @Body("type") ApplicationType type,
+                             @Body("originalID") String originalID,
+                             HttpSession session) {
+
+        Application app = applicationServiceBean.getApplicationByAppID(oldAppID);
+
+        List<String> errors = new ArrayList<>();
+        if (StringUtils.isEmpty(newAppID)) {
+            errors.add("App ID 不能为空");
+        }
+        if (StringUtils.isEmpty(appSecret)) {
+            errors.add("App Secret 不能为空");
+        }
+        if (StringUtils.isEmpty(token)) {
+            errors.add("Token 不能为空");
+        }
+        if (mode == null) {
+            errors.add("请选择消息加解密方式");
+        }
+        if (mode != EncodingMode.PLAIN && StringUtils.isEmpty(password)) {
+            errors.add("非明文模式下EncodingAESKey不能为空");
+        }
+        if (type == null) {
+            errors.add("请选择公众号类型");
+        }
+        if (StringUtils.isEmpty(originalID)) {
+            errors.add("原始ID 不能为空");
+        }
+
+        if (!app.getAppID().equals(newAppID) && applicationServiceBean.isAppIDExists(newAppID)) {
+            errors.add("App ID 已存在");
+        }
+        if (!app.getOriginalID().equals(originalID) && applicationServiceBean.isOriginalIDExists(originalID)) {
+            errors.add("原始ID已存在");
+        }
+
+        if (!errors.isEmpty()) {
+            session.setAttribute("errors", errors);
+            return new JsonResult(false, "FAIL", errors);
+        }
+
+        app.setAppID(newAppID);
+        app.setAppSecret(appSecret);
+        app.setPushURL("https://" + newAppID + ".wectrl.com/message");
+        app.setToken(token);
+
+        Encoding encoding = new Encoding();
+        encoding.setMode(mode);
+        encoding.setPassword(password);
+        app.setEncoding(encoding);
+
+        app.setPortraitURL(portraitURL);
+        app.setQRCodeURL(QRCodeURL);
+        app.setAppName(appName);
+        app.setAppNumber(appNumber);
+        app.setType(type);
+        app.setOriginalID(originalID);
+
+        applicationServiceBean.update(app);
+
+        return new JsonResult(newAppID);
     }
 
 }
