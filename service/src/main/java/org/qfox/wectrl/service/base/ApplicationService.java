@@ -15,4 +15,6 @@ public interface ApplicationService extends GenericService<Application, Long> {
 
     boolean isOriginalIDExists(String originalID);
 
+    Application getApplicationByAppID(String appID, String... fetchs);
+
 }

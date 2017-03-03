@@ -13,7 +13,7 @@
             <li class="dropdown-header">7 New Messages</li>
             <li class="message-preview">
                 <a href="#">
-                    <span class="avatar"><img src="http://placehold.it/50x50"></span>
+                    <span class="avatar"><img ></span>
                     <span class="name">John Smith:</span>
                     <span class="message">Hey there, I wanted to ask you something...</span>
                     <span class="time"><i class="fa fa-clock-o"></i> 4:34 PM</span>
@@ -22,7 +22,7 @@
             <li class="divider"></li>
             <li class="message-preview">
                 <a href="#">
-                    <span class="avatar"><img src="http://placehold.it/50x50"></span>
+                    <span class="avatar"><img ></span>
                     <span class="name">John Smith:</span>
                     <span class="message">Hey there, I wanted to ask you something...</span>
                     <span class="time"><i class="fa fa-clock-o"></i> 4:34 PM</span>
@@ -31,7 +31,7 @@
             <li class="divider"></li>
             <li class="message-preview">
                 <a href="#">
-                    <span class="avatar"><img src="http://placehold.it/50x50"></span>
+                    <span class="avatar"><img ></span>
                     <span class="name">John Smith:</span>
                     <span class="message">Hey there, I wanted to ask you something...</span>
                     <span class="time"><i class="fa fa-clock-o"></i> 4:34 PM</span>

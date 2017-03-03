@@ -63,7 +63,6 @@ public class ApplicationController {
     public String save(@Session(SessionKey.MERCHANT) Merchant merchant,
                        @Body("appID") String appID,
                        @Body("appSecret") String appSecret,
-                       @Body("pushURL") String pushURL,
                        @Body("token") String token,
                        @Body("mode") EncodingMode mode,
                        @Body("password") String password,
@@ -73,13 +72,12 @@ public class ApplicationController {
                        @Body("appNumber") String appNumber,
                        @Body("type") ApplicationType type,
                        @Body("originalID") String originalID,
-                       HttpServletRequest request,
                        HttpSession session) {
 
         Application app = new Application();
         app.setAppID(appID);
         app.setAppSecret(appSecret);
-        app.setPushURL(pushURL);
+        app.setPushURL("https://" + appID + ".wectrl.com/message");
         app.setToken(token);
 
         Encoding encoding = new Encoding();
@@ -101,9 +99,6 @@ public class ApplicationController {
         if (StringUtils.isEmpty(appSecret)) {
             errors.add("App Secret 不能为空");
         }
-        if (StringUtils.isEmpty(pushURL)) {
-            errors.add("URL 不能为空");
-        }
         if (StringUtils.isEmpty(token)) {
             errors.add("Token 不能为空");
         }
@@ -116,7 +111,7 @@ public class ApplicationController {
         if (type == null) {
             errors.add("请选择公众号类型");
         }
-        if (StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(originalID)) {
             errors.add("原始ID 不能为空");
         }
 
@@ -138,6 +133,13 @@ public class ApplicationController {
         applicationServiceBean.save(app);
 
         return "redirect:/applications";
+    }
+
+    @GET("/{appID:^(?!new)\\w+$}")
+    public String detail(@Path("appID") String appID, HttpServletRequest request) {
+        Application application = applicationServiceBean.getApplicationByAppID(appID);
+        request.setAttribute("app", application);
+        return "forward:/view/base/application/detail.jsp";
     }
 
 }

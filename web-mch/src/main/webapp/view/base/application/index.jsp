@@ -59,19 +59,37 @@
                     <table class="table table-bordered table-hover table-striped tablesorter">
                         <thead>
                             <tr>
-                                <th>Logo</th>
-                                <th>AppName</th>
-                                <th>AppNumber</th>
-                                <th>QRCode</th>
+                                <th>App ID</th>
+                                <th>应用名称</th>
+                                <th>类型</th>
+                                <th>URL</th>
+                                <th>消息加解密方式</th>
+                                <th>已验证</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${page.entities}" var="application">
                                 <tr>
-                                    <td><img height="60px" src="${application.portraitURL}"/></td>
+                                    <td><a href="/applications/${application.appID}">${application.appID}</a></td>
                                     <td>${application.appName}</td>
-                                    <td>${application.appNumber}</td>
-                                    <td>${application['QRCodeURL']}</td>
+                                    <td>${application.type.name}</td>
+                                    <td>${application.pushURL}</td>
+                                    <td>${application.encoding.mode.name}</td>
+                                    <td>${application.verified ? '是' : '否'}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default">Default</button>
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">Action</a></li>
+                                                <li><a href="#">Another action</a></li>
+                                                <li><a href="#">Something else here</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="#">Separated link</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>

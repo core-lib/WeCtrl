@@ -1,6 +1,7 @@
 package org.qfox.wectrl.service.bean.base;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -70,5 +71,17 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
         criteria.add(Restrictions.eq("originalID", originalID));
         Object count = criteria.uniqueResult();
         return count != null && Integer.valueOf(count.toString()) > 0;
+    }
+
+    @Override
+    public Application getApplicationByAppID(String appID, String... fetchs) {
+        Criteria criteria = applicationDAO.createCriteria();
+        criteria.add(Restrictions.eq("appID", appID));
+        criteria.add(Restrictions.eq("deleted", false));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        for (String fetch : fetchs) {
+            criteria.setFetchMode(fetch, FetchMode.JOIN);
+        }
+        return (Application) criteria.uniqueResult();
     }
 }

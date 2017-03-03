@@ -16,7 +16,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>我的应用 - WeCtrl</title>
+    <title>${application.appName} - WeCtrl</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/res/css/bootstrap.css" rel="stylesheet">
@@ -158,7 +158,7 @@
                     <div class="col-lg-12">
                         <div class="alert alert-dismissable alert-danger">
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            ${error}
+                                ${error}
                         </div>
                     </div>
                 </c:forEach>
