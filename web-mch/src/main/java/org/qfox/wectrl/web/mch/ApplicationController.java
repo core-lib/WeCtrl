@@ -1,8 +1,6 @@
 package org.qfox.wectrl.web.mch;
 
-import org.qfox.jestful.core.annotation.GET;
-import org.qfox.jestful.core.annotation.Jestful;
-import org.qfox.jestful.core.annotation.Query;
+import org.qfox.jestful.core.annotation.*;
 import org.qfox.jestful.server.annotation.Session;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Application;
@@ -28,10 +26,25 @@ public class ApplicationController {
                         @Query("pagination") int pagination,
                         @Query("capacity") int capacity,
                         HttpServletRequest request) {
+        pagination = pagination <= 0 ? 0 : pagination;
+        capacity = capacity <= 0 ? 20 : capacity;
+
         Long merchantId = merchant.getId();
         Page<Application> page = applicationServiceBean.getPagedMerchantApplications(merchantId, pagination, capacity);
         request.setAttribute("page", page);
         return "forward:/view/base/application/index.jsp";
+    }
+
+    @GET("/new")
+    public String create(@Session(SessionKey.MERCHANT) Merchant merchant) {
+
+        return "forward:/view/base/application/create.jsp";
+    }
+
+    @POST("/")
+    public String save(@Session(SessionKey.MERCHANT) Merchant merchant) {
+
+        return "redirect:/applications";
     }
 
 }

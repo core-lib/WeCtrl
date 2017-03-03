@@ -38,6 +38,7 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <c:set var="menu" value="application" scope="request"/>
                 <jsp:include page="/view/include/menu.jsp"/>
                 <jsp:include page="/view/include/user.jsp"/>
             </div><!-- /.navbar-collapse -->
@@ -47,8 +48,9 @@
                 <div class="col-lg-12">
                     <h1>我的应用 <small></small></h1>
                     <ol class="breadcrumb">
-                        <li><a href="/"><i class="icon-dashboard"></i> Dashboard</a></li>
-                        <li class="active"><i class="icon-file-alt"></i> 我的应用</li>
+                        <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                        <li class="active"><i class="fa fa-table"></i> 我的应用</li>
+                        <li><a href="/applications/new">添加应用</a></li>
                     </ol>
                 </div>
             </div><!-- /.row -->
