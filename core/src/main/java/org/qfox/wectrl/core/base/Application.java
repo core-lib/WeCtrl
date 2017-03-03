@@ -26,6 +26,8 @@ public class Application extends Domain {
     private Encoding encoding;
     private Mch merchant;
 
+    private boolean verified;
+
     @Column(unique = true, nullable = false)
     public String getAppID() {
         return appID;
@@ -44,7 +46,7 @@ public class Application extends Domain {
         this.appSecret = appSecret;
     }
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     public String getAppNumber() {
         return appNumber;
     }
@@ -53,7 +55,7 @@ public class Application extends Domain {
         this.appNumber = appNumber;
     }
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     public String getAppName() {
         return appName;
     }
@@ -142,5 +144,13 @@ public class Application extends Domain {
 
     public void setMerchant(Mch merchant) {
         this.merchant = merchant;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

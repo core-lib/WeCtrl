@@ -14,6 +14,15 @@ public class Mch implements Serializable {
     private String name;
     private String username;
 
+    public Mch() {
+    }
+
+    public Mch(Merchant merchant) {
+        this.id = merchant.getId();
+        this.name = merchant.getName();
+        this.username = merchant.getUsername();
+    }
+
     public Long getId() {
         return id;
     }

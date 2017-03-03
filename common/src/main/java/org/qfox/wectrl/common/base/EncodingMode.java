@@ -4,7 +4,7 @@ package org.qfox.wectrl.common.base;
  * Created by payne on 2017/1/29.
  */
 public enum EncodingMode {
-    PLAIN("明文"), ENCRYPTED("密文"), COMPATIBLE("兼容");
+    PLAIN("明文模式"), COMPATIBLE("兼容模式"), ENCRYPTED("安全模式（推荐）");
 
     private final String name;
 

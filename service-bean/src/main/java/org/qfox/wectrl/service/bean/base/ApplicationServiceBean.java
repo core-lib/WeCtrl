@@ -52,4 +52,23 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
 
         return page;
     }
+
+    @Override
+    public boolean isAppIDExists(String appID) {
+        Criteria criteria = applicationDAO.createCriteria();
+        criteria.setProjection(Projections.count("id"));
+        criteria.add(Restrictions.eq("appID", appID));
+        Object count = criteria.uniqueResult();
+        return count != null && Integer.valueOf(count.toString()) > 0;
+    }
+
+
+    @Override
+    public boolean isOriginalIDExists(String originalID) {
+        Criteria criteria = applicationDAO.createCriteria();
+        criteria.setProjection(Projections.count("id"));
+        criteria.add(Restrictions.eq("originalID", originalID));
+        Object count = criteria.uniqueResult();
+        return count != null && Integer.valueOf(count.toString()) > 0;
+    }
 }
