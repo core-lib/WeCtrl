@@ -97,7 +97,7 @@
                             <input type="radio" name="mode" value="COMPATIBLE" ${app.encoding.mode eq 'COMPATIBLE' ? 'checked="checked"' : ''}> 兼容模式
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="mode" value="ENCRYPTED"${app.encoding.mode eq 'ENCRYPTED' ? 'checked="checked"' : ''}> 安全模式（推荐）
+                            <input type="radio" name="mode" value="ENCRYPTED"${app.encoding.mode eq 'ENCRYPTED' ? 'checked="checked"' : ''}> 安全模式
                         </label>
                     </div>
                     <p class="help-block">公众号基本配置的消息加解密方式</p>
