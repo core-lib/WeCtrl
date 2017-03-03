@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,35 +43,23 @@ public class ApplicationController {
     }
 
     @GET("/new")
-    public String create(@Session(SessionKey.MERCHANT) Merchant merchant,
-                         @Session("errors") List<String> errors,
-                         @Session("app") Application app,
-                         HttpServletRequest request,
-                         HttpSession session) {
-
-        session.removeAttribute("errors");
-        session.removeAttribute("app");
-
-        request.setAttribute("errors", errors);
-        request.setAttribute("app", app);
-
+    public String create() {
         return "forward:/view/base/application/create.jsp";
     }
 
-    @POST("/")
-    public String save(@Session(SessionKey.MERCHANT) Merchant merchant,
-                       @Body("appID") String appID,
-                       @Body("appSecret") String appSecret,
-                       @Body("token") String token,
-                       @Body("mode") EncodingMode mode,
-                       @Body("password") String password,
-                       @Body("portraitURL") String portraitURL,
-                       @Body("QRCodeURL") String QRCodeURL,
-                       @Body("appName") String appName,
-                       @Body("appNumber") String appNumber,
-                       @Body("type") ApplicationType type,
-                       @Body("originalID") String originalID,
-                       HttpSession session) {
+    @POST(value = "/", produces = "application/json")
+    public JsonResult save(@Session(SessionKey.MERCHANT) Merchant merchant,
+                           @Body("appID") String appID,
+                           @Body("appSecret") String appSecret,
+                           @Body("token") String token,
+                           @Body("mode") EncodingMode mode,
+                           @Body("password") String password,
+                           @Body("portraitURL") String portraitURL,
+                           @Body("QRCodeURL") String QRCodeURL,
+                           @Body("appName") String appName,
+                           @Body("appNumber") String appNumber,
+                           @Body("type") ApplicationType type,
+                           @Body("originalID") String originalID) {
 
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(appID)) {
@@ -104,6 +91,10 @@ public class ApplicationController {
             errors.add("原始ID已存在");
         }
 
+        if (!errors.isEmpty()) {
+            return new JsonResult(false, "FAIL", errors);
+        }
+
         Application app = new Application();
         app.setAppID(appID);
         app.setAppSecret(appSecret);
@@ -122,29 +113,17 @@ public class ApplicationController {
         app.setType(type);
         app.setOriginalID(originalID);
 
-        if (!errors.isEmpty()) {
-            session.setAttribute("app", app);
-            session.setAttribute("errors", errors);
-            return "redirect:/applications/new";
-        }
-
         Mch mch = new Mch(merchant);
         app.setMerchant(mch);
         applicationServiceBean.save(app);
 
-        return "redirect:/applications";
+        return JsonResult.OK;
     }
 
     @GET("/{appID:(?!new)\\w+}")
-    public String edit(@Path("appID") String appID,
-                       @Session("errors") List<String> errors,
-                       HttpServletRequest request,
-                       HttpSession session) {
+    public String edit(@Path("appID") String appID, HttpServletRequest request) {
         Application application = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", application);
-
-        session.removeAttribute("errors");
-        request.setAttribute("errors", errors);
 
         return "forward:/view/base/application/edit.jsp";
     }
@@ -161,8 +140,7 @@ public class ApplicationController {
                              @Body("appName") String appName,
                              @Body("appNumber") String appNumber,
                              @Body("type") ApplicationType type,
-                             @Body("originalID") String originalID,
-                             HttpSession session) {
+                             @Body("originalID") String originalID) {
 
         Application app = applicationServiceBean.getApplicationByAppID(oldAppID);
 
@@ -197,7 +175,6 @@ public class ApplicationController {
         }
 
         if (!errors.isEmpty()) {
-            session.setAttribute("errors", errors);
             return new JsonResult(false, "FAIL", errors);
         }
 
@@ -220,7 +197,7 @@ public class ApplicationController {
 
         applicationServiceBean.update(app);
 
-        return new JsonResult(newAppID);
+        return JsonResult.OK;
     }
 
 }
