@@ -65,7 +65,6 @@
                                 <th>App ID</th>
                                 <th>应用名称</th>
                                 <th>类型</th>
-                                <th>URL</th>
                                 <th>消息加解密方式</th>
                                 <th>已验证</th>
                                 <th>操作</th>
@@ -77,7 +76,6 @@
                                     <td><a href="/applications/${application.appID}">${application.appID}</a></td>
                                     <td>${application.appName}</td>
                                     <td>${application.type.name}</td>
-                                    <td>${application.pushURL}</td>
                                     <td>${application.encoding.mode.name}</td>
                                     <td>${application.verified ? '是' : '否'}</td>
                                     <td>
