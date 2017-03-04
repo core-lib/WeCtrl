@@ -4,6 +4,7 @@ import org.qfox.wectrl.common.base.ApplicationType;
 import org.qfox.wectrl.core.Domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by yangchangpei on 17/2/27.
@@ -27,6 +28,7 @@ public class Application extends Domain {
     private Mch merchant;
 
     private boolean verified;
+    private Date dateVerified;
 
     @Column(unique = true, nullable = false)
     public String getAppID() {
@@ -152,5 +154,14 @@ public class Application extends Domain {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getDateVerified() {
+        return dateVerified;
+    }
+
+    public void setDateVerified(Date dateVerified) {
+        this.dateVerified = dateVerified;
     }
 }

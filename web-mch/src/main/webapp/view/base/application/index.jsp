@@ -51,8 +51,8 @@
                 <div class="col-lg-12">
                     <h1>我的应用 <small></small></h1>
                     <ol class="breadcrumb">
-                        <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                        <li class="active"><i class="fa fa-table"></i> 我的应用</li>
+                        <li><a href="/"> Dashboard</a></li>
+                        <li class="active"> 我的应用</li>
                         <li><a href="/applications/new">添加应用</a></li>
                     </ol>
                 </div>
@@ -83,7 +83,7 @@
                                             <button type="button" class="btn btn-danger" onclick="javascript: onDeleteButtonTap('${application.appID}');">删除</button>
                                             <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                                             <ul class="dropdown-menu">
-                                                <li><a href="/applications/${application.appID}">编辑</a></li>
+                                                <li><a href="/applications/${application.appID}/environments">应用环境</a></li>
                                             </ul>
                                         </div>
                                     </td>

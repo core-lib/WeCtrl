@@ -53,9 +53,9 @@
                     <small></small>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                    <li><a href="/applications"><i class="fa fa-table"></i> 我的应用</a></li>
-                    <li class="active"><i class="fa fa-edit">添加应用</i></li>
+                    <li><a href="/"> Dashboard</a></li>
+                    <li><a href="/applications"> 我的应用</a></li>
+                    <li class="active"> 添加应用</li>
                 </ol>
             </div>
         </div><!-- /.row -->
@@ -190,7 +190,7 @@
             success: function (res) {
                 $.hideLoading();
                 if (res.success) {
-                    location.href = "/applications";
+                    location.href = form.action;
                 } else {
                     var tpl = "{{#entity}}" + $("#error-tpl").clone().show().html() + "{{/entity}}";
                     var html = Mustache.render(tpl, res);

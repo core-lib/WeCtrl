@@ -55,7 +55,7 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
     }
 
     @Override
-    public boolean isAppIDExists(String appID) {
+    public boolean isAppIDExisted(String appID) {
         Criteria criteria = applicationDAO.createCriteria();
         criteria.setProjection(Projections.count("id"));
         criteria.add(Restrictions.eq("appID", appID));
@@ -65,7 +65,7 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
 
 
     @Override
-    public boolean isOriginalIDExists(String originalID) {
+    public boolean isOriginalIDExisted(String originalID) {
         Criteria criteria = applicationDAO.createCriteria();
         criteria.setProjection(Projections.count("id"));
         criteria.add(Restrictions.eq("originalID", originalID));

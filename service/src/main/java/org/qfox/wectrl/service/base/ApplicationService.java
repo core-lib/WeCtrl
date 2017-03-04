@@ -11,9 +11,9 @@ public interface ApplicationService extends GenericService<Application, Long> {
 
     Page<Application> getPagedMerchantApplications(Long merchantId, int pagination, int capacity);
 
-    boolean isAppIDExists(String appID);
+    boolean isAppIDExisted(String appID);
 
-    boolean isOriginalIDExists(String originalID);
+    boolean isOriginalIDExisted(String originalID);
 
     Application getApplicationByAppID(String appID, String... fetchs);
 

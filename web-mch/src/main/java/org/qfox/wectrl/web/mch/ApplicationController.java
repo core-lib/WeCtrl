@@ -84,10 +84,10 @@ public class ApplicationController {
             errors.add("原始ID 不能为空");
         }
 
-        if (applicationServiceBean.isAppIDExists(appID)) {
+        if (applicationServiceBean.isAppIDExisted(appID)) {
             errors.add("App ID 已存在");
         }
-        if (applicationServiceBean.isOriginalIDExists(originalID)) {
+        if (applicationServiceBean.isOriginalIDExisted(originalID)) {
             errors.add("原始ID已存在");
         }
 
@@ -167,10 +167,10 @@ public class ApplicationController {
             errors.add("原始ID 不能为空");
         }
 
-        if (!app.getAppID().equals(newAppID) && applicationServiceBean.isAppIDExists(newAppID)) {
+        if (!app.getAppID().equals(newAppID) && applicationServiceBean.isAppIDExisted(newAppID)) {
             errors.add("App ID 已存在");
         }
-        if (!app.getOriginalID().equals(originalID) && applicationServiceBean.isOriginalIDExists(originalID)) {
+        if (!app.getOriginalID().equals(originalID) && applicationServiceBean.isOriginalIDExisted(originalID)) {
             errors.add("原始ID已存在");
         }
 
