@@ -117,7 +117,7 @@ public class ApplicationController {
         app.setMerchant(mch);
         applicationServiceBean.save(app);
 
-        return JsonResult.OK;
+        return new JsonResult("/applications");
     }
 
     @GET("/{appID:(?!new)\\w+}")
@@ -197,7 +197,7 @@ public class ApplicationController {
 
         applicationServiceBean.update(app);
 
-        return JsonResult.OK;
+        return new JsonResult("/applications");
     }
 
     @DELETE("/{appID:(?!new)\\w+}")

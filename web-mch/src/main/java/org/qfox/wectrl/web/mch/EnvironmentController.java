@@ -92,7 +92,7 @@ public class EnvironmentController {
 
         environmentServiceBean.save(environment);
 
-        return JsonResult.OK;
+        return new JsonResult("/applications/" + appID + "/environments");
     }
 
     @GET("/applications/{appID:\\w+}/environments/{envKey:(?!new)\\w+}")
@@ -144,7 +144,7 @@ public class EnvironmentController {
 
         environmentServiceBean.update(env);
 
-        return JsonResult.OK;
+        return new JsonResult("/applications/" + appID + "/environments");
     }
 
     @DELETE("/applications/{appID:\\w+}/environments/{envKey:(?!new)\\w+}")

@@ -190,7 +190,7 @@
             success: function (res) {
                 $.hideLoading();
                 if (res.success) {
-                    location.href = form.action;
+                    location.href = res.entity;
                 } else {
                     var tpl = "{{#entity}}" + $("#error-tpl").clone().show().html() + "{{/entity}}";
                     var html = Mustache.render(tpl, res);
