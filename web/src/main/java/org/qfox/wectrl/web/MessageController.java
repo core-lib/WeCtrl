@@ -40,13 +40,13 @@ public class MessageController {
                          HttpServletRequest request) throws AesException {
 
         if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(echostr)) {
-            return null;
+            return "@:";
         }
 
         String appID = request.getServerName().split("\\.")[0];
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         if (app == null) {
-            return null;
+            return "@:";
         }
 
         String token = app.getToken();
@@ -66,21 +66,21 @@ public class MessageController {
         verificationServiceBean.save(verification);
 
         if (!verified) {
-            return null;
+            return "@:";
         }
 
         EncodingMode mode = app.getEncoding().getMode();
         switch (mode) {
             case PLAIN:
-                return echostr;
+                return "@:" + echostr;
             case COMPATIBLE:
-                return echostr;
+                return "@:" + echostr;
             case ENCRYPTED:
                 String password = app.getEncoding().getPassword();
                 WXBizMsgCrypt crypt = new WXBizMsgCrypt(token, password, appID);
                 return crypt.decrypt(echostr);
             default:
-                return null;
+                return "@:";
         }
     }
 
