@@ -15,7 +15,7 @@ public class Encoding implements Serializable {
     private static final long serialVersionUID = 2008285094523331265L;
 
     private EncodingMode mode;
-    private String algorithm;
+    private String algorithm = "AES";
     private String password;
 
     @Enumerated(EnumType.STRING)
