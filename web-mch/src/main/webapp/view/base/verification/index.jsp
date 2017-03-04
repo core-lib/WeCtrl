@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%--
   Created by IntelliJ IDEA.
   User: yangchangpei
@@ -71,6 +72,7 @@
                                 <th>加解密模式</th>
                                 <th>EncodingAESKey</th>
                                 <th>验证成功</th>
+                                <th>验证时间</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,6 +88,7 @@
                                     <td>${verfication.encoding.mode.name}</td>
                                     <td>${verfication.encoding.password}</td>
                                     <td>${verfication.success ? '是' : '否'}</td>
+                                    <th><fmt:formatDate value="${verification.dateCreated}" pattern="yyyy-MM-dd HH:mm:ss"/></th>
                                 </tr>
                             </c:forEach>
                         </tbody>

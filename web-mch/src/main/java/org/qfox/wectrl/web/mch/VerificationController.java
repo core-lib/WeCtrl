@@ -8,6 +8,7 @@ import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Merchant;
 import org.qfox.wectrl.core.base.Verification;
 import org.qfox.wectrl.service.base.VerificationService;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by yangchangpei on 17/3/4.
  */
 @Jestful("/verifications")
+@Controller
 public class VerificationController {
 
     @Resource
