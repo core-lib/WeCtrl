@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * Created by yangchangpei on 17/3/1.
@@ -56,6 +57,7 @@ public class MessageController {
         Verification verification = new Verification();
         App application = new App(app);
         verification.setApplication(application);
+        verification.setMerchant(app.getMerchant());
         verification.setSignature(signature);
         verification.setTimestamp(timestamp);
         verification.setNonce(nonce);
@@ -65,7 +67,11 @@ public class MessageController {
         verification.setSuccess(verified);
         verificationServiceBean.save(verification);
 
-        if (!verified) {
+        if (verified) {
+            app.setVerified(true);
+            app.setDateVerified(new Date());
+            applicationServiceBean.update(app);
+        } else {
             return "@:";
         }
 

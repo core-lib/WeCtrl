@@ -13,6 +13,7 @@ public class Verification extends Domain {
     private static final long serialVersionUID = -4348740977711268961L;
 
     private App application;
+    private Mch merchant;
     private String signature;
     private String timestamp;
     private String nonce;
@@ -35,6 +36,20 @@ public class Verification extends Domain {
 
     public void setApplication(App application) {
         this.application = application;
+    }
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "merchant_id")),
+            @AttributeOverride(name = "name", column = @Column(name = "merchant_name")),
+            @AttributeOverride(name = "username", column = @Column(name = "merchant_username"))
+    })
+    public Mch getMerchant() {
+        return merchant;
+    }
+
+    public void setMerchant(Mch merchant) {
+        this.merchant = merchant;
     }
 
     public String getSignature() {
