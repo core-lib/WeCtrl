@@ -58,7 +58,7 @@
     </profiles>
 
     <properties>
-        <jestful.version>v1.1.3-release</jestful.version>
+        <jestful.version>v1.1.4-release</jestful.version>
     </properties>
 
     <dependencyManagement>

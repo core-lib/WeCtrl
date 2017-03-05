@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by yangchangpei on 17/3/4.
  */
-@Jestful("/")
+@Jestful("/applications/{appID:\\w+}/environments")
 @Controller
 public class EnvironmentController {
 
@@ -28,7 +28,7 @@ public class EnvironmentController {
     @Resource
     private EnvironmentService environmentServiceBean;
 
-    @GET("/applications/{appID:\\w+}/environments")
+    @GET("/")
     public String index(@Path("appID") String appID,
                         @Query("pagination") int pagination,
                         @Query("capacity") int capacity,
@@ -46,14 +46,14 @@ public class EnvironmentController {
         return "forward:/view/base/environment/index.jsp";
     }
 
-    @GET("/applications/{appID:\\w+}/environments/new")
+    @GET("/new")
     public String create(@Path("appID") String appID, HttpServletRequest request) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", app);
         return "forward:/view/base/environment/create.jsp";
     }
 
-    @POST(value = "/applications/{appID:\\w+}/environments", produces = "application/json")
+    @POST(value = "/", produces = "application/json")
     public JsonResult save(@Path("appID") String appID,
                            @Body("envName") String envName,
                            @Body("envKey") String envKey,
@@ -95,7 +95,7 @@ public class EnvironmentController {
         return new JsonResult("/applications/" + appID + "/environments");
     }
 
-    @GET("/applications/{appID:\\w+}/environments/{envKey:(?!new)\\w+}")
+    @GET("/{envKey:(?!new)\\w+}")
     public String edit(@Path("appID") String appID,
                        @Path("envKey") String envKey,
                        HttpServletRequest request) {
@@ -107,7 +107,7 @@ public class EnvironmentController {
         return "forward:/view/base/environment/edit.jsp";
     }
 
-    @PUT(value = "/applications/{appID:\\w+}/environments/{oldEnvKey:(?!new)\\w+}", produces = "application/json")
+    @PUT(value = "/{oldEnvKey:(?!new)\\w+}", produces = "application/json")
     public JsonResult update(@Path("appID") String appID,
                              @Path("oldEnvKey") String oldEnvKey,
                              @Body("envName") String envName,
@@ -147,7 +147,7 @@ public class EnvironmentController {
         return new JsonResult("/applications/" + appID + "/environments");
     }
 
-    @DELETE("/applications/{appID:\\w+}/environments/{envKey:(?!new)\\w+}")
+    @DELETE("/{envKey:(?!new)\\w+}")
     public JsonResult delete(@Path("appID") String appID, @Path("envKey") String envKey) {
         Environment env = environmentServiceBean.getApplicationEnvironment(appID, envKey);
         environmentServiceBean.delete(env);
