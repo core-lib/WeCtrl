@@ -51,9 +51,9 @@ public class TicketController {
         }
         switch (type) {
             case JSAPI:
-                return new JsonResult(ticketServiceBean.getApplicationJSAPITicket(appID));
+                return new JsonResult(ticketServiceBean.newApplicationJSAPITicket(appID));
             case WX_CARD:
-                return new JsonResult(ticketServiceBean.getApplicationWXCardTicket(appID));
+                return new JsonResult(ticketServiceBean.newApplicationWXCardTicket(appID));
             default:
                 return new JsonResult(false, "unknown ticket type : " + type, type);
         }
