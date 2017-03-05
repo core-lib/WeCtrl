@@ -140,6 +140,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                 ticket.setApplication(new App(application));
                 ticket.setValue(result.getTicket());
                 ticket.setTimeExpired(System.currentTimeMillis() + result.getExpires_in() * 1000L);
+                ticket.setType(TicketType.JSAPI);
                 ticketServiceBean.save(ticket);
                 JSAPICache.put(appID, ticket);
             }
@@ -232,6 +233,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                 ticket.setApplication(new App(application));
                 ticket.setValue(result.getTicket());
                 ticket.setTimeExpired(System.currentTimeMillis() + result.getExpires_in() * 1000L);
+                ticket.setType(TicketType.WX_CARD);
                 ticketServiceBean.save(ticket);
                 WXCardCache.put(appID, ticket);
             }
