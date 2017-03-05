@@ -17,7 +17,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>应用环境 - WeCtrl</title>
+    <title>Access Token - WeCtrl</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/res/css/bootstrap.css" rel="stylesheet">
@@ -50,15 +50,15 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1>应用环境
+                <h1>Access Token
                     <small></small>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="/"> Dashboard</a></li>
                     <li><a href="/applications"> 我的应用</a></li>
                     <li><a href="/applications/${app.appID}"> ${app.appName}</a></li>
-                    <li class="active"> 应用环境</li>
-                    <li><a href="/applications/${app.appID}/environments/new"> 添加环境</a></li>
+                    <li class="active"> Access Token</li>
+                    <li><a onclick="javascript: onRefreshButtonTap('${app.appID}');" href="javascript:"> 刷新</a></li>
                 </ol>
             </div>
         </div><!-- /.row -->
@@ -67,35 +67,25 @@
                 <table class="table table-bordered table-hover table-striped tablesorter">
                     <thead>
                     <tr>
-                        <th>环境名称</th>
-                        <th>环境Key</th>
-                        <th>网页授权URL</th>
-                        <th>消息推送URL</th>
-                        <th>已验证</th>
-                        <th>验证时间</th>
-                        <th>操作</th>
+                        <th>Access Token</th>
+                        <th>过期时间</th>
+                        <th>已失效</th>
+                        <th>失效时间</th>
+                        <th>失效原因</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${page.entities}" var="environment">
-                        <tr id="environment-tr-${environment.envKey}">
-                            <td>${environment.envName}</td>
-                            <td><a href="/applications/${app.appID}/environments/${environment.envKey}">${environment.envKey}</a></td>
-                            <td>${environment.authorizeURL}</td>
-                            <td>${environment.pushURL}</td>
-                            <td>${environment.verified ? '是' : '否'}</td>
-                            <td><fmt:formatDate value="${environment.dateVerified}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                    <c:forEach items="${page.entities}" var="token">
+                        <tr>
                             <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-danger" onclick="javascript: onDeleteButtonTap('${app.appID}', '${environment.envKey}');">删除</button>
-                                    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="/applications/${app.appID}/environments/${environment.envKey}">编辑</a></li>
-                                    </ul>
+                                <div style="width: 240px; word-break: break-all;">
+                                    ${token.value}
                                 </div>
                             </td>
+                            <td>${token.timeExpired}</td>
+                            <td>${token.invalid ? '是' : '否'}</td>
+                            <td><fmt:formatDate value="${token.dateInvalid}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                            <td>${token.whyInvalid.name}</td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -120,22 +110,22 @@
 <script src="/mustache/mustache.js"></script>
 </body>
 <script>
-    function onDeleteButtonTap(appID, envKey) {
-        $.confirm("确定删除该应用环境?", "注意", function () {
-            $.showLoading("正在删除...");
+    function onRefreshButtonTap(appID) {
+        $.confirm("确定刷新Access Token?", "注意", function () {
+            $.showLoading("正在刷新...");
             $.ajax({
-                type: "DELETE",
-                url: "/applications/" + appID + "/environments/" + envKey,
+                type: "POST",
+                url: "/applications/" + appID + "/tokens",
                 success: function (res) {
                     $.hideLoading();
                     if (res.success) {
-                        $("#environment-tr-" + envKey).remove();
+                        location.href = "/applications/" + appID + "/tokens";
                     } else {
-                        $.alert(res.message ? res.message : "删除失败", "注意");
+                        $.alert(res.message ? res.message : "刷新失败", "注意");
                     }
                 },
                 error: function (res) {
-                    $.alert("删除失败", "注意");
+                    $.alert("刷新失败", "注意");
                 }
             });
         }, function () {

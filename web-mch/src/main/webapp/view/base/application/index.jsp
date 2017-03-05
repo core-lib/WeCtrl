@@ -84,6 +84,8 @@
                                             <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                                             <ul class="dropdown-menu">
                                                 <li><a href="/applications/${application.appID}/environments">应用环境</a></li>
+                                                <li><a href="/applications/${application.appID}/tokens">Access Token</a></li>
+                                                <li><a href="/applications/${application.appID}/tickets">应用票据</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -128,7 +130,7 @@
                 error: function (res) {
                     $.alert("删除失败", "注意");
                 }
-            })
+            });
         }, function () {
 
         });

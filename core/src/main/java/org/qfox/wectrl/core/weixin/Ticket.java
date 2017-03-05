@@ -1,5 +1,6 @@
 package org.qfox.wectrl.core.weixin;
 
+import org.qfox.wectrl.common.weixin.TicketType;
 import org.qfox.wectrl.common.weixin.WhyInvalid;
 import org.qfox.wectrl.core.Domain;
 import org.qfox.wectrl.core.base.App;
@@ -11,9 +12,9 @@ import java.util.Date;
  * Created by payne on 2017/3/5.
  */
 @Entity
-@Table(name = "weixin_token_tbl")
-public class Token extends Domain {
-    private static final long serialVersionUID = -4946230534210198042L;
+@Table(name = "weixin_ticket_tbl")
+public class Ticket extends Domain {
+    private static final long serialVersionUID = 6842019942850115316L;
 
     private String value;
     private Long timeExpired;
@@ -21,6 +22,7 @@ public class Token extends Domain {
     private Date dateInvalid;
     private WhyInvalid whyInvalid;
     private App application;
+    private TicketType type;
 
     @Transient
     public boolean isExpired() {
@@ -90,8 +92,13 @@ public class Token extends Domain {
         this.application = application;
     }
 
-    @Override
-    public String toString() {
-        return value;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    public TicketType getType() {
+        return type;
+    }
+
+    public void setType(TicketType type) {
+        this.type = type;
     }
 }

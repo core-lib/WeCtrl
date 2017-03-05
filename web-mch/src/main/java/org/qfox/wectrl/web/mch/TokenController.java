@@ -6,6 +6,8 @@ import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.Token;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.weixin.TokenService;
+import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by payne on 2017/3/5.
  */
 @Jestful("/applications/{appID:\\w+}/tokens")
+@Controller
 public class TokenController {
 
     @Resource
@@ -36,14 +39,13 @@ public class TokenController {
         Page<Token> page = tokenServiceBean.getPagedApplicationTokens(appID, pagination, capacity);
         request.setAttribute("page", page);
 
-        return "/view/base/weixin/token/index.jsp";
+        return "forward:/view/weixin/token/index.jsp";
     }
 
     @POST("/")
     public JsonResult refresh(@Path("appID") String appID) {
-
-
-        return new JsonResult(null);
+        TokenApiResult result = tokenServiceBean.newApplicationAccessToken(appID);
+        return new JsonResult(result);
     }
 
 }
