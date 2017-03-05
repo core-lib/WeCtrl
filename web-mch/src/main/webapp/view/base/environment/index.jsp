@@ -135,6 +135,7 @@
                     }
                 },
                 error: function (res) {
+                    $.hideLoading();
                     $.alert("删除失败", "注意");
                 }
             });

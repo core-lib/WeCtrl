@@ -150,7 +150,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
     @Override
     public TicketApiResult getApplicationWXCardTicket(String appID) {
         synchronized (appID.intern()) {
-            Ticket ticket = JSAPICache.get(appID);
+            Ticket ticket = WXCardCache.get(appID);
             if (ticket == null || ticket.isExpired()) {
                 Criteria criteria = ticketDAO.createCriteria();
                 criteria.add(Restrictions.eq("application.appID", appID));

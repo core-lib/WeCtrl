@@ -125,6 +125,7 @@
                     }
                 },
                 error: function (res) {
+                    $.hideLoading();
                     $.alert("刷新失败", "注意");
                 }
             });
