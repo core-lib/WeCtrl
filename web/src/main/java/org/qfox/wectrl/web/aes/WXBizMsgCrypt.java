@@ -179,8 +179,7 @@ public class WXBizMsgCrypt {
 			int xmlLength = recoverNetworkBytesOrder(networkOrder);
 
 			xmlContent = new String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), CHARSET);
-			from_appid = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length),
-					CHARSET);
+			from_appid = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length), CHARSET);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AesException(AesException.IllegalBuffer);
@@ -191,7 +190,6 @@ public class WXBizMsgCrypt {
 			throw new AesException(AesException.ValidateAppidError);
 		}
 		return xmlContent;
-
 	}
 
 	/**

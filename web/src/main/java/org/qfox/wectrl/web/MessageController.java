@@ -10,9 +10,10 @@ import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.base.Verification;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.VerificationService;
-import org.qfox.wectrl.web.aes.AesException;
 import org.qfox.wectrl.web.aes.SHA1;
 import org.qfox.wectrl.web.aes.WXBizMsgCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +27,7 @@ import java.util.Date;
 @Jestful("/message")
 @Controller
 public class MessageController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
     private ApplicationService applicationServiceBean;
@@ -38,55 +40,64 @@ public class MessageController {
                          @Query("timestamp") String timestamp,
                          @Query("nonce") String nonce,
                          @Query("echostr") String echostr,
-                         HttpServletRequest request) throws AesException {
-
-        if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(echostr)) {
-            return "@:";
-        }
-
-        String appID = request.getServerName().split("\\.")[0];
-        Application app = applicationServiceBean.getApplicationByAppID(appID);
-        if (app == null) {
-            return "@:";
-        }
-
-        String token = app.getToken();
-        String actual = SHA1.sign(token, timestamp, nonce, echostr);
-        boolean verified = actual.equals(signature);
-
-        Verification verification = new Verification();
-        App application = new App(app);
-        verification.setApplication(application);
-        verification.setMerchant(app.getMerchant());
-        verification.setSignature(signature);
-        verification.setTimestamp(timestamp);
-        verification.setNonce(nonce);
-        verification.setEchostr(echostr);
-        verification.setToken(token);
-        verification.setEncoding(app.getEncoding());
-        verification.setSuccess(verified);
-        verificationServiceBean.save(verification);
-
-        if (verified) {
-            app.setVerified(true);
-            app.setDateVerified(new Date());
-            applicationServiceBean.update(app);
-        } else {
-            return "@:";
-        }
-
-        EncodingMode mode = app.getEncoding().getMode();
-        switch (mode) {
-            case PLAIN:
-                return "@:" + echostr;
-            case COMPATIBLE:
-                return "@:" + echostr;
-            case ENCRYPTED:
-                String password = app.getEncoding().getPassword();
-                WXBizMsgCrypt crypt = new WXBizMsgCrypt(token, password, appID);
-                return crypt.decrypt(echostr);
-            default:
+                         HttpServletRequest request) {
+        Application app = null;
+        boolean verified = false;
+        try {
+            if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(echostr)) {
                 return "@:";
+            }
+
+            String appID = request.getServerName().split("\\.")[0];
+            app = applicationServiceBean.getApplicationByAppID(appID);
+            if (app == null) {
+                return "@:";
+            }
+
+            String token = app.getToken();
+            String actual = SHA1.sign(token, timestamp, nonce, echostr);
+            verified = actual.equals(signature);
+
+            if (!verified) {
+                return "@:";
+            }
+
+            EncodingMode mode = app.getEncoding().getMode();
+            switch (mode) {
+                case PLAIN:
+                    return "@:" + echostr;
+                case COMPATIBLE:
+                    return "@:" + echostr;
+                case ENCRYPTED:
+                    String password = app.getEncoding().getPassword();
+                    WXBizMsgCrypt crypt = new WXBizMsgCrypt(token, password, appID);
+                    return "@:" + crypt.decrypt(echostr);
+                default:
+                    return "@:";
+            }
+        } catch (Exception e) {
+            verified = false;
+            logger.error("error occurred when verifying : {}", e);
+            return "@:";
+        } finally {
+            if (verified) {
+                app.setVerified(true);
+                app.setDateVerified(new Date());
+                applicationServiceBean.update(app);
+            }
+
+            Verification verification = new Verification();
+            App application = app == null ? null : new App(app);
+            verification.setApplication(application);
+            verification.setMerchant(app == null ? null : app.getMerchant());
+            verification.setSignature(signature);
+            verification.setTimestamp(timestamp);
+            verification.setNonce(nonce);
+            verification.setEchostr(echostr);
+            verification.setToken(app == null ? null : app.getToken());
+            verification.setEncoding(app == null ? null : app.getEncoding());
+            verification.setSuccess(verified);
+            verificationServiceBean.save(verification);
         }
     }
 
