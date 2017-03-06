@@ -154,7 +154,7 @@ public class EnvironmentController {
 
         environmentServiceBean.update(env);
 
-        return new JsonResult("/applications/" + appID + "/environments");
+        return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
     }
 
     @DELETE("/{envKey:(?!new)\\w+}")

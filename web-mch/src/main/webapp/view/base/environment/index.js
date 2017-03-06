@@ -63,6 +63,7 @@ function onPutButtonTap(form) {
         success: function (res) {
             $.hideLoading();
             if (res.success) {
+                form.action = res.entity;
                 res = {
                     entity : ["更新成功"]
                 }
