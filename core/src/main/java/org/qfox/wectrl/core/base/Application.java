@@ -30,6 +30,8 @@ public class Application extends Domain {
     private boolean verified;
     private Date dateVerified;
 
+    private boolean pulling; // 正在同步用户
+
     @Column(unique = true, nullable = false)
     public String getAppID() {
         return appID;
@@ -164,4 +166,13 @@ public class Application extends Domain {
     public void setDateVerified(Date dateVerified) {
         this.dateVerified = dateVerified;
     }
+
+    public boolean isPulling() {
+        return pulling;
+    }
+
+    public void setPulling(boolean pulling) {
+        this.pulling = pulling;
+    }
+
 }

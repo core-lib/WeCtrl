@@ -24,4 +24,7 @@ public interface WeixinCgiBinAPI {
     @GET(value = "/user/info", produces = "application/json; charset=UTF-8")
     UserInfoApiResult userInfo(@Query("access_token") String accessToken, @Query("openid") String openID, @Query("lang") Language language);
 
+    @GET(value = "/user/get", produces = "application/json; charset=UTF-8")
+    PullApiResult pull(@Query("access_token") String accessToken, @Query("next_openid") String nextID);
+
 }

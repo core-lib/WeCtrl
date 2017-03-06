@@ -17,4 +17,6 @@ public interface ApplicationService extends GenericService<Application, Long> {
 
     Application getApplicationByAppID(String appID, String... fetchs);
 
+    boolean startPulling(String appID);
+
 }

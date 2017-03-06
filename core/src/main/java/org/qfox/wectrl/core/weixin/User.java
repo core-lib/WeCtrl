@@ -11,7 +11,7 @@ import java.util.Date;
  * Created by payne on 2017/3/6.
  */
 @Entity
-@Table(name = "weixin_user_tbl")
+@Table(name = "weixin_user_tbl", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_appID", "openID"})})
 public class User extends Domain {
     private static final long serialVersionUID = -4162990839957654501L;
 

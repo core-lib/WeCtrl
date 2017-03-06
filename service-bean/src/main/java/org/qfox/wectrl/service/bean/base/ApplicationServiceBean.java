@@ -84,4 +84,9 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
         }
         return (Application) criteria.uniqueResult();
     }
+
+    @Override
+    public boolean startPulling(String appID) {
+        return applicationDAO.startPulling(appID);
+    }
 }

@@ -3,11 +3,9 @@ package org.qfox.wectrl.web.mch;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Application;
-import org.qfox.wectrl.core.base.Environment;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.weixin.UserService;
-import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -46,6 +44,10 @@ public class UserController {
 
     @POST("/")
     public JsonResult refresh(@Path("appID") String appID) {
+        boolean success = applicationServiceBean.startPulling(appID);
+        if (success) {
+
+        }
         return new JsonResult(null);
     }
 

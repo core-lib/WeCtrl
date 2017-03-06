@@ -31,9 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class TokenServiceBean extends GenericServiceBean<Token, Long> implements TokenService {
-    private final WeixinCgiBinAPI weixinCgiBinAPI = Client.builder().setProtocol("https").setHost("api.weixin.qq.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinCgiBinAPI.class);
 
     private final Map<String, Token> cache = new ConcurrentHashMap<>();
+
+    @Resource
+    private WeixinCgiBinAPI weixinCgiBinAPI;
 
     @Resource
     private TokenDAO tokenDAO;

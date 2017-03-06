@@ -1,5 +1,6 @@
 package org.qfox.wectrl.dao.impl.base;
 
+import org.hibernate.SQLQuery;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.dao.base.ApplicationDAO;
 import org.qfox.wectrl.dao.impl.HibernateGenericDAO;
@@ -10,4 +11,24 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class HibernateApplicationDAO extends HibernateGenericDAO<Application, Long> implements ApplicationDAO {
+
+    @Override
+    public boolean startPulling(String appID) {
+        StringBuilder SQL = new StringBuilder();
+        SQL.append(" UPDATE");
+        SQL.append("     base_application_tbl");
+        SQL.append(" SET");
+        SQL.append("     pulling = TRUE");
+        SQL.append(" WHERE");
+        SQL.append("     appID = :appID");
+        SQL.append(" AND");
+        SQL.append("     pulling = FALSE");
+
+        SQLQuery query = currentSession().createSQLQuery(SQL.toString());
+        query.setParameter("appID", appID);
+
+        int count = query.executeUpdate();
+
+        return count == 1;
+    }
 }
