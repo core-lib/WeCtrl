@@ -67,6 +67,9 @@ public class EnvironmentController {
         if (StringUtils.isEmpty(envKey)) {
             errors.add("环境Key不能为空");
         }
+        if ("new".equalsIgnoreCase(envKey)) {
+            errors.add("环境Key不能为new");
+        }
         if (StringUtils.isEmpty(authorizeURL)) {
             errors.add("网页授权URL不能为空");
         }
@@ -125,6 +128,9 @@ public class EnvironmentController {
         }
         if (StringUtils.isEmpty(newEnvKey)) {
             errors.add("环境Key不能为空");
+        }
+        if ("new".equalsIgnoreCase(newEnvKey)) {
+            errors.add("环境Key不能为new");
         }
         if (StringUtils.isEmpty(authorizeURL)) {
             errors.add("网页授权URL不能为空");
