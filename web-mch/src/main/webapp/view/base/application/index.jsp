@@ -86,6 +86,7 @@
                                                 <li><a href="/applications/${application.appID}/environments">应用环境</a></li>
                                                 <li><a href="/applications/${application.appID}/tokens">Access Token</a></li>
                                                 <li><a href="/applications/${application.appID}/tickets">应用票据</a></li>
+                                                <li><a href="/applications/${application.appID}/users">用户</a></li>
                                             </ul>
                                         </div>
                                     </td>
