@@ -12,15 +12,3 @@ buildNumber.properties
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
-
-.idea/
-WeCtrl.iml
-common/common.iml
-core/core.iml
-dao-impl/dao-impl.iml
-dao/dao.iml
-service-bean/service-bean.iml
-service/service.iml
-web/web.iml
-web-admin/web-admin.iml
-web-mch/web-mch.iml
