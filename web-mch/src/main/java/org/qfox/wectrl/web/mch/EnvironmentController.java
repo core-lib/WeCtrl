@@ -58,7 +58,8 @@ public class EnvironmentController {
                            @Body("envName") String envName,
                            @Body("envKey") String envKey,
                            @Body("authorizeURL") String authorizeURL,
-                           @Body("pushURL") String pushURL) {
+                           @Body("pushURL") String pushURL,
+                           @Body("acquiescent") boolean acquiescent) {
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(envName)) {
             errors.add("环境名称不能为空");
@@ -85,6 +86,7 @@ public class EnvironmentController {
         environment.setEnvKey(envKey);
         environment.setAuthorizeURL(authorizeURL);
         environment.setPushURL(pushURL);
+        environment.setAcquiescent(acquiescent);
 
         Application application = applicationServiceBean.getApplicationByAppID(appID);
         App app = new App(application);
@@ -113,7 +115,8 @@ public class EnvironmentController {
                              @Body("envName") String envName,
                              @Body("envKey") String newEnvKey,
                              @Body("authorizeURL") String authorizeURL,
-                             @Body("pushURL") String pushURL) {
+                             @Body("pushURL") String pushURL,
+                             @Body("acquiescent") boolean acquiescent) {
         Environment env = environmentServiceBean.getApplicationEnvironment(appID, oldEnvKey);
 
         List<String> errors = new ArrayList<>();
@@ -141,6 +144,7 @@ public class EnvironmentController {
         env.setEnvKey(newEnvKey);
         env.setAuthorizeURL(authorizeURL);
         env.setPushURL(pushURL);
+        env.setAcquiescent(acquiescent);
 
         environmentServiceBean.update(env);
 

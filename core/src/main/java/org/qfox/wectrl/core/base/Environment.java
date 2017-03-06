@@ -20,6 +20,7 @@ public class Environment extends Domain {
     private String pushURL;
     private boolean verified;
     private Date dateVerified;
+    private boolean acquiescent;
 
     @Column(nullable = false)
     public String getEnvName() {
@@ -86,5 +87,13 @@ public class Environment extends Domain {
 
     public void setDateVerified(Date dateVerified) {
         this.dateVerified = dateVerified;
+    }
+
+    public boolean isAcquiescent() {
+        return acquiescent;
+    }
+
+    public void setAcquiescent(boolean acquiescent) {
+        this.acquiescent = acquiescent;
     }
 }
