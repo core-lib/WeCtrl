@@ -69,6 +69,7 @@ public class User extends Domain {
         this.nickname = nickname;
     }
 
+    @Column(length = 12)
     @Enumerated(EnumType.STRING)
     public Gender getGender() {
         return gender;
