@@ -74,6 +74,7 @@ public abstract class GenericServiceBean<T extends Serializable, PK extends Seri
         getEntityDAO().evict(entity);
     }
 
+    @Transactional
     @Override
     public int merge(T entity, String... properties) {
         return getEntityDAO().merge(entity, properties);
