@@ -12,6 +12,7 @@ import org.qfox.wectrl.dao.base.ApplicationDAO;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.bean.GenericServiceBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -85,6 +86,7 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
         return (Application) criteria.uniqueResult();
     }
 
+    @Transactional
     @Override
     public boolean startPulling(String appID) {
         return applicationDAO.startPulling(appID);
