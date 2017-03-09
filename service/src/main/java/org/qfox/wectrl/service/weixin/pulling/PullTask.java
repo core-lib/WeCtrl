@@ -11,8 +11,10 @@ import org.qfox.wectrl.service.weixin.cgi_bin.PullApiResult;
 import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
 import org.qfox.wectrl.service.weixin.cgi_bin.UserInfoApiResult;
 import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -50,10 +52,10 @@ public class PullTask implements Callable<PullResult> {
                 if (!pull.isSuccess()) {
                     break;
                 }
-                openIDs.addAll(pull.getData().getOpenid());
+                openIDs.addAll(pull.getData() != null && pull.getData().getOpenid() != null ? pull.getData().getOpenid() : Arrays.asList());
                 result.setTotal(pull.getTotal());
                 result.setPulled(result.getPulled() + pull.getCount());
-                nextID = pull.getNext_openid();
+                nextID = StringUtils.isEmpty(pull.getNext_openid()) ? null : pull.getNext_openid();
             }
 
             for (String openID : openIDs) {

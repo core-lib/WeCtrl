@@ -345,11 +345,33 @@ public abstract class HibernateGenericDAO<T extends Serializable, PK extends Ser
                 } else if (getter.getReturnType().isAnnotationPresent(Entity.class)) {
                     Object foreign = getter.invoke(entity);
                     if (foreign != null) {
+                        if (!values.isEmpty()) {
+                            sql.append(", ");
+                        }
                         Column column = getter.getAnnotation(Column.class);
                         String columnName = column == null || column.name().trim().equals("") ? (descriptor.getName() + "_" + idName) : column.name().trim();
                         sql.append("`").append(columnName).append("`");
                         Object value = new PropertyDescriptor(idName, getter.getReturnType()).getReadMethod().invoke(foreign);
                         values.add(value);
+                    }
+                } else if (getter.getReturnType().isEnum()) {
+                    Enum<?> value = (Enum<?>) getter.invoke(entity);
+                    if (value != null) {
+                        if (!values.isEmpty()) {
+                            sql.append(", ");
+                        }
+                        Column column = getter.getAnnotation(Column.class);
+                        String columnName = column == null || column.name().trim().equals("") ? descriptor.getName() : column.name().trim();
+                        sql.append("`").append(columnName).append("`");
+                        Enumerated enumerated = getter.getAnnotation(Enumerated.class);
+                        switch (enumerated != null ? enumerated.value() : EnumType.ORDINAL) {
+                            case ORDINAL:
+                                values.add(value.ordinal());
+                                break;
+                            case STRING:
+                                values.add(value.name());
+                                break;
+                        }
                     }
                 } else {
                     if (!values.isEmpty()) {
@@ -401,6 +423,21 @@ public abstract class HibernateGenericDAO<T extends Serializable, PK extends Ser
                         sql.append(", `").append(columnName).append("`").append(" = ?");
                         Object value = new PropertyDescriptor(idName, getter.getReturnType()).getReadMethod().invoke(foreign);
                         values.add(value);
+                    }
+                } else if (getter.getReturnType().isEnum()) {
+                    Column column = getter.getAnnotation(Column.class);
+                    String columnName = column == null || column.name().trim().equals("") ? descriptor.getName() : column.name().trim();
+                    sql.append(", `").append(columnName).append("`").append(" = ?");
+                    Enum<?> value = (Enum<?>) getter.invoke(entity);
+
+                    Enumerated enumerated = getter.getAnnotation(Enumerated.class);
+                    switch (enumerated != null ? enumerated.value() : EnumType.ORDINAL) {
+                        case ORDINAL:
+                            values.add(value == null ? null : value.ordinal());
+                            break;
+                        case STRING:
+                            values.add(value == null ? null : value.name());
+                            break;
                     }
                 } else {
                     Column column = getter.getAnnotation(Column.class);

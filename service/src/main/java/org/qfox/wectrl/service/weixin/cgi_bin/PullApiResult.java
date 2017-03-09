@@ -2,6 +2,7 @@ package org.qfox.wectrl.service.weixin.cgi_bin;
 
 import org.qfox.wectrl.service.weixin.ApiResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ public class PullApiResult extends ApiResult {
 
     private int total;
     private int count;
-    private Data data;
+    private Data data = new Data();
     private String next_openid;
 
     public int getTotal() {
@@ -48,7 +49,7 @@ public class PullApiResult extends ApiResult {
     }
 
     public static class Data {
-        private List<String> openid;
+        private List<String> openid = new ArrayList<>();
 
         public List<String> getOpenid() {
             return openid;
