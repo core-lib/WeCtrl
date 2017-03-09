@@ -46,13 +46,6 @@ public class EnvironmentController {
         return "forward:/view/base/environment/index.jsp";
     }
 
-    @GET("/new")
-    public String create(@Path("appID") String appID, HttpServletRequest request) {
-        Application app = applicationServiceBean.getApplicationByAppID(appID);
-        request.setAttribute("app", app);
-        return "forward:/view/base/environment/create.jsp";
-    }
-
     @POST(value = "/", produces = "application/json")
     public JsonResult save(@Path("appID") String appID,
                            @Body("envName") String envName,
@@ -100,7 +93,7 @@ public class EnvironmentController {
         return new JsonResult("/applications/" + appID + "/environments");
     }
 
-    @GET("/{envKey:(?!new)\\w+}")
+    @GET("/{envKey:\\w+}")
     public String edit(@Path("appID") String appID,
                        @Path("envKey") String envKey,
                        HttpServletRequest request) {
@@ -112,7 +105,7 @@ public class EnvironmentController {
         return "forward:/view/base/environment/edit.jsp";
     }
 
-    @PUT(value = "/{oldEnvKey:(?!new)\\w+}", produces = "application/json")
+    @PUT(value = "/{oldEnvKey:\\w+}", produces = "application/json")
     public JsonResult update(@Path("appID") String appID,
                              @Path("oldEnvKey") String oldEnvKey,
                              @Body("envName") String envName,
@@ -157,7 +150,7 @@ public class EnvironmentController {
         return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
     }
 
-    @DELETE("/{envKey:(?!new)\\w+}")
+    @DELETE("/{envKey:\\w+}")
     public JsonResult delete(@Path("appID") String appID, @Path("envKey") String envKey) {
         Environment env = environmentServiceBean.getApplicationEnvironment(appID, envKey);
         environmentServiceBean.delete(env);
