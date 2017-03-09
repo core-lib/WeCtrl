@@ -35,9 +35,6 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
     private final Map<String, Token> cache = new ConcurrentHashMap<>();
 
     @Resource
-    private WeixinCgiBinAPI weixinCgiBinAPI;
-
-    @Resource
     private TokenDAO tokenDAO;
 
     @Resource
@@ -74,7 +71,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                     }
                     Application application = applicationServiceBean.getApplicationByAppID(appID);
                     String appSecret = application.getAppSecret();
-                    TokenApiResult result = weixinCgiBinAPI.token(TokenType.client_credential, appID, appSecret);
+                    TokenApiResult result = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
                     if (result.isSuccess()) {
                         token = new Token();
                         token.setApplication(new App(application));
@@ -99,7 +96,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         synchronized (appID.intern()) {
             Application application = applicationServiceBean.getApplicationByAppID(appID);
             String appSecret = application.getAppSecret();
-            TokenApiResult result = weixinCgiBinAPI.token(TokenType.client_credential, appID, appSecret);
+            TokenApiResult result = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
             if (result.isSuccess()) {
                 Criteria criteria = tokenDAO.createCriteria();
                 criteria.add(Restrictions.eq("application.appID", appID));
