@@ -25,4 +25,6 @@ public interface GenericService<T extends Serializable, PK extends Serializable>
 
     void evict(T entity);
 
+    int merge(T entity, String... properties);
+
 }

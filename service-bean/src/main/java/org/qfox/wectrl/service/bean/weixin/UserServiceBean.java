@@ -1,11 +1,11 @@
 package org.qfox.wectrl.service.bean.weixin;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.qfox.wectrl.common.Page;
-import org.qfox.wectrl.core.base.Environment;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.dao.GenericDAO;
 import org.qfox.wectrl.dao.weixin.UserDAO;

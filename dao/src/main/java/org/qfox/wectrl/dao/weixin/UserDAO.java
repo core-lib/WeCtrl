@@ -7,4 +7,7 @@ import org.qfox.wectrl.dao.GenericDAO;
  * Created by payne on 2017/3/6.
  */
 public interface UserDAO extends GenericDAO<User, Long> {
+
+    int merge(User user);
+
 }

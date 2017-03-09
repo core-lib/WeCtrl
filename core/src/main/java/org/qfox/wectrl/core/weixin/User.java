@@ -33,7 +33,7 @@ public class User extends Domain {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "id", column = @Column(name = "application_id")),
-            @AttributeOverride(name = "appID", column = @Column(name = "application_appID")),
+            @AttributeOverride(name = "appID", column = @Column(name = "application_appID", length = 36)),
             @AttributeOverride(name = "appName", column = @Column(name = "application_appName"))
     })
     public App getApplication() {
@@ -52,6 +52,7 @@ public class User extends Domain {
         this.subscribed = subscribed;
     }
 
+    @Column(nullable = false, length = 36)
     public String getOpenID() {
         return openID;
     }

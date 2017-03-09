@@ -24,7 +24,7 @@ public class UserInfoApiResult extends ApiResult {
     private Long subscribe_time;
     private String unionid;
     private String remark;
-    private Long groupid;
+    private Integer groupid;
     private List<Integer> tagid_list;
 
     public boolean isSubscribe() {
@@ -123,11 +123,11 @@ public class UserInfoApiResult extends ApiResult {
         this.remark = remark;
     }
 
-    public Long getGroupid() {
+    public Integer getGroupid() {
         return groupid;
     }
 
-    public void setGroupid(Long groupid) {
+    public void setGroupid(Integer groupid) {
         this.groupid = groupid;
     }
 

@@ -3,15 +3,21 @@ package org.qfox.wectrl.dao.impl;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 import org.qfox.wectrl.dao.GenericDAO;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 import javax.annotation.Resource;
+import javax.persistence.*;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -296,5 +302,121 @@ public abstract class HibernateGenericDAO<T extends Serializable, PK extends Ser
     @Override
     public void evict(T entity) {
         getHibernateTemplate().evict(entity);
+    }
+
+    @Override
+    public int merge(T entity, String... properties) {
+        try {
+            StringBuilder sql = new StringBuilder();
+            Table table = entity.getClass().getAnnotation(Table.class);
+            String tableName = table == null || table.name().trim().equals("") ? entity.getClass().getSimpleName() : table.name().trim();
+
+            String idName = "id";
+            sql.append(" INSERT INTO ").append("`").append(tableName).append("`").append(" (");
+            List<Object> values = new ArrayList<>();
+            PropertyDescriptor[] descriptors = Introspector.getBeanInfo(entityClass).getPropertyDescriptors();
+            for (PropertyDescriptor descriptor : descriptors) {
+                if ("class".equals(descriptor.getName())) {
+                    continue;
+                }
+                Method getter = descriptor.getReadMethod();
+                if (getter.isAnnotationPresent(Transient.class)) {
+                    continue;
+                }
+                if (getter.isAnnotationPresent(Id.class)) {
+                    Column column = getter.getAnnotation(Column.class);
+                    idName = column == null || column.name().trim().equals("") ? descriptor.getName() : column.name().trim();
+                    continue;
+                }
+                if (getter.isAnnotationPresent(Embedded.class)) {
+                    Object embed = getter.invoke(entity);
+                    AttributeOverrides overrides = getter.getAnnotation(AttributeOverrides.class);
+                    for (int i = 0; embed != null && i < overrides.value().length; i++) {
+                        if (!values.isEmpty()) {
+                            sql.append(", ");
+                        }
+                        AttributeOverride override = overrides.value()[i];
+                        String propertyName = override.name();
+                        Column column = override.column();
+                        sql.append("`").append(column.name()).append("`");
+                        Object propertyValue = new PropertyDescriptor(propertyName, embed.getClass()).getReadMethod().invoke(embed);
+                        values.add(propertyValue);
+                    }
+                } else if (getter.getReturnType().isAnnotationPresent(Entity.class)) {
+                    Object foreign = getter.invoke(entity);
+                    if (foreign != null) {
+                        Column column = getter.getAnnotation(Column.class);
+                        String columnName = column == null || column.name().trim().equals("") ? (descriptor.getName() + "_" + idName) : column.name().trim();
+                        sql.append("`").append(columnName).append("`");
+                        Object value = new PropertyDescriptor(idName, getter.getReturnType()).getReadMethod().invoke(foreign);
+                        values.add(value);
+                    }
+                } else {
+                    if (!values.isEmpty()) {
+                        sql.append(", ");
+                    }
+                    Column column = getter.getAnnotation(Column.class);
+                    String columnName = column == null || column.name().trim().equals("") ? descriptor.getName() : column.name().trim();
+                    sql.append("`").append(columnName).append("`");
+                    Object value = getter.invoke(entity);
+                    values.add(value);
+                }
+            }
+            sql.append(" ) VALUES (");
+            for (int i = 0; i < values.size(); i++) {
+                if (i > 0) {
+                    sql.append(", ");
+                }
+                sql.append("?");
+            }
+            sql.append(" ) ON DUPLICATE KEY UPDATE ").append("`").append(idName).append("`").append(" = ").append("`").append(idName).append("`");
+            for (String property : properties) {
+                PropertyDescriptor descriptor = new PropertyDescriptor(property, entity.getClass());
+                if ("class".equals(descriptor.getName())) {
+                    continue;
+                }
+                Method getter = descriptor.getReadMethod();
+                if (getter.isAnnotationPresent(Transient.class)) {
+                    continue;
+                }
+                if (getter.isAnnotationPresent(Id.class)) {
+                    continue;
+                }
+                if (getter.isAnnotationPresent(Embedded.class)) {
+                    Object embed = getter.invoke(entity);
+                    AttributeOverrides overrides = getter.getAnnotation(AttributeOverrides.class);
+                    for (int i = 0; embed != null && i < overrides.value().length; i++) {
+                        AttributeOverride override = overrides.value()[i];
+                        String propertyName = override.name();
+                        Column column = override.column();
+                        sql.append(", `").append(column.name()).append("`").append(" = ?");
+                        Object propertyValue = new PropertyDescriptor(propertyName, embed.getClass()).getReadMethod().invoke(embed);
+                        values.add(propertyValue);
+                    }
+                } else if (getter.getReturnType().isAnnotationPresent(Entity.class)) {
+                    Object foreign = getter.invoke(entity);
+                    if (foreign != null) {
+                        Column column = getter.getAnnotation(Column.class);
+                        String columnName = column == null || column.name().trim().equals("") ? (descriptor.getName() + "_" + idName) : column.name().trim();
+                        sql.append(", `").append(columnName).append("`").append(" = ?");
+                        Object value = new PropertyDescriptor(idName, getter.getReturnType()).getReadMethod().invoke(foreign);
+                        values.add(value);
+                    }
+                } else {
+                    Column column = getter.getAnnotation(Column.class);
+                    String columnName = column == null || column.name().trim().equals("") ? descriptor.getName() : column.name().trim();
+                    sql.append(", `").append(columnName).append("`").append(" = ?");
+                    Object value = getter.invoke(entity);
+                    values.add(value);
+                }
+            }
+            SQLQuery query = currentSession().createSQLQuery(sql.toString());
+            for (int i = 0; i < values.size(); i++) {
+                query.setParameter(i, values.get(i));
+            }
+            return query.executeUpdate();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }

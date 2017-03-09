@@ -38,6 +38,9 @@ public interface GenericDAO<T extends Serializable, PK extends Serializable> {
     // 存储实体到数据库
     public void save(T entity);
 
+    // 存储实体到数据库 当唯一约束冲突时更新properties字段
+    public int merge(T entity, String... properties);
+
     // saveWithLock()
 
     // 增加或更新实体

@@ -1,5 +1,6 @@
 package org.qfox.wectrl.service.weixin.cgi_bin;
 
+import org.qfox.jestful.client.Client;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.service.weixin.Language;
 
@@ -8,6 +9,8 @@ import org.qfox.wectrl.service.weixin.Language;
  */
 @Jestful("/cgi-bin")
 public interface WeixinCgiBinAPI {
+
+    WeixinCgiBinAPI INSTANCE = Client.builder().setProtocol("https").setHost("api.weixin.qq.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinCgiBinAPI.class);
 
     @GET(value = "/token", produces = "application/json; charset=UTF-8")
     TokenApiResult token(@Query("grant_type") TokenType grantType, @Query("appid") String appId, @Query("secret") String appSecret);

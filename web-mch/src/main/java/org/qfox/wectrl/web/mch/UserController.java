@@ -5,11 +5,15 @@ import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.service.base.ApplicationService;
+import org.qfox.wectrl.service.transaction.SessionProvider;
+import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.UserService;
+import org.qfox.wectrl.service.weixin.pulling.PullTask;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.Executors;
 
 /**
  * Created by payne on 2017/3/6.
@@ -20,6 +24,12 @@ public class UserController {
 
     @Resource
     private ApplicationService applicationServiceBean;
+
+    @Resource
+    private TokenService tokenServiceBean;
+
+    @Resource
+    private SessionProvider defaultSessionProvider;
 
     @Resource
     private UserService userServiceBean;
@@ -44,10 +54,19 @@ public class UserController {
 
     @POST("/")
     public JsonResult refresh(@Path("appID") String appID) {
-        boolean success = applicationServiceBean.startPulling(appID);
-        if (success) {
+        Application application = applicationServiceBean.getApplicationByAppID(appID);
 
+        if (application != null) {
+            boolean success = applicationServiceBean.startPulling(appID);
+            if (success) {
+                Executors.newFixedThreadPool(1).submit(new PullTask(application, tokenServiceBean, defaultSessionProvider, userServiceBean));
+            } else {
+                return new JsonResult(false, "FAIL", "已启动");
+            }
+        } else {
+            return new JsonResult(false, "FAIL", "appID 不存在");
         }
+
         return new JsonResult(null);
     }
 
