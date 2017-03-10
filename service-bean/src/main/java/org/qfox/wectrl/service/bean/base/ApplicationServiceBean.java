@@ -91,4 +91,10 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
     public boolean startPulling(String appID) {
         return applicationDAO.startPulling(appID);
     }
+
+    @Transactional
+    @Override
+    public int updateToVerified(String appID) {
+        return applicationDAO.updateToVerified(appID);
+    }
 }

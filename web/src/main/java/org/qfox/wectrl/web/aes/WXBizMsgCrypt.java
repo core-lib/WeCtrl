@@ -268,45 +268,4 @@ public class WXBizMsgCrypt {
         return result;
     }
 
-    /**
-     * 验证URL
-     * @param signature 签名串，对应URL参数的msg_signature
-     * @param timestamp 时间戳，对应URL参数的timestamp
-     * @param nonce 随机串，对应URL参数的nonce
-     * @param echostr 随机串，对应URL参数的echostr
-     *
-     * @return 解密之后的echostr
-     * @throws AesException 执行失败，请查看该异常的错误码和具体的错误信息
-     */
-    public String verifyEncryptedURL(String signature, String timestamp, String nonce, String echostr) throws AesException {
-        String sign = SHA1.sign(token, timestamp, nonce);
-
-        if (!sign.equals(signature)) {
-            throw new AesException(AesException.ValidateSignatureError);
-        }
-
-        String result = decrypt(echostr);
-        return result;
-    }
-
-    /**
-     * 验证URL
-     * @param signature 签名串，对应URL参数的msg_signature
-     * @param timestamp 时间戳，对应URL参数的timestamp
-     * @param nonce 随机串，对应URL参数的nonce
-     * @param echostr 随机串，对应URL参数的echostr
-     *
-     * @return 原样echostr
-     * @throws AesException 执行失败，请查看该异常的错误码和具体的错误信息
-     */
-    public String verifyPlainURL(String signature, String timestamp, String nonce, String echostr) throws AesException {
-        String sign = SHA1.sign(token, timestamp, nonce);
-
-        if (!sign.equals(signature)) {
-            throw new AesException(AesException.ValidateSignatureError);
-        }
-
-        return echostr;
-    }
-
 }

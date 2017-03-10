@@ -31,4 +31,22 @@ public class HibernateApplicationDAO extends HibernateGenericDAO<Application, Lo
 
         return count == 1;
     }
+
+    @Override
+    public int updateToVerified(String appID) {
+        StringBuilder SQL = new StringBuilder();
+        SQL.append(" UPDATE");
+        SQL.append("     base_application_tbl");
+        SQL.append(" SET");
+        SQL.append("     verified = TRUE,");
+        SQL.append("     dateVerified = now()");
+        SQL.append(" WHERE");
+        SQL.append("     appID = :appID");
+
+        SQLQuery query = currentSession().createSQLQuery(SQL.toString());
+        query.setParameter("appID", appID);
+
+        return query.executeUpdate();
+    }
+
 }

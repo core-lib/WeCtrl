@@ -19,4 +19,6 @@ public interface ApplicationService extends GenericService<Application, Long> {
 
     boolean startPulling(String appID);
 
+    int updateToVerified(String appID);
+
 }
