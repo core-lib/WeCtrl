@@ -57,7 +57,7 @@ public class MessageController {
             WXBizMsgCrypt crypt = new WXBizMsgCrypt(app.getToken(), app.getEncoding().getPassword(), app.getAppID());
             String result = app.getEncoding().getMode() == EncodingMode.PLAIN ? crypt.verifyPlainURL(signature, timestamp, nonce, echostr) : crypt.verifyEncryptedURL(signature, timestamp, nonce, echostr);
             verified = true;
-            return "@:" + result;
+            return "@:" + echostr;
         } catch (Exception e) {
             verified = false;
             logger.error("error occurred when verifying : {}", e);
