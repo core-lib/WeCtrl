@@ -43,15 +43,15 @@ public class SHA1 {
             md.update(str.getBytes());
             byte[] digest = md.digest();
 
-            StringBuffer hexstr = new StringBuffer();
+            StringBuffer signature = new StringBuffer();
             for (int i = 0; i < digest.length; i++) {
                 String shaHex = Integer.toHexString(digest[i] & 0xFF);
                 if (shaHex.length() < 2) {
-                    hexstr.append(0);
+                    signature.append(0);
                 }
-                hexstr.append(shaHex);
+                signature.append(shaHex);
             }
-            return hexstr.toString();
+            return signature.toString();
         } catch (Exception e) {
             e.printStackTrace();
             throw new AesException(AesException.ComputeSignatureError);
