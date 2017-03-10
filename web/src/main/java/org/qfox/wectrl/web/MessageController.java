@@ -10,6 +10,7 @@ import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.VerificationService;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
 import org.qfox.wectrl.web.aes.SHA1;
+import org.qfox.wectrl.web.auth.Authorized;
 import org.qfox.wectrl.web.handler.EventHandler;
 import org.qfox.wectrl.web.handler.MessageHandler;
 import org.qfox.wectrl.web.msg.Msg;
@@ -21,7 +22,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import rx.Observable;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import javax.annotation.Resource;
@@ -53,6 +53,7 @@ public class MessageController implements ApplicationContextAware {
     @Resource
     private WeixinMessageService weixinMessageServiceBean;
 
+    @Authorized(required = false)
     @GET("/")
     public String verify(@Query("signature") String signature,
                          @Query("timestamp") String timestamp,
@@ -109,16 +110,13 @@ public class MessageController implements ApplicationContextAware {
                           @Query("encrypt_type") String encryptType,
                           @Query("msg_signature") String msgSignature,
                           @Body Msg msg,
+                          Application app,
                           HttpServletRequest request) throws Exception {
         if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce)) {
             throw new IllegalArgumentException("signature/timestamp/nonce must not null or empty");
         }
 
-        String appID = request.getServerName().split("\\.")[0];
-        Application app = applicationServiceBean.getApplicationByAppID(appID);
-        if (app == null) {
-            throw new NotFoundStatusException("/message", "GET", null);
-        }
+        String appID = app.getAppID();
 
         switch (msg.getType()) {
             case UNKNOWN:
