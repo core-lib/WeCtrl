@@ -42,7 +42,7 @@ public class MessageController {
                          @Query("echostr") String echostr,
                          HttpServletRequest request) {
         Application app = null;
-        boolean verified = true;
+        boolean verified = false;
         try {
             if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(echostr)) {
                 throw new IllegalArgumentException("signature/timestamp/nonce/echostr must not null or empty");
@@ -55,7 +55,9 @@ public class MessageController {
             }
 
             WXBizMsgCrypt crypt = new WXBizMsgCrypt(app.getToken(), app.getEncoding().getPassword(), app.getAppID());
-            return app.getEncoding().getMode() == EncodingMode.PLAIN ? crypt.verifyPlainURL(signature, timestamp, nonce, echostr) : crypt.verifyEncryptedURL(signature, timestamp, nonce, echostr);
+            String result = app.getEncoding().getMode() == EncodingMode.PLAIN ? crypt.verifyPlainURL(signature, timestamp, nonce, echostr) : crypt.verifyEncryptedURL(signature, timestamp, nonce, echostr);
+            verified = true;
+            return result;
         } catch (Exception e) {
             verified = false;
             logger.error("error occurred when verifying : {}", e);
