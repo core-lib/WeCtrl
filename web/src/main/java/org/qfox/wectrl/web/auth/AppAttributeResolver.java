@@ -45,10 +45,10 @@ public class AppAttributeResolver implements ExtraAttributeResolver {
         HttpServletRequest request = (HttpServletRequest) action.getRequest();
         String appID = request.getServerName().split("\\.")[0];
         AppHolder holder = cache.get(appID);
-        if (holder == null && System.currentTimeMillis() - holder.timeHolded > 1L * 60L) {
+        if (holder == null || System.currentTimeMillis() - holder.timeHolded > 1L * 60L) {
             synchronized (appID.intern()) {
                 holder = cache.get(appID);
-                if (holder == null && System.currentTimeMillis() - holder.timeHolded > 1L * 60L) {
+                if (holder == null || System.currentTimeMillis() - holder.timeHolded > 1L * 60L) {
                     Application application = applicationServiceBean.getApplicationByAppID(appID);
                     if (application == null) {
                         String host = request.getServerName();
