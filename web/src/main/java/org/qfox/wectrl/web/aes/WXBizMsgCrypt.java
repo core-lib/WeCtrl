@@ -279,7 +279,7 @@ public class WXBizMsgCrypt {
      * @throws AesException 执行失败，请查看该异常的错误码和具体的错误信息
      */
     public String verifyEncryptedURL(String signature, String timestamp, String nonce, String echostr) throws AesException {
-        String sign = SHA1.sign(token, timestamp, nonce, echostr);
+        String sign = SHA1.sign(token, timestamp, nonce);
 
         if (!sign.equals(signature)) {
             throw new AesException(AesException.ValidateSignatureError);
