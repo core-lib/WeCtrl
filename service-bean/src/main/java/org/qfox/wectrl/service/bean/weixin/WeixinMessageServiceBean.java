@@ -6,6 +6,7 @@ import org.qfox.wectrl.dao.weixin.WeixinMessageDAO;
 import org.qfox.wectrl.service.bean.GenericServiceBean;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -23,6 +24,7 @@ public class WeixinMessageServiceBean extends GenericServiceBean<Message, Long> 
         return weixinMessageDAO;
     }
 
+    @Transactional
     @Override
     public int merge(Message message) throws Exception {
         return weixinMessageDAO.merge(message);
