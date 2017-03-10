@@ -4,13 +4,13 @@ import org.qfox.jestful.core.annotation.GET;
 import org.qfox.jestful.core.annotation.Jestful;
 import org.qfox.jestful.core.annotation.POST;
 import org.qfox.jestful.core.annotation.Query;
+import org.qfox.jestful.server.exception.NotFoundStatusException;
 import org.qfox.wectrl.common.base.EncodingMode;
 import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.base.Verification;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.VerificationService;
-import org.qfox.wectrl.web.aes.SHA1;
 import org.qfox.wectrl.web.aes.WXBizMsgCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,39 +42,20 @@ public class MessageController {
                          @Query("echostr") String echostr,
                          HttpServletRequest request) {
         Application app = null;
-        boolean verified = false;
+        boolean verified = true;
         try {
             if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(echostr)) {
-                return "@:";
+                throw new IllegalArgumentException("signature/timestamp/nonce/echostr must not null or empty");
             }
 
             String appID = request.getServerName().split("\\.")[0];
             app = applicationServiceBean.getApplicationByAppID(appID);
             if (app == null) {
-                return "@:";
+                throw new NotFoundStatusException("/message", "GET", null);
             }
 
-            String token = app.getToken();
-            String actual = SHA1.sign(token, timestamp, nonce, echostr);
-            verified = actual.equals(signature);
-
-            if (!verified) {
-                return "@:";
-            }
-
-            EncodingMode mode = app.getEncoding().getMode();
-            switch (mode) {
-                case PLAIN:
-                    return "@:" + echostr;
-                case COMPATIBLE:
-                    return "@:" + echostr;
-                case ENCRYPTED:
-                    String password = app.getEncoding().getPassword();
-                    WXBizMsgCrypt crypt = new WXBizMsgCrypt(token, password, appID);
-                    return "@:" + crypt.decrypt(echostr);
-                default:
-                    return "@:";
-            }
+            WXBizMsgCrypt crypt = new WXBizMsgCrypt(app.getToken(), app.getEncoding().getPassword(), app.getAppID());
+            return app.getEncoding().getMode() == EncodingMode.PLAIN ? crypt.verifyPlainURL(signature, timestamp, nonce, echostr) : crypt.verifyEncryptedURL(signature, timestamp, nonce, echostr);
         } catch (Exception e) {
             verified = false;
             logger.error("error occurred when verifying : {}", e);
