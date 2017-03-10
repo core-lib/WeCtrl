@@ -61,7 +61,7 @@ public class AppAttributeResolver implements ExtraAttributeResolver {
                         throw new NotFoundStatusException(url, method, version);
                     }
                     applicationServiceBean.evict(application);
-                    cache.put(appID, new AppHolder(application));
+                    cache.put(appID, holder = new AppHolder(application));
                 }
             }
         }
