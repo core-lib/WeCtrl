@@ -103,7 +103,7 @@ public class MessageController implements ApplicationContextAware {
         }
     }
 
-    @POST("/")
+    @POST(value = "/", consumes = "application/xml")
     public String receive(@Query("signature") String signature,
                           @Query("timestamp") String timestamp,
                           @Query("nonce") String nonce,
