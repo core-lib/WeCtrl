@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * Created by yangchangpei on 17/2/22.
  */
-public class Msg implements Serializable {
+public class Data implements Serializable {
     private static final long serialVersionUID = 1435968761683273492L;
 
     private String receiver;
@@ -265,7 +265,7 @@ public class Msg implements Serializable {
 
     @Override
     public String toString() {
-        return "Msg{" +
+        return "Data{" +
                 "receiver='" + receiver + '\'' +
                 ", sender='" + sender + '\'' +
                 ", timeCreated=" + timeCreated +

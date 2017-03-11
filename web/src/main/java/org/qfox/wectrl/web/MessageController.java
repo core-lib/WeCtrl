@@ -1,7 +1,6 @@
 package org.qfox.wectrl.web;
 
 import org.qfox.jestful.core.annotation.*;
-import org.qfox.jestful.server.exception.NotFoundStatusException;
 import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.base.Verification;
@@ -10,10 +9,9 @@ import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.VerificationService;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
 import org.qfox.wectrl.web.aes.SHA1;
-import org.qfox.wectrl.web.auth.Authorized;
 import org.qfox.wectrl.web.handler.EventHandler;
 import org.qfox.wectrl.web.handler.MessageHandler;
-import org.qfox.wectrl.web.msg.Msg;
+import org.qfox.wectrl.web.msg.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -53,24 +51,17 @@ public class MessageController implements ApplicationContextAware {
     @Resource
     private WeixinMessageService weixinMessageServiceBean;
 
-    @Authorized(required = false)
     @GET("/")
     public String verify(@Query("signature") String signature,
                          @Query("timestamp") String timestamp,
                          @Query("nonce") String nonce,
                          @Query("echostr") String echostr,
-                         HttpServletRequest request) {
-        Application app = null;
+                         Application app) {
+
         boolean verified = false;
         try {
             if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(echostr)) {
                 throw new IllegalArgumentException("signature/timestamp/nonce/echostr must not null or empty");
-            }
-
-            String appID = request.getServerName().split("\\.")[0];
-            app = applicationServiceBean.getApplicationByAppID(appID);
-            if (app == null) {
-                throw new NotFoundStatusException("/message", "GET", null);
             }
 
             String sign = SHA1.sign(app.getToken(), timestamp, nonce);
@@ -109,26 +100,31 @@ public class MessageController implements ApplicationContextAware {
                           @Query("nonce") String nonce,
                           @Query("encrypt_type") String encryptType,
                           @Query("msg_signature") String msgSignature,
-                          @Body Msg msg,
-                          Application app,
-                          HttpServletRequest request) throws Exception {
+                          @Body Data data,
+                          Application app) throws Exception {
+
         if (StringUtils.isEmpty(signature) || StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce)) {
-            throw new IllegalArgumentException("signature/timestamp/nonce must not null or empty");
+            throw new IllegalArgumentException("signature/timestamp/nonce must not be null or empty");
+        }
+
+        String sign = SHA1.sign(app.getToken(), timestamp, nonce);
+        if (!signature.equals(sign)) {
+            throw new IllegalArgumentException("incorrect signature");
         }
 
         String appID = app.getAppID();
 
-        switch (msg.getType()) {
+        switch (data.getType()) {
             case UNKNOWN:
                 break;
             case TEXT:
                 Text text = new Text();
                 text.setAppId(appID);
-                text.setSender(msg.getSender());
-                text.setReceiver(msg.getReceiver());
-                text.setTimeCreated(msg.getTimeCreated());
-                text.setMsgId(msg.getMsgId());
-                text.setContent(msg.getContent());
+                text.setSender(data.getSender());
+                text.setReceiver(data.getReceiver());
+                text.setTimeCreated(data.getTimeCreated());
+                text.setMsgId(data.getMsgId());
+                text.setContent(data.getContent());
                 if (weixinMessageServiceBean.merge(text) == 1) {
                     fire(text);
                 }
@@ -136,12 +132,12 @@ public class MessageController implements ApplicationContextAware {
             case IMAGE:
                 Image image = new Image();
                 image.setAppId(appID);
-                image.setSender(msg.getSender());
-                image.setReceiver(msg.getReceiver());
-                image.setTimeCreated(msg.getTimeCreated());
-                image.setMsgId(msg.getMsgId());
-                image.setPicURL(msg.getPicURL());
-                image.setMediaId(msg.getMediaId());
+                image.setSender(data.getSender());
+                image.setReceiver(data.getReceiver());
+                image.setTimeCreated(data.getTimeCreated());
+                image.setMsgId(data.getMsgId());
+                image.setPicURL(data.getPicURL());
+                image.setMediaId(data.getMediaId());
                 if (weixinMessageServiceBean.merge(image) == 1) {
                     fire(image);
                 }
@@ -149,13 +145,13 @@ public class MessageController implements ApplicationContextAware {
             case VOICE:
                 Voice voice = new Voice();
                 voice.setAppId(appID);
-                voice.setSender(msg.getSender());
-                voice.setReceiver(msg.getReceiver());
-                voice.setTimeCreated(msg.getTimeCreated());
-                voice.setMsgId(msg.getMsgId());
-                voice.setFormat(msg.getFormat());
-                voice.setRecognition(msg.getRecognition());
-                voice.setMediaId(msg.getMediaId());
+                voice.setSender(data.getSender());
+                voice.setReceiver(data.getReceiver());
+                voice.setTimeCreated(data.getTimeCreated());
+                voice.setMsgId(data.getMsgId());
+                voice.setFormat(data.getFormat());
+                voice.setRecognition(data.getRecognition());
+                voice.setMediaId(data.getMediaId());
                 if (weixinMessageServiceBean.merge(voice) == 1) {
                     fire(voice);
                 }
@@ -163,12 +159,12 @@ public class MessageController implements ApplicationContextAware {
             case VIDEO:
                 Video video = new Video();
                 video.setAppId(appID);
-                video.setSender(msg.getSender());
-                video.setReceiver(msg.getReceiver());
-                video.setTimeCreated(msg.getTimeCreated());
-                video.setMsgId(msg.getMsgId());
-                video.setThumbMediaId(msg.getThumbMediaId());
-                video.setMediaId(msg.getMediaId());
+                video.setSender(data.getSender());
+                video.setReceiver(data.getReceiver());
+                video.setTimeCreated(data.getTimeCreated());
+                video.setMsgId(data.getMsgId());
+                video.setThumbMediaId(data.getThumbMediaId());
+                video.setMediaId(data.getMediaId());
                 if (weixinMessageServiceBean.merge(video) == 1) {
                     fire(video);
                 }
@@ -176,12 +172,12 @@ public class MessageController implements ApplicationContextAware {
             case SHORTVIDEO:
                 ShortVideo shortVideo = new ShortVideo();
                 shortVideo.setAppId(appID);
-                shortVideo.setSender(msg.getSender());
-                shortVideo.setReceiver(msg.getReceiver());
-                shortVideo.setTimeCreated(msg.getTimeCreated());
-                shortVideo.setMsgId(msg.getMsgId());
-                shortVideo.setThumbMediaId(msg.getThumbMediaId());
-                shortVideo.setMediaId(msg.getMediaId());
+                shortVideo.setSender(data.getSender());
+                shortVideo.setReceiver(data.getReceiver());
+                shortVideo.setTimeCreated(data.getTimeCreated());
+                shortVideo.setMsgId(data.getMsgId());
+                shortVideo.setThumbMediaId(data.getThumbMediaId());
+                shortVideo.setMediaId(data.getMediaId());
                 if (weixinMessageServiceBean.merge(shortVideo) == 1) {
                     fire(shortVideo);
                 }
@@ -189,14 +185,14 @@ public class MessageController implements ApplicationContextAware {
             case LOCATION:
                 Location location = new Location();
                 location.setAppId(appID);
-                location.setSender(msg.getSender());
-                location.setReceiver(msg.getReceiver());
-                location.setTimeCreated(msg.getTimeCreated());
-                location.setMsgId(msg.getMsgId());
-                location.setLocationX(msg.getLocationX());
-                location.setLocationY(msg.getLocationY());
-                location.setScale(msg.getScale());
-                location.setLabel(msg.getLabel());
+                location.setSender(data.getSender());
+                location.setReceiver(data.getReceiver());
+                location.setTimeCreated(data.getTimeCreated());
+                location.setMsgId(data.getMsgId());
+                location.setLocationX(data.getLocationX());
+                location.setLocationY(data.getLocationY());
+                location.setScale(data.getScale());
+                location.setLabel(data.getLabel());
                 if (weixinMessageServiceBean.merge(location) == 1) {
                     fire(location);
                 }
@@ -204,29 +200,29 @@ public class MessageController implements ApplicationContextAware {
             case LINK:
                 Link link = new Link();
                 link.setAppId(appID);
-                link.setSender(msg.getSender());
-                link.setReceiver(msg.getReceiver());
-                link.setTimeCreated(msg.getTimeCreated());
-                link.setMsgId(msg.getMsgId());
-                link.setTitle(msg.getTitle());
-                link.setDescription(msg.getDescription());
-                link.setUrl(msg.getUrl());
+                link.setSender(data.getSender());
+                link.setReceiver(data.getReceiver());
+                link.setTimeCreated(data.getTimeCreated());
+                link.setMsgId(data.getMsgId());
+                link.setTitle(data.getTitle());
+                link.setDescription(data.getDescription());
+                link.setUrl(data.getUrl());
                 if (weixinMessageServiceBean.merge(link) == 1) {
                     fire(link);
                 }
                 break;
             case EVENT:
-                switch (msg.getEvent()) {
+                switch (data.getEvent()) {
                     case UNKNOWN:
                         break;
                     case SUBSCRIBE:
                         Subscribe subscribe = new Subscribe();
                         subscribe.setAppId(appID);
-                        subscribe.setSender(msg.getSender());
-                        subscribe.setReceiver(msg.getReceiver());
-                        subscribe.setTimeCreated(msg.getTimeCreated());
-                        subscribe.setEventKey(msg.getEventKey());
-                        subscribe.setTicket(msg.getTicket());
+                        subscribe.setSender(data.getSender());
+                        subscribe.setReceiver(data.getReceiver());
+                        subscribe.setTimeCreated(data.getTimeCreated());
+                        subscribe.setEventKey(data.getEventKey());
+                        subscribe.setTicket(data.getTicket());
                         if (weixinMessageServiceBean.merge(subscribe) == 1) {
                             fire(subscribe);
                         }
@@ -234,9 +230,9 @@ public class MessageController implements ApplicationContextAware {
                     case UNSUBSCRIBE:
                         Unsubscribe unsubscribe = new Unsubscribe();
                         unsubscribe.setAppId(appID);
-                        unsubscribe.setSender(msg.getSender());
-                        unsubscribe.setReceiver(msg.getReceiver());
-                        unsubscribe.setTimeCreated(msg.getTimeCreated());
+                        unsubscribe.setSender(data.getSender());
+                        unsubscribe.setReceiver(data.getReceiver());
+                        unsubscribe.setTimeCreated(data.getTimeCreated());
                         if (weixinMessageServiceBean.merge(unsubscribe) == 1) {
                             fire(unsubscribe);
                         }
@@ -244,11 +240,11 @@ public class MessageController implements ApplicationContextAware {
                     case SCAN:
                         Scan scan = new Scan();
                         scan.setAppId(appID);
-                        scan.setSender(msg.getSender());
-                        scan.setReceiver(msg.getReceiver());
-                        scan.setTimeCreated(msg.getTimeCreated());
-                        scan.setEventKey(msg.getEventKey());
-                        scan.setTicket(msg.getTicket());
+                        scan.setSender(data.getSender());
+                        scan.setReceiver(data.getReceiver());
+                        scan.setTimeCreated(data.getTimeCreated());
+                        scan.setEventKey(data.getEventKey());
+                        scan.setTicket(data.getTicket());
                         if (weixinMessageServiceBean.merge(scan) == 1) {
                             fire(scan);
                         }
@@ -256,12 +252,12 @@ public class MessageController implements ApplicationContextAware {
                     case LOCATION:
                         Coordinate coordinate = new Coordinate();
                         coordinate.setAppId(appID);
-                        coordinate.setSender(msg.getSender());
-                        coordinate.setReceiver(msg.getReceiver());
-                        coordinate.setTimeCreated(msg.getTimeCreated());
-                        coordinate.setLatitude(msg.getLatitude());
-                        coordinate.setLongitude(msg.getLongitude());
-                        coordinate.setAccuracy(msg.getPrecision());
+                        coordinate.setSender(data.getSender());
+                        coordinate.setReceiver(data.getReceiver());
+                        coordinate.setTimeCreated(data.getTimeCreated());
+                        coordinate.setLatitude(data.getLatitude());
+                        coordinate.setLongitude(data.getLongitude());
+                        coordinate.setAccuracy(data.getPrecision());
                         if (weixinMessageServiceBean.merge(coordinate) == 1) {
                             fire(coordinate);
                         }
@@ -269,11 +265,11 @@ public class MessageController implements ApplicationContextAware {
                     case CLICK:
                         Click click = new Click();
                         click.setAppId(appID);
-                        click.setSender(msg.getSender());
-                        click.setReceiver(msg.getReceiver());
-                        click.setTimeCreated(msg.getTimeCreated());
-                        click.setEventKey(msg.getEventKey());
-                        click.setTicket(msg.getTicket());
+                        click.setSender(data.getSender());
+                        click.setReceiver(data.getReceiver());
+                        click.setTimeCreated(data.getTimeCreated());
+                        click.setEventKey(data.getEventKey());
+                        click.setTicket(data.getTicket());
                         if (weixinMessageServiceBean.merge(click) == 1) {
                             fire(click);
                         }
@@ -281,11 +277,11 @@ public class MessageController implements ApplicationContextAware {
                     case VIEW:
                         View view = new View();
                         view.setAppId(appID);
-                        view.setSender(msg.getSender());
-                        view.setReceiver(msg.getReceiver());
-                        view.setTimeCreated(msg.getTimeCreated());
-                        view.setEventKey(msg.getEventKey());
-                        view.setTicket(msg.getTicket());
+                        view.setSender(data.getSender());
+                        view.setReceiver(data.getReceiver());
+                        view.setTimeCreated(data.getTimeCreated());
+                        view.setEventKey(data.getEventKey());
+                        view.setTicket(data.getTicket());
                         if (weixinMessageServiceBean.merge(view) == 1) {
                             fire(view);
                         }
