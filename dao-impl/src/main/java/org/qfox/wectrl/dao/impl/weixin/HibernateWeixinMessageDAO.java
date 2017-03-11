@@ -8,6 +8,7 @@ import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.weixin.User;
+import org.qfox.wectrl.core.weixin.message.Image;
 import org.qfox.wectrl.core.weixin.message.Message;
 import org.qfox.wectrl.core.weixin.message.Text;
 import org.qfox.wectrl.dao.impl.HibernateGenericDAO;
@@ -160,6 +161,80 @@ public class HibernateWeixinMessageDAO extends HibernateGenericDAO<Message, Long
         }
 
         Page<Text> page = new Page(pagination, capacity);
+        page.setEntities(texts);
+        page.setTotal((Integer) currentSession().createSQLQuery("SELECT FOUND_ROWS() AS total").addScalar("total", IntegerType.INSTANCE).uniqueResult());
+
+        return page;
+    }
+
+    @Override
+    public Page<Image> getPagedApplicationImages(String appID, int pagination, int capacity, String keyword) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT SQL_CALC_FOUND_ROWS");
+        sql.append("      i.id imageId,");
+        sql.append("      i.dateCreated,");
+        sql.append("      i.picURL,");
+        sql.append("      i.sender,");
+        sql.append("      i.appId,");
+        sql.append("      u.id AS userId,");
+        sql.append("      u.nickname,");
+        sql.append("      u.portraitURL");
+        sql.append("  FROM");
+        sql.append("      weixin_image_tbl AS i");
+        sql.append("  LEFT JOIN weixin_user_tbl AS u ON i.appId = u.application_appID");
+        sql.append("  AND i.sender = u.openID");
+        sql.append("  WHERE");
+        sql.append("      i.appId = :appID");
+        if (!StringUtils.isEmpty(keyword)) {
+            sql.append(" AND u.nickname = :keyword");
+        }
+        sql.append(" ORDER BY");
+        sql.append("    i.timeCreated DESC");
+
+        SQLQuery query = currentSession().createSQLQuery(sql.toString());
+        query.setParameter("appID", appID);
+        if (!StringUtils.isEmpty(keyword)) {
+            query.setParameter("keyword", "%" + keyword + "%");
+        }
+
+        query.setFirstResult(pagination * capacity);
+        query.setMaxResults(capacity);
+
+        query.addScalar("imageId", LongType.INSTANCE);
+        query.addScalar("dateCreated", TimestampType.INSTANCE);
+        query.addScalar("picURL", StringType.INSTANCE);
+        query.addScalar("sender", StringType.INSTANCE);
+        query.addScalar("appId", StringType.INSTANCE);
+        query.addScalar("userId", LongType.INSTANCE);
+        query.addScalar("nickname", StringType.INSTANCE);
+        query.addScalar("portraitURL", StringType.INSTANCE);
+
+        query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+
+        List<Map<String, Object>> items = query.list();
+
+        List<Image> texts = new ArrayList<>();
+        for (Map<String, Object> item : items) {
+            Image text = new Image();
+            text.setId((Long) item.get("imageId"));
+            text.setDateCreated((Date) item.get("dateCreated"));
+            text.setPicURL((String) item.get("picURL"));
+            text.setSender((String) item.get("sender"));
+            text.setAppId((String) item.get("appId"));
+
+            Long userId = (Long) item.get("userId");
+            if (userId != null) {
+                User user = new User();
+                user.setId(userId);
+                user.setNickname((String) item.get("nickname"));
+                user.setPortraitURL((String) item.get("portraitURL"));
+                text.setUser(user);
+            }
+
+            texts.add(text);
+        }
+
+        Page<Image> page = new Page(pagination, capacity);
         page.setEntities(texts);
         page.setTotal((Integer) currentSession().createSQLQuery("SELECT FOUND_ROWS() AS total").addScalar("total", IntegerType.INSTANCE).uniqueResult());
 

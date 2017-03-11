@@ -6,6 +6,7 @@ import org.qfox.jestful.core.annotation.Path;
 import org.qfox.jestful.core.annotation.Query;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Application;
+import org.qfox.wectrl.core.weixin.message.Image;
 import org.qfox.wectrl.core.weixin.message.Text;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
@@ -35,15 +36,29 @@ public class MessageController {
     }
 
     @GET(value = "/texts", produces = "application/json")
-    public Page<Text> text(@Path("appID") String appID,
-                           @Query("pagination") int pagination,
-                           @Query("capacity") int capacity,
-                           @Query("keyword") String keyword) {
+    public Page<Text> texts(@Path("appID") String appID,
+                            @Query("pagination") int pagination,
+                            @Query("capacity") int capacity,
+                            @Query("keyword") String keyword) {
 
         pagination = pagination <= 0 ? 0 : pagination;
         capacity = capacity <= 0 ? 20 : capacity;
 
         Page<Text> page = weixinMessageServiceBean.getPagedApplicationTexts(appID, pagination, capacity, keyword);
+
+        return page;
+    }
+
+    @GET(value = "/images", produces = "application/json")
+    public Page<Image> images(@Path("appID") String appID,
+                              @Query("pagination") int pagination,
+                              @Query("capacity") int capacity,
+                              @Query("keyword") String keyword) {
+
+        pagination = pagination <= 0 ? 0 : pagination;
+        capacity = capacity <= 0 ? 20 : capacity;
+
+        Page<Image> page = weixinMessageServiceBean.getPagedApplicationImages(appID, pagination, capacity, keyword);
 
         return page;
     }

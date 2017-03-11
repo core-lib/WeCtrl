@@ -64,25 +64,36 @@
         <div class="col-lg-12">
             <ul class="nav nav-tabs" style="margin-bottom: 15px;">
                 <li class="active"><a href="#text" data-toggle="tab" onclick="javascript: loadTexts('${app.appID}');">文本消息</a></li>
-                <li><a href="#image" data-toggle="tab">图片消息</a></li>
+                <li><a href="#image" data-toggle="tab" onclick="javascript: loadImages('${app.appID}');">图片消息</a></li>
             </ul>
             <div class="tab-content">
                 <div id="text" class="tab-pane fade active in">
-                    <table class="table table-bordered table-hover table-striped tablesorter">
+                    <table class="table table-bordered table-hover table-striped">
                         <tr id="text-row-tpl" style="display: none;">
                             <td><img src="{{user.portraitURL}}" width="50px" /></td>
-                            <td>{{appId}}</td>
+                            <td>{{sender}}</td>
                             <td>{{user.nickname}}</td>
                             <td>{{content}}</td>
                             <td>{{dateCreated}}</td>
                         </tr>
-                        <tbody>
+                        <tbody id="text-tbody">
 
                         </tbody>
                     </table>
                 </div>
                 <div id="image" class="tab-pane fade">
+                    <table class="table table-bordered table-hover table-striped">
+                        <tr id="image-row-tpl" style="display: none;">
+                            <td><img src="{{user.portraitURL}}" width="50px" /></td>
+                            <td>{{sender}}</td>
+                            <td>{{user.nickname}}</td>
+                            <td><img src="{{picURL}}" width="100px" /></td>
+                            <td>{{dateCreated}}</td>
+                        </tr>
+                        <tbody id="image-tbody">
 
+                        </tbody>
+                    </table>
                 </div>
             </div>
     </div><!-- /.row -->
@@ -103,12 +114,36 @@
 <script src="/mustache/mustache.js"></script>
 </body>
 <script>
+    $(function () {
+        loadTexts('${app.appID}');
+    });
+
     function loadTexts(appID) {
+        if ($("#text-tbody").children().length > 0) {
+            return;
+        }
+        $.showLoading("请稍候...");
         $.get("/applications/" + appID + "/messages/texts", function (page) {
             var tpl =  "{{#entities}}<tr>" + $("#text-row-tpl").html() + "</tr>{{/entities}}";
             var html = Mustache.render(tpl, page);
-            $("#text").find("tbody").empty().html(html);
+            $("#text-tbody").empty().html(html);
+            $.hideLoading();
         });
     }
+
+    function loadImages(appID) {
+        if ($("#image-tbody").children().length > 0) {
+            return;
+        }
+        $.showLoading("请稍候...");
+        $.get("/applications/" + appID + "/messages/images", function (page) {
+            var tpl =  "{{#entities}}<tr>" + $("#image-row-tpl").html() + "</tr>{{/entities}}";
+            var html = Mustache.render(tpl, page);
+            $("#image-tbody").empty().html(html);
+            $.hideLoading();
+        });
+    }
+
+
 </script>
 </html>

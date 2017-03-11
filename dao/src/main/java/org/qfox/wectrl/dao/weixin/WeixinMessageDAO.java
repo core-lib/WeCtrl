@@ -3,6 +3,7 @@ package org.qfox.wectrl.dao.weixin;
 
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.weixin.User;
+import org.qfox.wectrl.core.weixin.message.Image;
 import org.qfox.wectrl.core.weixin.message.Message;
 import org.qfox.wectrl.core.weixin.message.Text;
 import org.qfox.wectrl.dao.GenericDAO;
@@ -18,4 +19,5 @@ public interface WeixinMessageDAO extends GenericDAO<Message, Long> {
 
     Page<Text> getPagedApplicationTexts(String appID, int pagination, int capacity, String keyword);
 
+    Page<Image> getPagedApplicationImages(String appID, int pagination, int capacity, String keyword);
 }
