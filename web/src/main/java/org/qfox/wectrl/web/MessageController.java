@@ -7,7 +7,10 @@ import org.qfox.wectrl.core.base.Verification;
 import org.qfox.wectrl.core.weixin.message.*;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.VerificationService;
+import org.qfox.wectrl.service.transaction.SessionProvider;
+import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
+import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
 import org.qfox.wectrl.web.aes.SHA1;
 import org.qfox.wectrl.web.handler.EventHandler;
 import org.qfox.wectrl.web.handler.MessageHandler;
@@ -23,7 +26,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -50,6 +52,12 @@ public class MessageController implements ApplicationContextAware {
 
     @Resource
     private WeixinMessageService weixinMessageServiceBean;
+
+    @Resource
+    private TokenService tokenServiceBean;
+
+    @Resource
+    private SessionProvider defaultSessionProvider;
 
     @GET("/")
     public String verify(@Query("signature") String signature,
@@ -297,26 +305,22 @@ public class MessageController implements ApplicationContextAware {
         Observable.from(messageHandlers.entrySet())
                 .filter(entry -> entry.getKey().isInstance(message))
                 .flatMap(entry -> Observable.from(entry.getValue()))
-                .map(messageHandler -> {
-                    messageHandler.handle(message);
-                    return null;
-                })
+                .map(messageHandler -> messageHandler.handle(message))
+                .filter(msg -> msg != null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe();
+                .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.INSTANCE.message(tokenServiceBean.getApplicationAccessToken(message.getAppId()).getAccess_token(), msg)));
     }
 
     private void fire(final Event event) {
         Observable.from(eventHandlers.entrySet())
                 .filter(entry -> entry.getKey().isInstance(event))
                 .flatMap(entry -> Observable.from(entry.getValue()))
-                .map(messageHandler -> {
-                    messageHandler.handle(event);
-                    return null;
-                })
+                .map(eventHandler -> eventHandler.handle(event))
+                .filter(msg -> msg != null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe();
+                .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.INSTANCE.message(tokenServiceBean.getApplicationAccessToken(event.getAppId()).getAccess_token(), msg)));
     }
 
     @Override
@@ -375,6 +379,16 @@ public class MessageController implements ApplicationContextAware {
                     clazz = clazz.getSuperclass();
                 }
             }
+        }
+    }
+
+    private static class HandlerEntry<M extends Message> {
+        private final MessageHandler<M> handler;
+        private final Type[] genericInterfaces;
+
+        public HandlerEntry(MessageHandler<M> handler, Type[] genericInterfaces) {
+            this.handler = handler;
+            this.genericInterfaces = genericInterfaces;
         }
     }
 

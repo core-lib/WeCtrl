@@ -3,6 +3,7 @@ package org.qfox.wectrl.service.weixin.cgi_bin;
 import org.qfox.jestful.client.Client;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.service.weixin.Language;
+import org.qfox.wectrl.service.weixin.cgi_bin.menu.Menu;
 import org.qfox.wectrl.service.weixin.cgi_bin.msg.Msg;
 
 /**
@@ -23,7 +24,7 @@ public interface WeixinCgiBinAPI {
     MessageApiResult message(@Query("access_token") String accessToken, @Body Msg msg);
 
     @POST(value = "/menu/create", consumes = "application/json", produces = "application/json")
-    MenuApiResult menu(@Query("access_token") String accessToken, @Body MenuApiParameter parameter);
+    MenuApiResult menu(@Query("access_token") String accessToken, @Body Menu menu);
 
     @GET(value = "/user/info", produces = "application/json; charset=UTF-8")
     UserInfoApiResult userInfo(@Query("access_token") String accessToken, @Query("openid") String openID, @Query("lang") Language language);

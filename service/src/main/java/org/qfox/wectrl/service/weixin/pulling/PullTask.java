@@ -63,28 +63,30 @@ public class PullTask implements Callable<PullResult> {
                 if (!token.isSuccess()) {
                     break;
                 }
-                UserInfoApiResult result = WeixinCgiBinAPI.INSTANCE.userInfo(token.getAccess_token(), openID, Language.zh_CN);
-                if (!result.isSuccess() || !result.isSubscribe()) {
+                UserInfoApiResult info = WeixinCgiBinAPI.INSTANCE.userInfo(token.getAccess_token(), openID, Language.zh_CN);
+                if (!info.isSuccess() || !info.isSubscribe()) {
                     continue;
                 }
                 App app = new App(application);
                 User user = new User();
                 user.setApplication(app);
-                user.setSubscribed(result.isSubscribe());
-                user.setOpenID(result.getOpenid());
-                user.setNickname(result.getNickname());
-                user.setGender(result.getSex());
-                user.setLanguage(result.getLanguage());
-                user.setCity(result.getCity());
-                user.setProvince(result.getProvince());
-                user.setCountry(result.getCountry());
-                user.setPortraitURL(result.getHeadimgurl());
-                user.setDateSubscribed(result.getSubscribe_time() == null ? null : new Date(result.getSubscribe_time() * 1000L));
-                user.setUnionID(result.getUnionid());
-                user.setRemark(result.getRemark());
-                user.setGroupID(result.getGroupid());
+                user.setSubscribed(info.isSubscribe());
+                user.setOpenID(info.getOpenid());
+                user.setNickname(info.getNickname());
+                user.setGender(info.getSex());
+                user.setLanguage(info.getLanguage());
+                user.setCity(info.getCity());
+                user.setProvince(info.getProvince());
+                user.setCountry(info.getCountry());
+                user.setPortraitURL(info.getHeadimgurl());
+                user.setDateSubscribed(info.getSubscribe_time() == null ? null : new Date(info.getSubscribe_time() * 1000L));
+                user.setUnionID(info.getUnionid());
+                user.setRemark(info.getRemark());
+                user.setGroupID(info.getGroupid());
 
-                userServiceBean.merge(user);
+                int count = userServiceBean.merge(user);
+
+                result.setLoaded(result.getLoaded() + count);
             }
         });
         return result;
