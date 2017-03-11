@@ -63,7 +63,7 @@
         </div><!-- /.row -->
         <div class="col-lg-12">
             <ul class="nav nav-tabs" style="margin-bottom: 15px;">
-                <li class="active"><a href="#text" data-toggle="tab" onclick="javascript: loadTexts();">文本消息</a></li>
+                <li class="active"><a href="#text" data-toggle="tab" onclick="javascript: loadTexts('${app.appID}');">文本消息</a></li>
                 <li><a href="#image" data-toggle="tab">图片消息</a></li>
             </ul>
             <div class="tab-content">
