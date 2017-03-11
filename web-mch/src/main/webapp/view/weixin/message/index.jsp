@@ -69,6 +69,13 @@
             <div class="tab-content">
                 <div id="text" class="tab-pane fade active in">
                     <table class="table table-bordered table-hover table-striped tablesorter">
+                        <tr id="text-row-tpl" style="display: none;">
+                            <td><img src="{{user.portraitURL}}" width="50px" /></td>
+                            <td>{{appId}}</td>
+                            <td>{{user.nickname}}</td>
+                            <td>{{content}}</td>
+                            <td>{{dateCreated}}</td>
+                        </tr>
                         <tbody>
 
                         </tbody>
@@ -94,20 +101,11 @@
 <script src="/jq-weui/lib/fastclick.js"></script>
 <script src="/jq-weui/js/jquery-weui.js"></script>
 <script src="/mustache/mustache.js"></script>
-<div id="text-row-tpl" style="display: none;">
-    <tr>
-        <td><img src="{{user.portraitURL}}" width="50px" /></td>
-        <td>{{appId}}</td>
-        <td>{{user.nickname}}</td>
-        <td>{{content}}</td>
-        <td>{{dateCreated}}</td>
-    </tr>
-</div>
 </body>
 <script>
     function loadTexts(appID) {
         $.get("/applications/" + appID + "/messages/texts", function (page) {
-            var tpl =  "{{#entities}}" + $("#text-row-tpl").clone().html() + "{{/entities}}";
+            var tpl =  "{{#entities}}<tr>" + $("#text-row-tpl").html() + "</tr>{{/entities}}";
             var html = Mustache.render(tpl, page);
             $("#text").find("tbody").empty().html(html);
         });
