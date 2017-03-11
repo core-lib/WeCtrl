@@ -40,6 +40,9 @@ public class MessageController {
                            @Query("capacity") int capacity,
                            @Query("keyword") String keyword) {
 
+        pagination = pagination <= 0 ? 0 : pagination;
+        capacity = capacity <= 0 ? 20 : capacity;
+
         Page<Text> page = weixinMessageServiceBean.getPagedApplicationTexts(appID, pagination, capacity, keyword);
 
         return page;
