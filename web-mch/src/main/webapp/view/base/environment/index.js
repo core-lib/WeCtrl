@@ -36,7 +36,7 @@ function onPostButtomTap(form) {
             if (res.success) {
                 location.href = res.entity;
             } else {
-                var tpl = "{{#entity}}" + $("#error-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
+                var tpl = "{{#entity}}" + $("#error-tpl").html() + "{{/entity}}";
                 var html = Mustache.render(tpl, res);
                 $(form).find(".error-container").empty().html(html);
             }
@@ -46,7 +46,7 @@ function onPostButtomTap(form) {
             res = {
                 entity: ["未知错误"]
             };
-            var tpl = "{{#entity}}" + $("#error-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
+            var tpl = "{{#entity}}" + $("#error-tpl").html() + "{{/entity}}";
             var html = Mustache.render(tpl, res);
             $(form).find(".error-container").empty().html(html);
         }
@@ -67,11 +67,11 @@ function onPutButtonTap(form) {
                 res = {
                     entity : ["更新成功"]
                 }
-                var tpl = "{{#entity}}" + $("#success-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
+                var tpl = "{{#entity}}" + $("#success-tpl").html() + "{{/entity}}";
                 var html = Mustache.render(tpl, res);
                 $(form).find(".error-container").empty().html(html);
             } else {
-                var tpl = "{{#entity}}" + $("#error-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
+                var tpl = "{{#entity}}" + $("#error-tpl").html() + "{{/entity}}";
                 var html = Mustache.render(tpl, res);
                 $(form).find(".error-container").empty().html(html);
             }
@@ -81,7 +81,7 @@ function onPutButtonTap(form) {
             res = {
                 entity: ["未知错误"]
             };
-            var tpl = "{{#entity}}" + $("#error-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
+            var tpl = "{{#entity}}" + $("#error-tpl").html() + "{{/entity}}";
             var html = Mustache.render(tpl, res);
             $(form).find(".error-container").empty().html(html);
         }
