@@ -193,7 +193,7 @@
                 if (res.success) {
                     location.href = res.entity;
                 } else {
-                    var tpl = "{{#entity}}" + $("#error-tpl").clone().show().html() + "{{/entity}}";
+                    var tpl = "{{#entity}}" + $("#error-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
                     var html = Mustache.render(tpl, res);
                     $("#error-container").empty().html(html);
                 }
@@ -203,7 +203,7 @@
                 res = {
                     entity: ["未知错误"]
                 };
-                var tpl = "{{#entity}}" + $("#error-tpl").clone().show().html() + "{{/entity}}";
+                var tpl = "{{#entity}}" + $("#error-tpl").clone().removeAttr("id").show().html() + "{{/entity}}";
                 var html = Mustache.render(tpl, res);
                 $("#error-container").empty().html(html);
             }
