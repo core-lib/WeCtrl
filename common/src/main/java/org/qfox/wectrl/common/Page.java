@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by yangchangpei on 17/3/2.
  */
-public class Page<T extends Serializable> implements Serializable {
+public class Page<T> implements Serializable {
     private static final long serialVersionUID = -3724044500222125800L;
 
     private List<T> entities = new ArrayList<>();

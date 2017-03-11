@@ -1,6 +1,8 @@
 package org.qfox.wectrl.service.bean.weixin;
 
+import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.weixin.message.Message;
+import org.qfox.wectrl.core.weixin.message.Text;
 import org.qfox.wectrl.dao.GenericDAO;
 import org.qfox.wectrl.dao.weixin.WeixinMessageDAO;
 import org.qfox.wectrl.service.bean.GenericServiceBean;
@@ -28,5 +30,10 @@ public class WeixinMessageServiceBean extends GenericServiceBean<Message, Long> 
     @Override
     public int merge(Message message) throws Exception {
         return weixinMessageDAO.merge(message);
+    }
+
+    @Override
+    public Page<Text> getPagedApplicationTexts(String appID, int pagination, int capacity, String keyword) {
+        return weixinMessageDAO.getPagedApplicationTexts(appID, pagination, capacity, keyword);
     }
 }

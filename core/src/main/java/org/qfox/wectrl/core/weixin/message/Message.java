@@ -1,9 +1,11 @@
 package org.qfox.wectrl.core.weixin.message;
 
 import org.qfox.wectrl.core.Domain;
+import org.qfox.wectrl.core.weixin.User;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 /**
  * Created by yangchangpei on 17/2/23.
@@ -16,6 +18,8 @@ public abstract class Message extends Domain {
     private String receiver;
     private String sender;
     private Long timeCreated;
+
+    private User user;
 
     @Column(nullable = false, length = 32)
     public String getAppId() {
@@ -51,4 +55,12 @@ public abstract class Message extends Domain {
         this.timeCreated = timeCreated;
     }
 
+    @Transient
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
