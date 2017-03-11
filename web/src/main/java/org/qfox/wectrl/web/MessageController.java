@@ -323,6 +323,10 @@ public class MessageController implements ApplicationContextAware {
                 .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.INSTANCE.message(tokenServiceBean.getApplicationAccessToken(event.getAppId()).getAccess_token(), msg)));
     }
 
+    private void bind(MessageHandler handler) {
+
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         {
