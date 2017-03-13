@@ -12,6 +12,7 @@ import org.qfox.wectrl.dao.base.EnvironmentDAO;
 import org.qfox.wectrl.service.base.EnvironmentService;
 import org.qfox.wectrl.service.bean.GenericServiceBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -75,5 +76,11 @@ public class EnvironmentServiceBean extends GenericServiceBean<Environment, Long
             criteria.setFetchMode(fetch, FetchMode.JOIN);
         }
         return (Environment) criteria.uniqueResult();
+    }
+
+    @Transactional
+    @Override
+    public int updateToVerified(String appID, String envKey) {
+        return environmentDAO.updateToVerified(appID, envKey);
     }
 }

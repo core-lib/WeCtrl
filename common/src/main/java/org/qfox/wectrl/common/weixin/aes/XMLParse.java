@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------
 
-package org.qfox.wectrl.web.aes;
+package org.qfox.wectrl.common.weixin.aes;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -1,4 +1,4 @@
-package org.qfox.wectrl.web.aes;
+package org.qfox.wectrl.common.weixin.aes;
 
 public class AesException extends Exception {
     private static final long serialVersionUID = -5338294406483183411L;

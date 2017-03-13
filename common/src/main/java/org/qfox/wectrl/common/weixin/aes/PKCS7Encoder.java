@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------
 
-package org.qfox.wectrl.web.aes;
+package org.qfox.wectrl.common.weixin.aes;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
