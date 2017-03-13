@@ -16,7 +16,7 @@ public class Environment extends Domain {
     private String envName;
     private String envKey;
     private App application;
-    private String authorizeURL;
+    private String domain;
     private String pushURL;
     private boolean verified;
     private Date dateVerified;
@@ -55,12 +55,12 @@ public class Environment extends Domain {
     }
 
     @Column(nullable = false)
-    public String getAuthorizeURL() {
-        return authorizeURL;
+    public String getDomain() {
+        return domain;
     }
 
-    public void setAuthorizeURL(String authorizeURL) {
-        this.authorizeURL = authorizeURL;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     @Column(nullable = false)

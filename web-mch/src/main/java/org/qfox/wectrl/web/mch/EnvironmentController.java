@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class EnvironmentController {
     public JsonResult save(@Path("appID") String appID,
                            @Body("envName") String envName,
                            @Body("envKey") String envKey,
-                           @Body("authorizeURL") String authorizeURL,
+                           @Body("domain") String domain,
                            @Body("pushURL") String pushURL,
                            @Body("acquiescent") boolean acquiescent) throws UnsupportedEncodingException, AesException, MalformedURLException {
         List<String> errors = new ArrayList<>();
@@ -71,15 +70,17 @@ public class EnvironmentController {
         if ("new".equalsIgnoreCase(envKey)) {
             errors.add("环境Key不能为new");
         }
-        if (StringUtils.isEmpty(authorizeURL)) {
-            errors.add("网页授权URL不能为空");
-        } else if (URLDecoder.decode(authorizeURL, "UTF-8").contains("?")) {
-            errors.add("网页授权URL不能包含'?'");
+        if (StringUtils.isEmpty(domain)) {
+            errors.add("网页授权回调域名不能为空");
+        } else if (!domain.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?$")) {
+            errors.add("网页授权回调域名格式不正确");
         }
         if (StringUtils.isEmpty(pushURL)) {
             errors.add("消息推送URL不能为空");
-        } else if (URLDecoder.decode(pushURL, "UTF-8").contains("?")) {
-            errors.add("消息推送URL不能包含'?'");
+        }
+        // TODO 有可能被指向到自己造成死递归!!!!!!!!!
+        else if (!pushURL.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$")) {
+            errors.add("消息推送URL格式不正确 请填写完整的网页地址 且不能包含'?' 和 '#'");
         }
         if (environmentServiceBean.isApplicationEnvKeyExisted(appID, envKey)) {
             errors.add("环境Key已存在");
@@ -93,7 +94,7 @@ public class EnvironmentController {
             return new JsonResult(false, "FAIL", errors);
         }
 
-        JsonResult verification = verify(authorizeURL, pushURL, application.getToken());
+        JsonResult verification = verify(pushURL, application.getToken());
         if (!verification.isSuccess()) {
             return verification;
         }
@@ -101,7 +102,7 @@ public class EnvironmentController {
         Environment environment = new Environment();
         environment.setEnvName(envName);
         environment.setEnvKey(envKey);
-        environment.setAuthorizeURL(authorizeURL);
+        environment.setDomain(domain);
         environment.setPushURL(pushURL);
         environment.setAcquiescent(acquiescent);
         environment.setApplication(new App(application));
@@ -128,7 +129,7 @@ public class EnvironmentController {
                              @Path("oldEnvKey") String oldEnvKey,
                              @Body("envName") String envName,
                              @Body("envKey") String newEnvKey,
-                             @Body("authorizeURL") String authorizeURL,
+                             @Body("domain") String domain,
                              @Body("pushURL") String pushURL,
                              @Body("acquiescent") boolean acquiescent) throws UnsupportedEncodingException, AesException, MalformedURLException {
         Environment env = environmentServiceBean.getApplicationEnvironment(appID, oldEnvKey);
@@ -143,15 +144,17 @@ public class EnvironmentController {
         if ("new".equalsIgnoreCase(newEnvKey)) {
             errors.add("环境Key不能为new");
         }
-        if (StringUtils.isEmpty(authorizeURL)) {
-            errors.add("网页授权URL不能为空");
-        } else if (URLDecoder.decode(authorizeURL, "UTF-8").contains("?")) {
-            errors.add("网页授权URL不能包含'?'");
+        if (StringUtils.isEmpty(domain)) {
+            errors.add("网页授权回调域名不能为空");
+        } else if (!domain.matches("^http(s)?://[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*$")) {
+            errors.add("网页授权回调域名格式不正确");
         }
         if (StringUtils.isEmpty(pushURL)) {
             errors.add("消息推送URL不能为空");
-        } else if (URLDecoder.decode(pushURL, "UTF-8").contains("?")) {
-            errors.add("消息推送URL不能包含'?'");
+        }
+        // TODO 有可能被指向到自己造成死递归!!!!!!!!!
+        else if (!pushURL.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$")) {
+            errors.add("消息推送URL格式不正确 请填写完整的网页地址 且不能包含'?' 和 '#'");
         }
         if (!env.getEnvKey().equals(newEnvKey) && environmentServiceBean.isApplicationEnvKeyExisted(appID, newEnvKey)) {
             errors.add("环境Key已存在");
@@ -165,14 +168,14 @@ public class EnvironmentController {
             return new JsonResult(false, "FAIL", errors);
         }
 
-        JsonResult verification = verify(authorizeURL, pushURL, application.getToken());
+        JsonResult verification = verify(pushURL, application.getToken());
         if (!verification.isSuccess()) {
             return verification;
         }
 
         env.setEnvName(envName);
         env.setEnvKey(newEnvKey);
-        env.setAuthorizeURL(authorizeURL);
+        env.setDomain(domain);
         env.setPushURL(pushURL);
         env.setAcquiescent(acquiescent);
         env.setApplication(new App(application));
@@ -182,28 +185,17 @@ public class EnvironmentController {
         return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
     }
 
-    private static JsonResult verify(String authorizeURL, String pushURL, String token) throws AesException, MalformedURLException {
+    private static JsonResult verify(String pushURL, String token) throws AesException, MalformedURLException {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
         String nonce = Randoms.number(9);
         String echostr = Randoms.number(18);
         String signature = SHA1.sign(token, timestamp, nonce);
 
-        {
-            Client client = Client.builder().setEndpoint(new URL(pushURL)).build();
-            VerificationAPI api = client.create(VerificationAPI.class);
-            String result = api.get(signature, timestamp, nonce, echostr);
-            if (!echostr.equals(result)) {
-                return new JsonResult(false, "Fail", "pushURL验证失败");
-            }
-        }
-
-        {
-            Client client = Client.builder().setEndpoint(new URL(authorizeURL)).build();
-            VerificationAPI api = client.create(VerificationAPI.class);
-            String result = api.post(signature, timestamp, nonce, echostr);
-            if (!echostr.equals(result)) {
-                return new JsonResult(false, "Fail", "authorizeURL验证失败");
-            }
+        Client client = Client.builder().setEndpoint(new URL(pushURL)).build();
+        VerificationAPI api = client.create(VerificationAPI.class);
+        String result = api.get(signature, timestamp, nonce, echostr);
+        if (!echostr.equals(result)) {
+            return new JsonResult(false, "Fail", "pushURL验证失败");
         }
 
         return JsonResult.OK;

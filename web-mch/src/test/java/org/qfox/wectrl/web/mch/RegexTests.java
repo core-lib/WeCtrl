@@ -9,7 +9,7 @@ public class RegexTests {
 
     @Test
     public void testRegex() {
-        System.out.println("aa0123".matches("^(?![0-9_-])[a-zA-Z0-9_-]{6,12}$"));
+        System.out.println("http://localhost:8080/fffsd.res/sdfsd.res".matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$"));
     }
 
 }

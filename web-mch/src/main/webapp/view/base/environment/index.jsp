@@ -87,12 +87,14 @@
                                     <input class="form-control" name="envKey" value="${env.envKey}">
                                 </div>
                                 <div class="form-group">
-                                    <label>网页授权URL</label>
-                                    <input class="form-control" name="authorizeURL" value="${env.authorizeURL}">
+                                    <label>网页授权域名</label>
+                                    <input class="form-control" name="domain" value="${env.domain}">
+                                    <p class="help-block">http://this-environment-domain 或 https://this-environment-domain</p>
                                 </div>
                                 <div class="form-group">
                                     <label>消息推送URL</label>
                                     <input class="form-control" name="pushURL" value="${env.pushURL}">
+                                    <p class="help-block">http://this-environment-domain/path/to/receive/messages 或 https://this-environment-domain/path/to/receive/messages</p>
                                 </div>
                                 <div class="form-group">
                                     <label class="radio-inline">
@@ -130,12 +132,14 @@
                                 <input class="form-control" name="envKey">
                             </div>
                             <div class="form-group">
-                                <label>网页授权URL</label>
-                                <input class="form-control" name="authorizeURL">
+                                <label>网页授权域名</label>
+                                <input class="form-control" name="domain">
+                                <p class="help-block">http://this-environment-domain 或 https://this-environment-domain</p>
                             </div>
                             <div class="form-group">
                                 <label>消息推送URL</label>
                                 <input class="form-control" name="pushURL">
+                                <p class="help-block">http://this-environment-domain/path/to/receive/messages 或 https://this-environment-domain/path/to/receive/messages</p>
                             </div>
                             <div class="form-group">
                                 <label class="radio-inline">
