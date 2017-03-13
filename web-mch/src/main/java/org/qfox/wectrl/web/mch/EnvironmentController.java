@@ -11,6 +11,8 @@ import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.base.Environment;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.EnvironmentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +30,7 @@ import java.util.List;
 @Jestful("/applications/{appID:\\w+}/environments")
 @Controller
 public class EnvironmentController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
     private ApplicationService applicationServiceBean;
@@ -185,20 +188,25 @@ public class EnvironmentController {
         return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
     }
 
-    private static JsonResult verify(String pushURL, String token) throws AesException, MalformedURLException {
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
-        String nonce = Randoms.number(9);
-        String echostr = Randoms.number(18);
-        String signature = SHA1.sign(token, timestamp, nonce);
+    private JsonResult verify(String pushURL, String token) {
+        try {
+            String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
+            String nonce = Randoms.number(9);
+            String echostr = Randoms.number(18);
+            String signature = SHA1.sign(token, timestamp, nonce);
 
-        Client client = Client.builder().setEndpoint(new URL(pushURL)).build();
-        VerificationAPI api = client.create(VerificationAPI.class);
-        String result = api.get(signature, timestamp, nonce, echostr);
-        if (!echostr.equals(result)) {
-            return new JsonResult(false, "Fail", "pushURL验证失败");
+            Client client = Client.builder().setEndpoint(new URL(pushURL)).build();
+            VerificationAPI api = client.create(VerificationAPI.class);
+            String result = api.get(signature, timestamp, nonce, echostr);
+            if (!echostr.equals(result)) {
+                return new JsonResult(false, "Fail", "消息推送URL验证失败");
+            }
+
+            return JsonResult.OK;
+        } catch (Exception e) {
+            logger.error("消息推送URL验证失败:{}", e);
+            return new JsonResult(false, "Fail", "消息推送URL验证失败");
         }
-
-        return JsonResult.OK;
     }
 
     @DELETE(value = "/{envKey:\\w+}", produces = "application/json")
