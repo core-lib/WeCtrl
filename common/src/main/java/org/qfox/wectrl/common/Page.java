@@ -54,4 +54,5 @@ public class Page<T> implements Serializable {
     public void setTotal(int total) {
         this.total = total;
     }
+
 }

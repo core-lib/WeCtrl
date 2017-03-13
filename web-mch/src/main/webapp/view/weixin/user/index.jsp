@@ -97,12 +97,12 @@
                                         </c:forEach>
                                     </ul>
                                 </div>
-
                             </td>
                         </tr>
                     </c:forEach>
                     </tbody>
                 </table>
+                <div style="float: right;"><jsp:include page="/view/include/page-control.jsp" /></div>
             </div>
         </div>
     </div><!-- /.row -->
