@@ -11,7 +11,7 @@ import org.qfox.wectrl.service.transaction.SessionProvider;
 import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
 import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
-import org.qfox.wectrl.web.aes.SHA1;
+import org.qfox.wectrl.common.weixin.aes.SHA1;
 import org.qfox.wectrl.web.handler.EventHandler;
 import org.qfox.wectrl.web.handler.MessageHandler;
 import org.qfox.wectrl.web.msg.Data;

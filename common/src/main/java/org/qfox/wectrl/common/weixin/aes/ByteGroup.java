@@ -1,4 +1,4 @@
-package org.qfox.wectrl.web.aes;
+package org.qfox.wectrl.common.weixin.aes;
 
 import java.util.ArrayList;
 

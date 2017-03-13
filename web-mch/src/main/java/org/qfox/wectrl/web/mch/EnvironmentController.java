@@ -1,7 +1,11 @@
 package org.qfox.wectrl.web.mch;
 
+import org.qfox.jestful.client.Client;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.common.Page;
+import org.qfox.wectrl.common.Randoms;
+import org.qfox.wectrl.common.weixin.aes.AesException;
+import org.qfox.wectrl.common.weixin.aes.SHA1;
 import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.base.Environment;
@@ -12,6 +16,10 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +60,7 @@ public class EnvironmentController {
                            @Body("envKey") String envKey,
                            @Body("authorizeURL") String authorizeURL,
                            @Body("pushURL") String pushURL,
-                           @Body("acquiescent") boolean acquiescent) {
+                           @Body("acquiescent") boolean acquiescent) throws UnsupportedEncodingException, AesException, MalformedURLException {
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(envName)) {
             errors.add("环境名称不能为空");
@@ -65,16 +73,29 @@ public class EnvironmentController {
         }
         if (StringUtils.isEmpty(authorizeURL)) {
             errors.add("网页授权URL不能为空");
+        } else if (URLDecoder.decode(authorizeURL, "UTF-8").contains("?")) {
+            errors.add("网页授权URL不能包含'?'");
         }
         if (StringUtils.isEmpty(pushURL)) {
             errors.add("消息推送URL不能为空");
+        } else if (URLDecoder.decode(pushURL, "UTF-8").contains("?")) {
+            errors.add("消息推送URL不能包含'?'");
         }
         if (environmentServiceBean.isApplicationEnvKeyExisted(appID, envKey)) {
             errors.add("环境Key已存在");
         }
+        Application application = applicationServiceBean.getApplicationByAppID(appID);
+        if (application == null) {
+            errors.add("AppID不存在");
+        }
 
         if (!errors.isEmpty()) {
             return new JsonResult(false, "FAIL", errors);
+        }
+
+        JsonResult verification = verify(authorizeURL, pushURL, application.getToken());
+        if (!verification.isSuccess()) {
+            return verification;
         }
 
         Environment environment = new Environment();
@@ -83,10 +104,7 @@ public class EnvironmentController {
         environment.setAuthorizeURL(authorizeURL);
         environment.setPushURL(pushURL);
         environment.setAcquiescent(acquiescent);
-
-        Application application = applicationServiceBean.getApplicationByAppID(appID);
-        App app = new App(application);
-        environment.setApplication(app);
+        environment.setApplication(new App(application));
 
         environmentServiceBean.save(environment);
 
@@ -112,7 +130,7 @@ public class EnvironmentController {
                              @Body("envKey") String newEnvKey,
                              @Body("authorizeURL") String authorizeURL,
                              @Body("pushURL") String pushURL,
-                             @Body("acquiescent") boolean acquiescent) {
+                             @Body("acquiescent") boolean acquiescent) throws UnsupportedEncodingException, AesException, MalformedURLException {
         Environment env = environmentServiceBean.getApplicationEnvironment(appID, oldEnvKey);
 
         List<String> errors = new ArrayList<>();
@@ -127,16 +145,29 @@ public class EnvironmentController {
         }
         if (StringUtils.isEmpty(authorizeURL)) {
             errors.add("网页授权URL不能为空");
+        } else if (URLDecoder.decode(authorizeURL, "UTF-8").contains("?")) {
+            errors.add("网页授权URL不能包含'?'");
         }
         if (StringUtils.isEmpty(pushURL)) {
             errors.add("消息推送URL不能为空");
+        } else if (URLDecoder.decode(pushURL, "UTF-8").contains("?")) {
+            errors.add("消息推送URL不能包含'?'");
         }
         if (!env.getEnvKey().equals(newEnvKey) && environmentServiceBean.isApplicationEnvKeyExisted(appID, newEnvKey)) {
             errors.add("环境Key已存在");
         }
+        Application application = applicationServiceBean.getApplicationByAppID(appID);
+        if (application == null) {
+            errors.add("AppID不存在");
+        }
 
         if (!errors.isEmpty()) {
             return new JsonResult(false, "FAIL", errors);
+        }
+
+        JsonResult verification = verify(authorizeURL, pushURL, application.getToken());
+        if (!verification.isSuccess()) {
+            return verification;
         }
 
         env.setEnvName(envName);
@@ -144,13 +175,41 @@ public class EnvironmentController {
         env.setAuthorizeURL(authorizeURL);
         env.setPushURL(pushURL);
         env.setAcquiescent(acquiescent);
+        env.setApplication(new App(application));
 
         environmentServiceBean.update(env);
 
         return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
     }
 
-    @DELETE("/{envKey:\\w+}")
+    private static JsonResult verify(String authorizeURL, String pushURL, String token) throws AesException, MalformedURLException {
+        String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
+        String nonce = Randoms.number(9);
+        String echostr = Randoms.number(18);
+        String signature = SHA1.sign(token, timestamp, nonce);
+
+        {
+            Client client = Client.builder().setEndpoint(new URL(pushURL)).build();
+            VerificationAPI api = client.create(VerificationAPI.class);
+            String result = api.get(signature, timestamp, nonce, echostr);
+            if (!echostr.equals(result)) {
+                return new JsonResult(false, "Fail", "pushURL验证失败");
+            }
+        }
+
+        {
+            Client client = Client.builder().setEndpoint(new URL(authorizeURL)).build();
+            VerificationAPI api = client.create(VerificationAPI.class);
+            String result = api.post(signature, timestamp, nonce, echostr);
+            if (!echostr.equals(result)) {
+                return new JsonResult(false, "Fail", "authorizeURL验证失败");
+            }
+        }
+
+        return JsonResult.OK;
+    }
+
+    @DELETE(value = "/{envKey:\\w+}", produces = "application/json")
     public JsonResult delete(@Path("appID") String appID, @Path("envKey") String envKey) {
         Environment env = environmentServiceBean.getApplicationEnvironment(appID, envKey);
         environmentServiceBean.delete(env);
