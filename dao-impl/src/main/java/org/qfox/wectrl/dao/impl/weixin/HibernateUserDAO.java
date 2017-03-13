@@ -89,7 +89,7 @@ public class HibernateUserDAO extends HibernateGenericDAO<User, Long> implements
         sql.append("     u.openID,");
         sql.append("     u.subscribed,");
         sql.append("     u.dateSubscribed,");
-        sql.append("     e.id AS envId");
+        sql.append("     e.id AS envId,");
         sql.append("     e.envKey,");
         sql.append("     e.envName");
         sql.append(" FROM");
