@@ -13,4 +13,6 @@ public interface UserDAO extends GenericDAO<User, Long> {
 
     Page<User> getPagedApplicationUsers(String appID, int pagination, int capacity, String keyword);
 
+    int setUserToEnvironment(String appID, String openID, String envKey);
+
 }

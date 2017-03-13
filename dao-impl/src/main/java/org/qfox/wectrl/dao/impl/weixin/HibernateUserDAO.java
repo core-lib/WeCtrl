@@ -78,6 +78,51 @@ public class HibernateUserDAO extends HibernateGenericDAO<User, Long> implements
     }
 
     @Override
+    public int setUserToEnvironment(String appID, String openID, String envKey) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" UPDATE");
+        sql.append("     weixin_user_tbl");
+        sql.append(" SET");
+        sql.append("     environment_id = (");
+        sql.append("         SELECT");
+        sql.append("             env.id");
+        sql.append("         FROM");
+        sql.append("             base_environment_tbl AS env");
+        sql.append("         WHERE");
+        sql.append("             env.application_appID = :appID");
+        sql.append("         AND env.envKey = :envKey");
+        sql.append("     ),");
+        sql.append("     environment_envKey = (");
+        sql.append("         SELECT");
+        sql.append("             env.envKey");
+        sql.append("         FROM");
+        sql.append("             base_environment_tbl AS env");
+        sql.append("         WHERE");
+        sql.append("             env.application_appID = :appID");
+        sql.append("         AND env.envKey = :envKey");
+        sql.append("     ),");
+        sql.append("     environment_envName = (");
+        sql.append("         SELECT");
+        sql.append("             env.envName");
+        sql.append("         FROM");
+        sql.append("             base_environment_tbl AS env");
+        sql.append("         WHERE");
+        sql.append("             env.application_appID = :appID");
+        sql.append("         AND env.envKey = :envKey");
+        sql.append("     )");
+        sql.append(" WHERE");
+        sql.append("     application_appID = :appID");
+        sql.append(" AND openID = :openID");
+
+        SQLQuery query = currentSession().createSQLQuery(sql.toString());
+        query.setParameter("appID", appID);
+        query.setParameter("openID", openID);
+        query.setParameter("envKey", envKey);
+
+        return query.executeUpdate();
+    }
+
+    @Override
     public Page<User> getPagedApplicationUsers(String appID, int pagination, int capacity, String keyword) {
         Page<User> page = new Page<>(pagination, capacity);
 

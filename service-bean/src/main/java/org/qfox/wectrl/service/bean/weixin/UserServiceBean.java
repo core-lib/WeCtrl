@@ -1,5 +1,8 @@
 package org.qfox.wectrl.service.bean.weixin;
 
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.Restrictions;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.dao.GenericDAO;
@@ -7,6 +10,7 @@ import org.qfox.wectrl.dao.weixin.UserDAO;
 import org.qfox.wectrl.service.bean.GenericServiceBean;
 import org.qfox.wectrl.service.weixin.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -31,8 +35,20 @@ public class UserServiceBean extends GenericServiceBean<User, Long> implements U
 
     @Override
     public User get(String appID, String openID, String... fetchs) {
+        Criteria criteria = userDAO.createCriteria();
+        criteria.add(Restrictions.eq("application.appID", appID));
+        criteria.add(Restrictions.eq("openID", openID));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        for (String fetch : fetchs) {
+            criteria.setFetchMode(fetch, FetchMode.JOIN);
+        }
+        return (User) criteria.uniqueResult();
+    }
 
-        return null;
+    @Transactional
+    @Override
+    public int setUserToEnvironment(String appID, String openID, String envKey) {
+        return userDAO.setUserToEnvironment(appID, openID, envKey);
     }
 
 }

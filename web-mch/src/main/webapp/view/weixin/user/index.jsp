@@ -66,24 +66,39 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped tablesorter">
                     <thead>
-                        <tr>
-                            <th>头像</th>
-                            <th>昵称</th>
-                            <th>openID</th>
-                            <th>已关注</th>
-                            <th>关注时间</th>
-                            <th>归属环境</th>
-                        </tr>
+                    <tr>
+                        <th>头像</th>
+                        <th>昵称</th>
+                        <th>openID</th>
+                        <th>已关注</th>
+                        <th>关注时间</th>
+                        <th>归属环境</th>
+                    </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${page.entities}" var="user">
                         <tr>
-                            <td><img src="${user.portraitURL}" width="50px" /></td>
+                            <td><img src="${user.portraitURL}" width="50px"/></td>
                             <td>${user.nickname}</td>
                             <td>${user.openID}</td>
                             <td>${user.subscribed ? '是' : '否'}</td>
                             <td><fmt:formatDate value="${user.dateSubscribed}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                            <td>${user.environment.envName}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        ${empty user.environment.envName ? '默认环境' : user.environment.envName}
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <c:forEach items="${environments}" var="environment">
+                                            <li onclick="javascript: onEnvironmentButtonTap(this, '${app.appID}', '${user.openID}', '${environment.envKey}');" style="cursor: pointer;">
+                                                <a>${environment.envName}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+
+                            </td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -129,6 +144,26 @@
             });
         }, function () {
 
+        });
+    }
+
+    function onEnvironmentButtonTap(btn, appID, openID, envKey) {
+        $.showLoading("请稍候...");
+        $.ajax({
+            type: "PUT",
+            url: "/applications/" + appID + "/users/" + openID,
+            data: {
+                envKey: envKey
+            },
+            success: function (res) {
+                $.hideLoading();
+                $(btn).parent().prev().html($(btn).text() + '<span class="caret"></span>');
+                $.toast("操作成功", "success", null);
+            },
+            error: function (res) {
+                $.hideLoading();
+                $.toast(res.message ? res.message : "操作失败", "cancel", null);
+            }
         });
     }
 </script>

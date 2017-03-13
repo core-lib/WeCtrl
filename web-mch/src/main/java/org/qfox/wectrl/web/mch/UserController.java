@@ -3,8 +3,10 @@ package org.qfox.wectrl.web.mch;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Application;
+import org.qfox.wectrl.core.base.Environment;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.service.base.ApplicationService;
+import org.qfox.wectrl.service.base.EnvironmentService;
 import org.qfox.wectrl.service.transaction.SessionProvider;
 import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.UserService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
@@ -34,6 +37,9 @@ public class UserController {
     @Resource
     private UserService userServiceBean;
 
+    @Resource
+    private EnvironmentService environmentServiceBean;
+
     @GET("/")
     public String index(@Path("appID") String appID,
                         @Query("pagination") int pagination,
@@ -46,6 +52,9 @@ public class UserController {
 
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", app);
+
+        List<Environment> environments = environmentServiceBean.listAll();
+        request.setAttribute("environments", environments);
 
         Page<User> page = userServiceBean.getPagedApplicationUsers(appID, pagination, capacity, keyword);
         request.setAttribute("page", page);
@@ -70,5 +79,12 @@ public class UserController {
         }
     }
 
+    @PUT("/{openID:[a-zA-Z0-9_-]+}")
+    public JsonResult attach(@Path("appID") String appID,
+                             @Path("openID") String openID,
+                             @Body("envKey") String envKey) {
+        int count = userServiceBean.setUserToEnvironment(appID, openID, envKey);
+        return count > 0 ? JsonResult.OK : new JsonResult(false, "记录不存在或已经被更新", null);
+    }
 
 }
