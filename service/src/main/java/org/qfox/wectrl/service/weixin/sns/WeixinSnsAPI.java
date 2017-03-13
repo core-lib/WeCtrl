@@ -1,15 +1,19 @@
 package org.qfox.wectrl.service.weixin.sns;
 
+import org.qfox.jestful.client.Client;
 import org.qfox.jestful.core.annotation.GET;
 import org.qfox.jestful.core.annotation.Jestful;
 import org.qfox.jestful.core.annotation.Query;
 import org.qfox.wectrl.service.weixin.Language;
+import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
 
 /**
  * Created by yangchangpei on 17/2/23.
  */
 @Jestful("/sns")
 public interface WeixinSnsAPI {
+
+    WeixinSnsAPI INSTANCE = Client.builder().setProtocol("https").setHost("api.weixin.qq.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinSnsAPI.class);
 
     @GET(value = "/oauth2/access_token", produces = "application/json; charset=UTF-8")
     SnsAccessTokenApiResult accessToken(@Query("appid") String appID, @Query("secret") String appSecret, @Query("code") String code, @Query("grant_type") SnsGrantType grantType);

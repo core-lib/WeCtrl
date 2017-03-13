@@ -38,6 +38,7 @@ public class UserController {
     public String index(@Path("appID") String appID,
                         @Query("pagination") int pagination,
                         @Query("capacity") int capacity,
+                        @Query("keyword") String keyword,
                         HttpServletRequest request) {
 
         pagination = pagination <= 0 ? 0 : pagination;
@@ -46,7 +47,7 @@ public class UserController {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", app);
 
-        Page<User> page = userServiceBean.getPagedApplicationUsers(appID, pagination, capacity);
+        Page<User> page = userServiceBean.getPagedApplicationUsers(appID, pagination, capacity, keyword);
         request.setAttribute("page", page);
 
         return "forward:/view/weixin/user/index.jsp";
@@ -59,15 +60,15 @@ public class UserController {
         if (application != null) {
             boolean success = applicationServiceBean.startPulling(appID);
             if (success) {
-                Executors.newFixedThreadPool(1).submit(new PullTask(application, tokenServiceBean, defaultSessionProvider, userServiceBean));
+                Executors.newFixedThreadPool(1).submit(new PullTask(application, applicationServiceBean, tokenServiceBean, userServiceBean, defaultSessionProvider));
+                return JsonResult.OK;
             } else {
                 return new JsonResult(false, "FAIL", "已启动");
             }
         } else {
             return new JsonResult(false, "FAIL", "appID 不存在");
         }
-
-        return new JsonResult(null);
     }
+
 
 }

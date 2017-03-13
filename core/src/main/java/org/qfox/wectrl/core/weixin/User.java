@@ -3,6 +3,7 @@ package org.qfox.wectrl.core.weixin;
 import org.qfox.wectrl.common.Gender;
 import org.qfox.wectrl.core.Domain;
 import org.qfox.wectrl.core.base.App;
+import org.qfox.wectrl.core.base.Env;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -29,6 +30,7 @@ public class User extends Domain {
     private String unionID;
     private String remark;
     private Integer groupID;
+    private Env environment;
 
     @Embedded
     @AttributeOverrides({
@@ -150,5 +152,19 @@ public class User extends Domain {
 
     public void setGroupID(Integer groupID) {
         this.groupID = groupID;
+    }
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "environment_id")),
+            @AttributeOverride(name = "envName", column = @Column(name = "environment_envName")),
+            @AttributeOverride(name = "envKey", column = @Column(name = "environment_envKey"))
+    })
+    public Env getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Env environment) {
+        this.environment = environment;
     }
 }

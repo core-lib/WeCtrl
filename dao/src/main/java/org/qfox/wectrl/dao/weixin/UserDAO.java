@@ -1,5 +1,6 @@
 package org.qfox.wectrl.dao.weixin;
 
+import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.dao.GenericDAO;
 
@@ -9,5 +10,7 @@ import org.qfox.wectrl.dao.GenericDAO;
 public interface UserDAO extends GenericDAO<User, Long> {
 
     int merge(User user);
+
+    Page<User> getPagedApplicationUsers(String appID, int pagination, int capacity, String keyword);
 
 }

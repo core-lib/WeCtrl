@@ -9,6 +9,8 @@ import org.qfox.wectrl.service.GenericService;
  */
 public interface UserService extends GenericService<User, Long> {
 
-    Page<User> getPagedApplicationUsers(String appID, int pagination, int capacity);
+    Page<User> getPagedApplicationUsers(String appID, int pagination, int capacity, String keyword);
+
+    User get(String appID, String openID, String... fetchs);
 
 }

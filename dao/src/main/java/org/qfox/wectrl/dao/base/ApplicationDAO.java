@@ -10,6 +10,8 @@ public interface ApplicationDAO extends GenericDAO<Application, Long> {
 
     boolean startPulling(String appID);
 
+    boolean endPulling(String appID);
+
     int updateToVerified(String appID);
 
 }

@@ -72,7 +72,7 @@
                             <th>openID</th>
                             <th>已关注</th>
                             <th>关注时间</th>
-                            <th>操作</th>
+                            <th>归属环境</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,9 +83,7 @@
                             <td>${user.openID}</td>
                             <td>${user.subscribed ? '是' : '否'}</td>
                             <td><fmt:formatDate value="${user.dateSubscribed}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                            <td>
-
-                            </td>
+                            <td>${user.environment.envName}</td>
                         </tr>
                     </c:forEach>
                     </tbody>
