@@ -63,15 +63,11 @@
                     <table class="table table-bordered table-hover table-striped tablesorter">
                         <thead>
                             <tr>
-                                <th>App ID</th>
-                                <th>应用名称</th>
                                 <th>Signature</th>
                                 <th>Timestamp</th>
                                 <th>Nonce</th>
                                 <th>Echostr</th>
                                 <th>Token</th>
-                                <th>加解密模式</th>
-                                <th>EncodingAESKey</th>
                                 <th>验证成功</th>
                                 <th>验证时间</th>
                             </tr>
@@ -79,15 +75,11 @@
                         <tbody>
                             <c:forEach items="${page.entities}" var="verfication">
                                 <tr>
-                                    <td>${verfication.application.appID}</td>
-                                    <td>${verfication.application.appName}</td>
                                     <td>${verfication.signature}</td>
                                     <td>${verfication.timestamp}</td>
                                     <td>${verfication.nonce}</td>
                                     <td>${verfication.echostr}</td>
                                     <td>${verfication.token}</td>
-                                    <td>${verfication.encoding.mode.name}</td>
-                                    <td>${verfication.encoding.password}</td>
                                     <td>${verfication.success ? '是' : '否'}</td>
                                     <th><fmt:formatDate value="${verification.dateCreated}" pattern="yyyy-MM-dd HH:mm:ss"/></th>
                                 </tr>
