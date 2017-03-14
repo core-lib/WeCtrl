@@ -10,4 +10,6 @@ public interface EnvironmentDAO extends GenericDAO<Environment, Long> {
 
     int updateToVerified(String appID, String envKey);
 
+    int updateToNormal(String appID);
+
 }

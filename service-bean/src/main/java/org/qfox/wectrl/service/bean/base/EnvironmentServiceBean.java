@@ -83,4 +83,13 @@ public class EnvironmentServiceBean extends GenericServiceBean<Environment, Long
     public int updateToVerified(String appID, String envKey) {
         return environmentDAO.updateToVerified(appID, envKey);
     }
+
+    @Transactional
+    @Override
+    public void save(Environment entity) {
+        if (entity.isAcquiescent()) {
+            environmentDAO.updateToNormal(entity.getApplication().getAppID());
+        }
+        environmentDAO.merge(entity);
+    }
 }

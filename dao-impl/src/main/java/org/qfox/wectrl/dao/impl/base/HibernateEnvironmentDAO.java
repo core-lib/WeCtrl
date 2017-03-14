@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class HibernateEnvironmentDAO extends HibernateGenericDAO<Environment, Long> implements EnvironmentDAO {
+
     @Override
     public int updateToVerified(String appID, String envKey) {
         StringBuilder sql = new StringBuilder();
@@ -29,4 +30,21 @@ public class HibernateEnvironmentDAO extends HibernateGenericDAO<Environment, Lo
 
         return query.executeUpdate();
     }
+
+    @Override
+    public int updateToNormal(String appID) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" UPDATE");
+        sql.append("    base_environment_tbl");
+        sql.append(" SET");
+        sql.append("    acquiescent = FALSE");
+        sql.append(" WHERE");
+        sql.append("    application_appID = :appID");
+
+        SQLQuery query = currentSession().createSQLQuery(sql.toString());
+        query.setParameter("appID", appID);
+
+        return query.executeUpdate();
+    }
+
 }
