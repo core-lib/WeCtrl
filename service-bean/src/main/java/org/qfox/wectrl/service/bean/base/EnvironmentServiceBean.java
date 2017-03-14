@@ -96,15 +96,17 @@ public class EnvironmentServiceBean extends GenericServiceBean<Environment, Long
 
     @Transactional
     @Override
-    public int update(String oldEnvKey, Environment environment) {
-        if (!oldEnvKey.equals(environment.getEnvKey())) {
-            environmentDAO.deleteByAppIDAndEnvKey(environment.getApplication().getAppID(), oldEnvKey);
-        }
+    public void update(Environment environment) {
         if (environment.isAcquiescent()) {
             environmentDAO.updateToNormal(environment.getApplication().getAppID());
         }
         // 如果唯一约束冲突证明并发了或者是没有修改envKey 那么更新回去就OK了
-        return environmentDAO.merge(environment, "envName", "domain", "pushURL", "acquiescent");
+        environmentDAO.merge(environment, "envName", "domain", "pushURL", "acquiescent");
     }
 
+    @Transactional
+    @Override
+    public int deleteByAppIDAndEnvKey(String appID, String envKey) {
+        return environmentDAO.deleteByAppIDAndEnvKey(appID, envKey);
+    }
 }

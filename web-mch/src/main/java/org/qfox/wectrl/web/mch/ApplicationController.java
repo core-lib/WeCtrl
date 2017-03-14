@@ -57,6 +57,9 @@ public class ApplicationController {
         if (StringUtils.isEmpty(appID)) {
             errors.add("App ID 不能为空");
         }
+        if ("new".equalsIgnoreCase(appID)) {
+            errors.add("App ID 不能为new");
+        }
         if (StringUtils.isEmpty(appSecret)) {
             errors.add("App Secret 不能为空");
         }
@@ -120,7 +123,7 @@ public class ApplicationController {
         return "forward:/view/base/application/edit.jsp";
     }
 
-    @PUT(value = "/{appID:(?!new)\\w+}", produces = "application/json")
+    @PUT(value = "/{appID:\\w+}", produces = "application/json")
     public JsonResult update(@Path("appID") String appID,
                              @Body("appSecret") String appSecret,
                              @Body("token") String token,
@@ -136,6 +139,9 @@ public class ApplicationController {
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(appSecret)) {
             errors.add("App Secret 不能为空");
+        }
+        if ("new".equalsIgnoreCase(appID)) {
+            errors.add("App ID 不能为new");
         }
         if (StringUtils.isEmpty(token)) {
             errors.add("Token 不能为空");
@@ -180,7 +186,7 @@ public class ApplicationController {
         return new JsonResult("/applications/" + appID + "/index");
     }
 
-    @DELETE("/{appID:(?!new)\\w+}")
+    @DELETE("/{appID:\\w+}")
     public JsonResult delete(@Path("appID") String appID) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         applicationServiceBean.delete(app);

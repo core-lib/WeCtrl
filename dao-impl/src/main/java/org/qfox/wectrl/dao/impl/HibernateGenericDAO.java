@@ -430,11 +430,32 @@ public abstract class HibernateGenericDAO<T extends Serializable, PK extends Ser
                     AttributeOverrides overrides = getter.getAnnotation(AttributeOverrides.class);
                     for (int i = 0; embed != null && i < overrides.value().length; i++) {
                         AttributeOverride override = overrides.value()[i];
-                        String propertyName = override.name();
                         Column column = override.column();
                         sql.append(", `").append(column.name()).append("`").append(" = ?");
-                        Object propertyValue = new PropertyDescriptor(propertyName, embed.getClass()).getReadMethod().invoke(embed);
-                        values.add(propertyValue);
+
+                        String embedName = override.name();
+                        PropertyDescriptor embedDescriptor = new PropertyDescriptor(embedName, embed.getClass());
+                        Method embedGetter = embedDescriptor.getReadMethod();
+                        Object embedValue = embedGetter.invoke(embed);
+
+                        if (embedGetter.getReturnType().isEnum()) {
+                            if (embedValue != null) {
+                                Enum<?> enumValue = (Enum<?>) embedValue;
+                                Enumerated enumerated = embedGetter.getAnnotation(Enumerated.class);
+                                switch (enumerated != null ? enumerated.value() : EnumType.ORDINAL) {
+                                    case ORDINAL:
+                                        values.add(enumValue.ordinal());
+                                        break;
+                                    case STRING:
+                                        values.add(enumValue.name());
+                                        break;
+                                }
+                            } else {
+                                values.add(embedValue);
+                            }
+                        } else {
+                            values.add(embedValue);
+                        }
                     }
                 } else if (getter.getReturnType().isAnnotationPresent(Entity.class)) {
                     Object foreign = getter.invoke(entity);

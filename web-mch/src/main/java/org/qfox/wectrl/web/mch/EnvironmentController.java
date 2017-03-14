@@ -127,24 +127,18 @@ public class EnvironmentController {
         return "forward:/view/base/environment/edit.jsp";
     }
 
-    @PUT(value = "/{oldEnvKey:\\w+}", produces = "application/json")
+    @PUT(value = "/{envKey:\\w+}", produces = "application/json")
     public JsonResult update(@Path("appID") String appID,
-                             @Path("oldEnvKey") String oldEnvKey,
+                             @Path("envKey") String envKey,
                              @Body("envName") String envName,
-                             @Body("envKey") String newEnvKey,
                              @Body("domain") String domain,
                              @Body("pushURL") String pushURL,
                              @Body("acquiescent") boolean acquiescent) throws UnsupportedEncodingException, AesException, MalformedURLException {
-        Environment env = environmentServiceBean.getApplicationEnvironment(appID, oldEnvKey);
-
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(envName)) {
             errors.add("环境名称不能为空");
         }
-        if (StringUtils.isEmpty(newEnvKey)) {
-            errors.add("环境Key不能为空");
-        }
-        if ("new".equalsIgnoreCase(newEnvKey)) {
+        if ("new".equalsIgnoreCase(envKey)) {
             errors.add("环境Key不能为new");
         }
         if (StringUtils.isEmpty(domain)) {
@@ -158,9 +152,6 @@ public class EnvironmentController {
         // TODO 有可能被指向到自己造成死递归!!!!!!!!!
         else if (!pushURL.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$")) {
             errors.add("消息推送URL格式不正确 请填写完整的网页地址 且不能包含'?' 和 '#'");
-        }
-        if (!env.getEnvKey().equals(newEnvKey) && environmentServiceBean.isApplicationEnvKeyExisted(appID, newEnvKey)) {
-            errors.add("环境Key已存在");
         }
         Application application = applicationServiceBean.getApplicationByAppID(appID);
         if (application == null) {
@@ -176,16 +167,17 @@ public class EnvironmentController {
             return verification;
         }
 
+        Environment env = new Environment();
         env.setEnvName(envName);
-        env.setEnvKey(newEnvKey);
+        env.setEnvKey(envKey);
         env.setDomain(domain);
         env.setPushURL(pushURL);
         env.setAcquiescent(acquiescent);
         env.setApplication(new App(application));
 
-        environmentServiceBean.merge(env);
+        environmentServiceBean.update(env);
 
-        return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
+        return new JsonResult("/applications/" + appID + "/environments/" + envKey);
     }
 
     private JsonResult verify(String pushURL, String token) {
@@ -211,8 +203,7 @@ public class EnvironmentController {
 
     @DELETE(value = "/{envKey:\\w+}", produces = "application/json")
     public JsonResult delete(@Path("appID") String appID, @Path("envKey") String envKey) {
-        Environment env = environmentServiceBean.getApplicationEnvironment(appID, envKey);
-        environmentServiceBean.delete(env);
+        environmentServiceBean.deleteByAppIDAndEnvKey(appID, envKey);
         return JsonResult.OK;
     }
 

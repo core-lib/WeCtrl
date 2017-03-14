@@ -64,7 +64,7 @@
                 <h3>基本配置</h3>
                 <div class="form-group">
                     <label>App ID</label>
-                    <input class="form-control" name="appID" value="${app.appID}">
+                    <input class="form-control" name="appID" value="${app.appID}" disabled="disabled">
                     <p class="help-block">公众号基本配置的AppID(应用ID)</p>
                 </div>
                 <div class="form-group">
@@ -152,7 +152,7 @@
                 </div>
                 <div class="form-group">
                     <label>原始 ID</label>
-                    <input class="form-control" name="originalID" value="${app.originalID}">
+                    <input class="form-control" name="originalID" value="${app.originalID}" readonly="readonly">
                     <p class="help-block">公众号账号详情的原始ID</p>
                 </div>
             </div>
