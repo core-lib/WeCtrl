@@ -207,4 +207,13 @@ public class EnvironmentController {
         return JsonResult.OK;
     }
 
+    @GET("/{envKey:\\w+}/acquiescence")
+    public JsonResult acquiescence(@Path("appID") String appID, @Path("envKey") String envKey) {
+        Environment env = environmentServiceBean.getApplicationEnvironment(appID, envKey);
+        if (env == null) {
+            new JsonResult(false, "Not Found", "应用环境不存在");
+        }
+        return new JsonResult(true, "OK", env.isAcquiescent());
+    }
+
 }

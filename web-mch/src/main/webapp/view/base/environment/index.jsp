@@ -66,7 +66,7 @@
             <div class="table-responsive">
                 <ul class="nav nav-tabs" style="margin-bottom: 15px;">
                     <c:forEach items="${page.entities}" var="env" varStatus="status">
-                        <li envKey="${env.envKey}" ${status.index == 0 ? 'class="active"' : ''}><a href="#${env.envKey}" data-toggle="tab">${env.envName}</a></li>
+                        <li envKey="${env.envKey}" ${status.index == 0 ? 'class="active"' : ''}><a href="#${env.envKey}" onclick="javascript: onEnvironmentTabShow('${app.appID}', '${env.envKey}');" data-toggle="tab">${env.envName}</a></li>
                     </c:forEach>
                     <li envKey="new" ${fn:length(page.entities) == 0 ? 'class="active"' : ''}><a href="#new" data-toggle="tab">新建环境</a></li>
                 </ul>

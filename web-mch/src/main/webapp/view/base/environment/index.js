@@ -1,3 +1,25 @@
+function onEnvironmentTabShow(appID, envKey) {
+    $.showLoading("请稍候...");
+    $.ajax({
+        url: "/applications/" + appID + "/environments/" + envKey + "/acquiescence",
+        type: "GET",
+        success: function (res) {
+            $.hideLoading();
+            var $acquiescents = $("#" + envKey).find("input[name='acquiescent']");
+            $acquiescents.each(function (index, element) {
+                if ((res.entity == true && $(this).val() == 'true') || (res.entity == false && $(this).val() == 'false')) {
+                    $(this).prop("checked", true);
+                } else {
+                    $(this).prop("checked", false);
+                }
+            });
+        },
+        error: function (res) {
+            $.hideLoading();
+        }
+    });
+}
+
 function onDeleteButtonTap(appID, envKey) {
     $.confirm("确定删除该应用环境?", "注意", function () {
         $.showLoading("正在删除...");
