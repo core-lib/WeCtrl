@@ -27,7 +27,7 @@ public class ApplicationController {
     @Resource
     private ApplicationService applicationServiceBean;
 
-    @GET("/{appID:\\w+}/index")
+    @GET("/index/{appID:\\w+}")
     public String index(@Path("appID") String appID, HttpServletRequest request) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", app);

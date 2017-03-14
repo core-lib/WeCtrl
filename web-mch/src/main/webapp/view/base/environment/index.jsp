@@ -57,7 +57,7 @@
                 <ol class="breadcrumb">
 
                     <li><a href="/"> 我的应用</a></li>
-                    <li><a href="/applications/${app.appID}/index"> ${app.appName}</a></li>
+                    <li><a href="/applications/index/${app.appID}"> ${app.appName}</a></li>
                     <li class="active"> 应用环境</li>
                 </ol>
             </div>

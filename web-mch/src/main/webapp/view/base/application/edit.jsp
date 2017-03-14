@@ -41,7 +41,7 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <c:set var="menu" value="application" scope="request"/>
+            <c:set var="menu" value="index" scope="request"/>
             <jsp:include page="/view/include/menu.jsp"/>
             <jsp:include page="/view/include/user.jsp"/>
         </div><!-- /.navbar-collapse -->
@@ -49,13 +49,13 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1>我的应用
+                <h1>${app.appName}
                     <small></small>
                 </h1>
                 <ol class="breadcrumb">
-
                     <li><a href="/"> 我的应用</a></li>
-                    <li class="active"> ${app.appName}</li>
+                    <li><a href="/applications/index/${app.appID}"> ${app.appName}</a></li>
+                    <li class="active"> 编辑</li>
                 </ol>
             </div>
         </div><!-- /.row -->

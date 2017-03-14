@@ -53,6 +53,7 @@
                     <ol class="breadcrumb">
                         <li><a href="/"> 我的应用</a></li>
                         <li class="active"> ${app.appName}</li>
+                        <li><a href="/applications/${app.appID}"> 编辑</a></li>
                     </ol>
                 </div>
             </div><!-- /.row -->
