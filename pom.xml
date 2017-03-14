@@ -236,6 +236,7 @@
                     <server>tomcat7</server>
                     <username>admin</username>
                     <password>admin</password>
+                    <uriEncoding>UTF-8</uriEncoding>
                     <path>/</path>
                 </configuration>
             </plugin>
