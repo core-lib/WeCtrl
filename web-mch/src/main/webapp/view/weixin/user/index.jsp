@@ -7,7 +7,7 @@
   Time: 上午11:52
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,6 +62,18 @@
                 </ol>
             </div>
         </div><!-- /.row -->
+        <div class="row">
+            <form role="form" action="/applications/${app.appID}/users" class="col-lg-12">
+                <input type="hidden" name="pagination" value="0"/>
+                <input type="hidden" name="capacity" value="20"/>
+                <div class="form-group input-group col-lg-3" style="float: right;">
+                    <input type="text" class="form-control" name="keyword" value="${param.keyword}" placeholder="关键字搜索">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </form>
+        </div>
         <div class="col-lg-12">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped tablesorter">

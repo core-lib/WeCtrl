@@ -7,7 +7,7 @@
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
         </descriptors>
         <webroots>
-          <root url="file://$MODULE_DIR$/src/main/resources/test" relative="WEB-INF/classes" />
+          <root url="file://$MODULE_DIR$/src/main/resources/product" relative="WEB-INF/classes" />
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
       </configuration>
@@ -22,6 +22,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-client:v1.1.5-release" level="project" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-server:v1.1.5-release" level="project" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-core:v1.1.5-release" level="project" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-commons:v1.1.5-release" level="project" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-spring:v1.1.5-release" level="project" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-json:v1.1.5-release" level="project" />
+    <orderEntry type="library" name="Maven: com.github.core-lib.jestful:jestful-xml:v1.1.5-release" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.jolbox:bonecp:0.8.0.RELEASE" level="project" />
