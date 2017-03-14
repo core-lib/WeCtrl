@@ -7,7 +7,11 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <ul class="nav navbar-nav side-nav">
-    <li${empty menu or menu eq 'dashboard' ? ' class="active"' : ''}><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li${menu eq 'application' ? ' class="active"' : ''}><a href="/applications"><i class="fa fa-table"></i> 我的应用</a></li>
-    <li${menu eq 'verification' ? ' class="active"' : ''}><a href="/verifications"><i class="fa fa-table"></i> 应用验证</a></li>
+    <li${empty menu or menu eq 'index' ? ' class="active"' : ''}><a href="/applications/${app.appID}/index"><i class="fa fa-dashboard"></i> ${app.appName}</a></li>
+    <li${menu eq 'user' ? ' class="active"' : ''}><a href="/applications/${app.appID}/users"><i class="fa fa-table"></i> 用户</a></li>
+    <li${menu eq 'message' ? ' class="active"' : ''}><a href="/applications/${app.appID}/messages"><i class="fa fa-table"></i> 消息</a></li>
+    <li${menu eq 'token' ? ' class="active"' : ''}><a href="/applications/${app.appID}/tokens"><i class="fa fa-table"></i> Access Token</a></li>
+    <li${menu eq 'ticket' ? ' class="active"' : ''}><a href="/applications/${app.appID}/tickets"><i class="fa fa-table"></i> 票据</a></li>
+    <li${menu eq 'environment' ? ' class="active"' : ''}><a href="/applications/${app.appID}/environments"><i class="fa fa-table"></i> 环境</a></li>
+    <li${menu eq 'verification' ? ' class="active"' : ''}><a href="/applications/${app.appID}/verifications"><i class="fa fa-table"></i> 验证</a></li>
 </ul>

@@ -2,6 +2,7 @@ package org.qfox.wectrl.service.bean.base;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -13,6 +14,7 @@ import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.bean.GenericServiceBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,12 +34,15 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
     }
 
     @Override
-    public Page<Application> getPagedMerchantApplications(Long merchantId, int pagination, int capacity) {
+    public Page<Application> getPagedMerchantApplications(Long merchantId, int pagination, int capacity, String keyword, String... fetchs) {
         Page<Application> page = new Page<>(pagination, capacity);
 
         Criteria criteria = applicationDAO.createCriteria();
         criteria.add(Restrictions.eq("merchant.id", merchantId));
         criteria.add(Restrictions.eq("deleted", false));
+        if (!StringUtils.isEmpty(keyword)) {
+            criteria.add(Restrictions.like("appName", keyword, MatchMode.ANYWHERE));
+        }
         criteria.setProjection(Projections.countDistinct("id"));
         Object total = criteria.uniqueResult();
         page.setTotal(total == null ? 0 : Integer.valueOf(total.toString()));
@@ -48,6 +53,9 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
             criteria.addOrder(Order.desc("id"));
             criteria.setMaxResults(capacity);
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            for (String fetch : fetchs) {
+                criteria.setFetchMode(fetch, FetchMode.JOIN);
+            }
             List<Application> applications = criteria.list();
             page.setEntities(applications);
         }

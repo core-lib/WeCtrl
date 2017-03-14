@@ -10,6 +10,6 @@ import org.qfox.wectrl.service.GenericService;
  */
 public interface VerificationService extends GenericService<Verification, Long> {
 
-    Page<Verification> getPagedMerchantVerifications(Long merchantId, int pagination, int capacity);
+    Page<Verification> getPagedApplicationVerifications(String appID, int pagination, int capacity);
 
 }

@@ -43,7 +43,7 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <c:set var="menu" value="application" scope="request"/>
+            <c:set var="menu" value="environment" scope="request"/>
             <jsp:include page="/view/include/menu.jsp"/>
             <jsp:include page="/view/include/user.jsp"/>
         </div><!-- /.navbar-collapse -->
@@ -55,11 +55,10 @@
                     <small></small>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="/"> Dashboard</a></li>
-                    <li><a href="/applications"> 我的应用</a></li>
-                    <li><a href="/applications/${app.appID}"> ${app.appName}</a></li>
+
+                    <li><a href="/"> 我的应用</a></li>
+                    <li><a href="/applications/${app.appID}/index"> ${app.appName}</a></li>
                     <li class="active"> 应用环境</li>
-                    <%--<li><a href="/applications/${app.appID}/environments/new"> 添加环境</a></li>--%>
                 </ol>
             </div>
         </div><!-- /.row -->

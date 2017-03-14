@@ -52,7 +52,8 @@
                 <div class="col-lg-12">
                     <h1>应用验证 <small></small></h1>
                     <ol class="breadcrumb">
-                        <li><a href="/"> Dashboard</a></li>
+                        <li><a href="/"> 我的应用</a></li>
+                        <li><a href="/applications/${app.appID}/index"> ${app.appName}</a></li>
                         <li class="active"> 应用验证</li>
                     </ol>
                 </div>

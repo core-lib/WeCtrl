@@ -9,7 +9,7 @@ import org.qfox.wectrl.service.GenericService;
  */
 public interface ApplicationService extends GenericService<Application, Long> {
 
-    Page<Application> getPagedMerchantApplications(Long merchantId, int pagination, int capacity);
+    Page<Application> getPagedMerchantApplications(Long merchantId, int pagination, int capacity, String keyword, String... fetchs);
 
     boolean isAppIDExisted(String appID);
 

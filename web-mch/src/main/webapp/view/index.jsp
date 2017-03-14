@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: yangchangpei
@@ -37,7 +38,6 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <jsp:include page="/view/include/menu.jsp"/>
                 <jsp:include page="/view/include/user.jsp"/>
             </div><!-- /.navbar-collapse -->
         </nav>
@@ -51,116 +51,55 @@
                 </div>
             </div><!-- /.row -->
             <div class="row">
-                <div class="col-lg-12"><h3>我的应用</h3></div>
-                <div class="col-lg-3">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-6">
-                                    <i class="fa fa-comments fa-5x"></i>
-                                </div>
-                                <div class="col-xs-6 text-right">
-                                    <p class="announcement-heading">456</p>
-                                    <p class="announcement-text">New Mentions!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <div class="panel-footer announcement-bottom">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        View Mentions
-                                    </div>
-                                    <div class="col-xs-6 text-right">
-                                        <i class="fa fa-arrow-circle-right"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                <form role="form" action="/" class="col-lg-3" style="float: right;">
+                    <input type="hidden" name="pagination" value="0"/>
+                    <input type="hidden" name="capacity" value="20"/>
+                    <div class="form-group input-group">
+                        <input type="text" class="form-control" name="keyword" value="${param.keyword}" placeholder="关键字搜索">
+                            <span class="input-group-btn">
+                          <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                        </span>
                     </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-6">
-                                    <i class="fa fa-check fa-5x"></i>
-                                </div>
-                                <div class="col-xs-6 text-right">
-                                    <p class="announcement-heading">12</p>
-                                    <p class="announcement-text">To-Do Items</p>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <div class="panel-footer announcement-bottom">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        Complete Tasks
-                                    </div>
-                                    <div class="col-xs-6 text-right">
-                                        <i class="fa fa-arrow-circle-right"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="panel panel-danger">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-6">
-                                    <i class="fa fa-tasks fa-5x"></i>
-                                </div>
-                                <div class="col-xs-6 text-right">
-                                    <p class="announcement-heading">18</p>
-                                    <p class="announcement-text">Crawl Errors</p>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <div class="panel-footer announcement-bottom">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        Fix Issues
-                                    </div>
-                                    <div class="col-xs-6 text-right">
-                                        <i class="fa fa-arrow-circle-right"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-6">
-                                    <i class="fa fa-comments fa-5x"></i>
-                                </div>
-                                <div class="col-xs-6 text-right">
-                                    <p class="announcement-heading">56</p>
-                                    <p class="announcement-text">New Orders!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#">
-                            <div class="panel-footer announcement-bottom">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        Complete Orders
-                                    </div>
-                                    <div class="col-xs-6 text-right">
-                                        <i class="fa fa-arrow-circle-right"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                </form>
             </div>
+            <div class="row">
+                <div class="col-lg-12"><h3>我的应用</h3></div>
+                <c:forEach items="${page.entities}" var="app">
+                    <div class="col-lg-4">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-2">
+                                        <i class="fa fa-comments fa-5x"></i>
+                                        <p class="announcement-heading"></p>
+                                    </div>
+                                    <div class="col-xs-10 text-right">
+                                        <p class="announcement-heading">${app.appName}</p>
+                                        <p class="announcement-text">${app.type.name}</p>
+                                        <p class="announcement-text">${app.appID}</p>
+                                        <p class="announcement-text">${app.verified ? '已验证' : '未验证'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/applications/${app.appID}/index">
+                                <div class="panel-footer announcement-bottom">
+                                    <div class="row">
+                                        <div class="col-xs-8">
+                                            应用详情
+                                        </div>
+                                        <div class="col-xs-4 text-right">
+                                            <i class="fa fa-arrow-circle-right"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+            <c:if test="${page.total > page.capacity}">
+                <div style="float: right;"><jsp:include page="/view/include/page-control.jsp" /></div>
+            </c:if>
         </div><!-- /#page-wrapper -->
     </div><!-- /#wrapper -->
     <!-- JavaScript -->

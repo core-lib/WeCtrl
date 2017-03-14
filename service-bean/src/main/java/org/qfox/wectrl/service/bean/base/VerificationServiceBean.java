@@ -30,11 +30,11 @@ public class VerificationServiceBean extends GenericServiceBean<Verification, Lo
     }
 
     @Override
-    public Page<Verification> getPagedMerchantVerifications(Long merchantId, int pagination, int capacity) {
+    public Page<Verification> getPagedApplicationVerifications(String appID, int pagination, int capacity) {
         Page<Verification> page = new Page<>(pagination, capacity);
 
         Criteria criteria = verificationDAO.createCriteria();
-        criteria.add(Restrictions.eq("merchant.id", merchantId));
+        criteria.add(Restrictions.eq("application.appID", appID));
         criteria.add(Restrictions.eq("deleted", false));
         criteria.setProjection(Projections.countDistinct("id"));
         Object total = criteria.uniqueResult();

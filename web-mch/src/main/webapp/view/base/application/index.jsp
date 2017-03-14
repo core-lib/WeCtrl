@@ -41,7 +41,7 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <c:set var="menu" value="application" scope="request"/>
+                <c:set var="menu" value="index" scope="request"/>
                 <jsp:include page="/view/include/menu.jsp"/>
                 <jsp:include page="/view/include/user.jsp"/>
             </div><!-- /.navbar-collapse -->
@@ -49,53 +49,15 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>我的应用 <small></small></h1>
+                    <h1>${app.appName} <small></small></h1>
                     <ol class="breadcrumb">
-                        <li><a href="/"> Dashboard</a></li>
-                        <li class="active"> 我的应用</li>
-                        <li><a href="/applications/new">添加应用</a></li>
+                        <li><a href="/"> 我的应用</a></li>
+                        <li class="active"> ${app.appName}</li>
                     </ol>
                 </div>
             </div><!-- /.row -->
             <div class="col-lg-12">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped tablesorter">
-                        <thead>
-                            <tr>
-                                <th>App ID</th>
-                                <th>应用名称</th>
-                                <th>类型</th>
-                                <th>消息加解密方式</th>
-                                <th>已验证</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${page.entities}" var="application">
-                                <tr id="application-tr-${application.appID}">
-                                    <td><a href="/applications/${application.appID}">${application.appID}</a></td>
-                                    <td>${application.appName}</td>
-                                    <td>${application.type.name}</td>
-                                    <td>${application.encoding.mode.name}</td>
-                                    <td>${application.verified ? '是' : '否'}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-danger" onclick="javascript: onDeleteButtonTap('${application.appID}');">删除</button>
-                                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="/applications/${application.appID}/environments">应用环境</a></li>
-                                                <li><a href="/applications/${application.appID}/tokens">Access Token</a></li>
-                                                <li><a href="/applications/${application.appID}/tickets">应用票据</a></li>
-                                                <li><a href="/applications/${application.appID}/users">用户</a></li>
-                                                <li><a href="/applications/${application.appID}/messages">消息</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
+
             </div>
         </div><!-- /.row -->
     </div><!-- /#page-wrapper -->

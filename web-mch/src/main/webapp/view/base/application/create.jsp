@@ -53,8 +53,8 @@
                     <small></small>
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="/"> Dashboard</a></li>
-                    <li><a href="/applications"> 我的应用</a></li>
+
+                    <li><a href="/"> 我的应用</a></li>
                     <li class="active"> 添加应用</li>
                 </ol>
             </div>
