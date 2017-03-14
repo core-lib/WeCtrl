@@ -73,14 +73,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach items="${page.entities}" var="verfication">
+                            <c:forEach items="${page.entities}" var="verification">
                                 <tr>
-                                    <td>${verfication.signature}</td>
-                                    <td>${verfication.timestamp}</td>
-                                    <td>${verfication.nonce}</td>
-                                    <td>${verfication.echostr}</td>
-                                    <td>${verfication.token}</td>
-                                    <td>${verfication.success ? '是' : '否'}</td>
+                                    <td>${verification.signature}</td>
+                                    <td>${verification.timestamp}</td>
+                                    <td>${verification.nonce}</td>
+                                    <td>${verification.echostr}</td>
+                                    <td>${verification.token}</td>
+                                    <td>${verification.success ? '是' : '否'}</td>
                                     <th><fmt:formatDate value="${verification.dateCreated}" pattern="yyyy-MM-dd HH:mm:ss"/></th>
                                 </tr>
                             </c:forEach>
