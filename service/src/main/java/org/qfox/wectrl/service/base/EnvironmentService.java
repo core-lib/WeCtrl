@@ -17,4 +17,6 @@ public interface EnvironmentService extends GenericService<Environment, Long> {
 
     int updateToVerified(String appID, String envKey);
 
+    int update(String oldEnvKey, Environment environment);
+
 }

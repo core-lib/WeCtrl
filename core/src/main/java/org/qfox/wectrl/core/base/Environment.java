@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by yangchangpei on 17/3/4.
  */
 @Entity
-@Table(name = "base_environment_tbl")
+@Table(name = "base_environment_tbl", uniqueConstraints = @UniqueConstraint(columnNames = {"application_appID", "envKey"}))
 public class Environment extends Domain {
     private static final long serialVersionUID = -6989709709063798340L;
 
@@ -31,7 +31,7 @@ public class Environment extends Domain {
         this.envName = envName;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 36, updatable = false)
     public String getEnvKey() {
         return envKey;
     }
@@ -43,7 +43,7 @@ public class Environment extends Domain {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "id", column = @Column(name = "application_id")),
-            @AttributeOverride(name = "appID", column = @Column(name = "application_appID")),
+            @AttributeOverride(name = "appID", column = @Column(name = "application_appID", length = 36)),
             @AttributeOverride(name = "appName", column = @Column(name = "application_appName"))
     })
     public App getApplication() {

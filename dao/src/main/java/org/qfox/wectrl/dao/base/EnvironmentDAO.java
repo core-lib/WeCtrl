@@ -12,4 +12,6 @@ public interface EnvironmentDAO extends GenericDAO<Environment, Long> {
 
     int updateToNormal(String appID);
 
+    int deleteByAppIDAndEnvKey(String appID, String envKey);
+
 }

@@ -86,10 +86,25 @@ public class EnvironmentServiceBean extends GenericServiceBean<Environment, Long
 
     @Transactional
     @Override
-    public void save(Environment entity) {
-        if (entity.isAcquiescent()) {
-            environmentDAO.updateToNormal(entity.getApplication().getAppID());
+    public void save(Environment environment) {
+        if (environment.isAcquiescent()) {
+            environmentDAO.updateToNormal(environment.getApplication().getAppID());
         }
-        environmentDAO.merge(entity, "envName", "domain", "pushURL", "acquiescent");
+        // 如果唯一约束冲突证明并发了 那么更新回去就OK了
+        environmentDAO.merge(environment, "envName", "domain", "pushURL", "acquiescent");
     }
+
+    @Transactional
+    @Override
+    public int update(String oldEnvKey, Environment environment) {
+        if (!oldEnvKey.equals(environment.getEnvKey())) {
+            environmentDAO.deleteByAppIDAndEnvKey(environment.getApplication().getAppID(), oldEnvKey);
+        }
+        if (environment.isAcquiescent()) {
+            environmentDAO.updateToNormal(environment.getApplication().getAppID());
+        }
+        // 如果唯一约束冲突证明并发了或者是没有修改envKey 那么更新回去就OK了
+        return environmentDAO.merge(environment, "envName", "domain", "pushURL", "acquiescent");
+    }
+
 }

@@ -83,7 +83,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>环境 Key</label>
-                                    <input class="form-control" name="envKey" value="${env.envKey}">
+                                    <input class="form-control" name="envKey" value="${env.envKey}" disabled="disabled">
                                 </div>
                                 <div class="form-group">
                                     <label>网页授权域名</label>

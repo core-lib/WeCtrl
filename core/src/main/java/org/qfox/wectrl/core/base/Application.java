@@ -32,7 +32,7 @@ public class Application extends Domain {
 
     private boolean pulling; // 正在同步用户
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 36, updatable = false)
     public String getAppID() {
         return appID;
     }
@@ -113,7 +113,7 @@ public class Application extends Domain {
         this.type = type;
     }
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 36, updatable = false)
     public String getOriginalID() {
         return originalID;
     }

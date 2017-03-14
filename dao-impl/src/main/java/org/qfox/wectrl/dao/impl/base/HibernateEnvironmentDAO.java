@@ -47,4 +47,13 @@ public class HibernateEnvironmentDAO extends HibernateGenericDAO<Environment, Lo
         return query.executeUpdate();
     }
 
+    @Override
+    public int deleteByAppIDAndEnvKey(String appID, String envKey) {
+        String sql = "DELETE FROM base_environment_tbl WHERE application_appID = :appID AND envKey = :envKey";
+        SQLQuery query = currentSession().createSQLQuery(sql);
+        query.setParameter("appID", appID);
+        query.setParameter("envKey", envKey);
+        return query.executeUpdate();
+    }
+
 }

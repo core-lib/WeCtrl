@@ -107,7 +107,7 @@ public class ApplicationController {
 
         Mch mch = new Mch(merchant);
         app.setMerchant(mch);
-        applicationServiceBean.save(app);
+        applicationServiceBean.merge(app);
 
         return new JsonResult("/applications/" + appID + "/index");
     }
@@ -120,9 +120,8 @@ public class ApplicationController {
         return "forward:/view/base/application/edit.jsp";
     }
 
-    @PUT(value = "/{oldAppID:(?!new)\\w+}", produces = "application/json")
-    public JsonResult update(@Path("oldAppID") String oldAppID,
-                             @Body("appID") String newAppID,
+    @PUT(value = "/{appID:(?!new)\\w+}", produces = "application/json")
+    public JsonResult update(@Path("appID") String appID,
                              @Body("appSecret") String appSecret,
                              @Body("token") String token,
                              @Body("mode") EncodingMode mode,
@@ -134,12 +133,7 @@ public class ApplicationController {
                              @Body("type") ApplicationType type,
                              @Body("originalID") String originalID) {
 
-        Application app = applicationServiceBean.getApplicationByAppID(oldAppID);
-
         List<String> errors = new ArrayList<>();
-        if (StringUtils.isEmpty(newAppID)) {
-            errors.add("App ID 不能为空");
-        }
         if (StringUtils.isEmpty(appSecret)) {
             errors.add("App Secret 不能为空");
         }
@@ -159,20 +153,14 @@ public class ApplicationController {
             errors.add("原始ID 不能为空");
         }
 
-        if (!app.getAppID().equals(newAppID) && applicationServiceBean.isAppIDExisted(newAppID)) {
-            errors.add("App ID 已存在");
-        }
-        if (!app.getOriginalID().equals(originalID) && applicationServiceBean.isOriginalIDExisted(originalID)) {
-            errors.add("原始ID已存在");
-        }
-
         if (!errors.isEmpty()) {
             return new JsonResult(false, "FAIL", errors);
         }
 
-        app.setAppID(newAppID);
+        Application app = new Application();
+        app.setAppID(appID);
         app.setAppSecret(appSecret);
-        app.setPushURL("https://" + newAppID + ".wectrl.com/message");
+        app.setPushURL("https://" + appID + ".wectrl.com/message");
         app.setToken(token);
 
         Encoding encoding = new Encoding();
@@ -187,9 +175,9 @@ public class ApplicationController {
         app.setType(type);
         app.setOriginalID(originalID);
 
-        applicationServiceBean.update(app);
+        applicationServiceBean.merge(app, "appSecret", "pushURL", "token", "encoding", "portraitURL", "QRCodeURL", "appName", "appNumber", "type");
 
-        return new JsonResult("/applications/" + newAppID + "/index");
+        return new JsonResult("/applications/" + appID + "/index");
     }
 
     @DELETE("/{appID:(?!new)\\w+}")

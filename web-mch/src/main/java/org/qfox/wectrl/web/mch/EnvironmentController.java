@@ -183,7 +183,7 @@ public class EnvironmentController {
         env.setAcquiescent(acquiescent);
         env.setApplication(new App(application));
 
-        environmentServiceBean.update(env);
+        environmentServiceBean.merge(env);
 
         return new JsonResult("/applications/" + appID + "/environments/" + newEnvKey);
     }
