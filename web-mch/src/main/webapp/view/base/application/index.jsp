@@ -106,29 +106,4 @@
     <script src="/jq-weui/js/jquery-weui.js"></script>
     <script src="/mustache/mustache.js"></script>
 </body>
-<script>
-    function onDeleteButtonTap(appID) {
-        $.confirm("确定删除该应用?", "注意", function () {
-            $.showLoading("正在删除...");
-            $.ajax({
-                type: "DELETE",
-                url: "/applications/" + appID,
-                success: function (res) {
-                    $.hideLoading();
-                    if (res.success) {
-                        $("#application-tr-" + appID).remove();
-                    } else {
-                        $.alert(res.message ? res.message : "删除失败", "注意");
-                    }
-                },
-                error: function (res) {
-                    $.hideLoading();
-                    $.alert("删除失败", "注意");
-                }
-            });
-        }, function () {
-
-        });
-    }
-</script>
 </html>

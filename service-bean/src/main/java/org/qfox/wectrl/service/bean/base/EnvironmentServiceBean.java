@@ -90,6 +90,6 @@ public class EnvironmentServiceBean extends GenericServiceBean<Environment, Long
         if (entity.isAcquiescent()) {
             environmentDAO.updateToNormal(entity.getApplication().getAppID());
         }
-        environmentDAO.merge(entity);
+        environmentDAO.merge(entity, "envName", "domain", "pushURL", "acquiescent");
     }
 }

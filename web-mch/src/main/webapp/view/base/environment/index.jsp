@@ -75,7 +75,7 @@
                 <c:forEach items="${page.entities}" var="env" varStatus="status">
                     <div envKey="${env.envKey}" class="tab-pane fade ${status.index == 0 ? 'active in' : ''}" id="${env.envKey}">
                         <form role="form" action="/applications/${app.appID}/environments/${env.envKey}" method="PUT" onsubmit="javascript: return onPutButtonTap(this);">
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <h3>基本配置</h3>
                                 <div class="form-group">
                                     <label>环境名称</label>
@@ -109,10 +109,7 @@
                                 <div class="form-group">
                                 </div>
                             </div>
-                            <div class="col-lg-1"></div>
-                            <div class="col-lg-4">
-
-                            </div>
+                            <div class="col-lg-3"></div>
                             <div class="col-lg-3 error-container">
                             </div>
                         </form>

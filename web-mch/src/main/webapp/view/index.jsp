@@ -26,6 +26,9 @@
     <link rel="stylesheet" href="/res/font-awesome/css/font-awesome.min.css">
     <!-- Page Specific CSS -->
     <link rel="stylesheet" href="/res/css/morris-0.4.3.min.css">
+
+    <link rel="stylesheet" href="/jq-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="/jq-weui/css/jquery-weui.css">
 </head>
 
 <body>
@@ -65,7 +68,7 @@
             <div class="row">
                 <div class="col-lg-12"><h3>我的应用</h3></div>
                 <c:forEach items="${page.entities}" var="app">
-                    <div class="col-lg-4">
+                    <div id="application-panel-${app.appID}" class="col-lg-4">
                         <div class="panel panel-success">
                             <div class="panel-heading">
                                 <div class="row">
@@ -74,10 +77,11 @@
                                         <p class="announcement-heading"></p>
                                     </div>
                                     <div class="col-xs-10 text-right">
-                                        <p class="announcement-heading">${app.appName}</p>
+                                        <h3>${app.appName}</h3>
                                         <p class="announcement-text">${app.type.name}</p>
                                         <p class="announcement-text">${app.appID}</p>
                                         <p class="announcement-text">${app.verified ? '已验证' : '未验证'}</p>
+                                        <p class="announcement-text"><a href="javascript: onDeleteButtonTap('${app.appID}');">删除</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -105,7 +109,8 @@
                                     <p class="announcement-heading"></p>
                                 </div>
                                 <div class="col-xs-10 text-right">
-                                    <p class="announcement-heading">+新应用</p>
+                                    <h3>+新应用</h3>
+                                    <p class="announcement-text">&nbsp;</p>
                                     <p class="announcement-text">&nbsp;</p>
                                     <p class="announcement-text">&nbsp;</p>
                                     <p class="announcement-text">&nbsp;</p>
@@ -141,5 +146,34 @@
     <script src="/res/js/morris/chart-data-morris.js"></script>
     <script src="/res/js/tablesorter/jquery.tablesorter.js"></script>
     <script src="/res/js/tablesorter/tables.js"></script>
+    <script src="/jq-weui/lib/jquery-2.1.4.js"></script>
+    <script src="/jq-weui/lib/fastclick.js"></script>
+    <script src="/jq-weui/js/jquery-weui.js"></script>
+    <script src="/mustache/mustache.js"></script>
 </body>
+<script>
+    function onDeleteButtonTap(appID) {
+        $.confirm("确定删除该应用?", "注意", function () {
+            $.showLoading("正在删除...");
+            $.ajax({
+                type: "DELETE",
+                url: "/applications/" + appID,
+                success: function (res) {
+                    $.hideLoading();
+                    if (res.success) {
+                        $("#application-panel-" + appID).remove();
+                    } else {
+                        $.alert(res.message ? res.message : "删除失败", "注意");
+                    }
+                },
+                error: function (res) {
+                    $.hideLoading();
+                    $.alert("删除失败", "注意");
+                }
+            });
+        }, function () {
+
+        });
+    }
+</script>
 </html>
