@@ -96,6 +96,36 @@
                         </div>
                     </div>
                 </c:forEach>
+                <div class="col-lg-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <i class="fa fa-comments fa-5x"></i>
+                                    <p class="announcement-heading"></p>
+                                </div>
+                                <div class="col-xs-10 text-right">
+                                    <p class="announcement-heading">+新应用</p>
+                                    <p class="announcement-text">&nbsp;</p>
+                                    <p class="announcement-text">&nbsp;</p>
+                                    <p class="announcement-text">&nbsp;</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/applications/new">
+                            <div class="panel-footer announcement-bottom">
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        添加应用
+                                    </div>
+                                    <div class="col-xs-4 text-right">
+                                        <i class="fa fa-arrow-circle-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
             <c:if test="${page.total > page.capacity}">
                 <div style="float: right;"><jsp:include page="/view/include/page-control.jsp" /></div>

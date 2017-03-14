@@ -41,15 +41,13 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <c:set var="menu" value="application" scope="request"/>
-            <jsp:include page="/view/include/menu.jsp"/>
             <jsp:include page="/view/include/user.jsp"/>
         </div><!-- /.navbar-collapse -->
     </nav>
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1>我的应用
+                <h1>+新应用
                     <small></small>
                 </h1>
                 <ol class="breadcrumb">
