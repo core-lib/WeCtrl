@@ -88,6 +88,7 @@
                     </table>
                 </div>
             </div>
+            <div style="float: right;"><jsp:include page="/view/include/page-control.jsp" /></div>
         </div><!-- /.row -->
     </div><!-- /#page-wrapper -->
     </div><!-- /#wrapper -->
