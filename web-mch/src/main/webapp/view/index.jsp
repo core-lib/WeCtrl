@@ -81,7 +81,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="/applications/index/${app.appID}">
+                            <a href="/applications/${app.appID}/index">
                                 <div class="panel-footer announcement-bottom">
                                     <div class="row">
                                         <div class="col-xs-8">

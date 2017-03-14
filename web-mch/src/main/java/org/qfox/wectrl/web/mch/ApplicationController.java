@@ -27,7 +27,7 @@ public class ApplicationController {
     @Resource
     private ApplicationService applicationServiceBean;
 
-    @GET("/index/{appID:\\w+}")
+    @GET("/{appID:\\w+}/index")
     public String index(@Path("appID") String appID, HttpServletRequest request) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         request.setAttribute("app", app);
@@ -109,7 +109,7 @@ public class ApplicationController {
         app.setMerchant(mch);
         applicationServiceBean.save(app);
 
-        return new JsonResult("/applications");
+        return new JsonResult("/applications/" + appID + "/index");
     }
 
     @GET("/{appID:(?!new)\\w+}")
@@ -189,7 +189,7 @@ public class ApplicationController {
 
         applicationServiceBean.update(app);
 
-        return new JsonResult("/applications");
+        return new JsonResult("/applications/" + newAppID + "/index");
     }
 
     @DELETE("/{appID:(?!new)\\w+}")
