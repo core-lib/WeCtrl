@@ -8,7 +8,6 @@ import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.EnvironmentService;
 import org.qfox.wectrl.service.transaction.SessionProvider;
-import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.UserService;
 import org.qfox.wectrl.service.weixin.pulling.PullTask;
 import org.springframework.stereotype.Controller;
@@ -27,9 +26,6 @@ public class UserController {
 
     @Resource
     private ApplicationService applicationServiceBean;
-
-    @Resource
-    private TokenService tokenServiceBean;
 
     @Resource
     private SessionProvider defaultSessionProvider;
@@ -69,7 +65,7 @@ public class UserController {
         if (application != null) {
             boolean success = applicationServiceBean.startPulling(appID);
             if (success) {
-                Executors.newFixedThreadPool(1).submit(new PullTask(application, applicationServiceBean, tokenServiceBean, userServiceBean, defaultSessionProvider));
+                Executors.newFixedThreadPool(1).submit(new PullTask(application, applicationServiceBean, userServiceBean, defaultSessionProvider));
                 return JsonResult.OK;
             } else {
                 return new JsonResult(false, "FAIL", "已启动");

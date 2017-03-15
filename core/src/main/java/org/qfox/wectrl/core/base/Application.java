@@ -176,6 +176,7 @@ public class Application extends Domain {
         this.pulling = pulling;
     }
 
+    @Column(nullable = false, length = 36)
     public String getSecret() {
         return secret;
     }

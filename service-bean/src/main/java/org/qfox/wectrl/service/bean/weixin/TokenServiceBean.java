@@ -4,6 +4,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.qfox.jestful.client.Message;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.common.weixin.WhyInvalid;
 import org.qfox.wectrl.core.base.App;
@@ -70,7 +71,16 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                     }
                     Application application = applicationServiceBean.getApplicationByAppID(appID);
                     String appSecret = application.getAppSecret();
-                    TokenApiResult result = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
+                    Message<TokenApiResult> message = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
+                    TokenApiResult result = null;
+                    if (message != null && message.isSuccess()) {
+                        result = message.getEntity();
+                    } else {
+                        result = new TokenApiResult();
+                        result.setErrcode(500);
+                        result.setErrmsg("未知错误");
+                    }
+
                     if (result.isSuccess()) {
                         token = new Token();
                         token.setApplication(new App(application));
@@ -95,7 +105,15 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         synchronized (appID.intern()) {
             Application application = applicationServiceBean.getApplicationByAppID(appID);
             String appSecret = application.getAppSecret();
-            TokenApiResult result = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
+            Message<TokenApiResult> message = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
+            TokenApiResult result = null;
+            if (message != null && message.isSuccess()) {
+                result = message.getEntity();
+            } else {
+                result = new TokenApiResult();
+                result.setErrcode(500);
+                result.setErrmsg("未知错误");
+            }
             if (result.isSuccess()) {
                 Criteria criteria = tokenDAO.createCriteria();
                 criteria.add(Restrictions.eq("application.appID", appID));
@@ -147,4 +165,13 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
 
         return page;
     }
+
+    @Override
+    public Token getTokenByValue(String value) {
+        Criteria criteria = tokenDAO.createCriteria();
+        criteria.add(Restrictions.eq("value", value));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return (Token) criteria.uniqueResult();
+    }
+
 }

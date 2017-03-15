@@ -1,5 +1,6 @@
 package org.qfox.wectrl.web.mch;
 
+import org.qfox.jestful.client.Message;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.core.base.Application;
@@ -7,6 +8,8 @@ import org.qfox.wectrl.core.weixin.Token;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
+import org.qfox.wectrl.service.weixin.cgi_bin.TokenType;
+import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -44,8 +47,12 @@ public class TokenController {
 
     @POST("/")
     public JsonResult refresh(@Path("appID") String appID) {
-        TokenApiResult result = tokenServiceBean.newApplicationAccessToken(appID);
-        return new JsonResult(result);
+        Application app = applicationServiceBean.getApplicationByAppID(appID);
+        Message<TokenApiResult> message = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, app.getAppID(), app.getSecret());
+        if (message == null || !message.isSuccess()) {
+            return JsonResult.FAIL;
+        }
+        return new JsonResult(message.getEntity());
     }
 
 }

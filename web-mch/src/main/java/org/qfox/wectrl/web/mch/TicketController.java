@@ -1,5 +1,6 @@
 package org.qfox.wectrl.web.mch;
 
+import org.qfox.jestful.client.Message;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.common.weixin.TicketType;
@@ -7,6 +8,10 @@ import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.Ticket;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.weixin.TicketService;
+import org.qfox.wectrl.service.weixin.cgi_bin.TicketApiResult;
+import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
+import org.qfox.wectrl.service.weixin.cgi_bin.TokenType;
+import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -49,11 +54,25 @@ public class TicketController {
         if (type == null) {
             return new JsonResult(false, "type is required", null);
         }
+        Application app = applicationServiceBean.getApplicationByAppID(appID);
+        Message<TokenApiResult> token = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, app.getAppID(), app.getSecret());
+        if (token == null || !token.isSuccess()) {
+            return JsonResult.FAIL;
+        }
+        String accessToken = token.getEntity().getAccess_token();
         switch (type) {
             case JSAPI:
-                return new JsonResult(ticketServiceBean.newApplicationJSAPITicket(appID));
+                Message<TicketApiResult> jsapi = WeixinCgiBinAPI.WXCTRL.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+                if (jsapi == null || !jsapi.isSuccess()) {
+                    return JsonResult.FAIL;
+                }
+                return new JsonResult(jsapi.getEntity());
             case WX_CARD:
-                return new JsonResult(ticketServiceBean.newApplicationWXCardTicket(appID));
+                Message<TicketApiResult> wxcard = WeixinCgiBinAPI.WXCTRL.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
+                if (wxcard == null || !wxcard.isSuccess()) {
+                    return JsonResult.FAIL;
+                }
+                return new JsonResult(wxcard.getEntity());
             default:
                 return new JsonResult(false, "unknown ticket type : " + type, type);
         }

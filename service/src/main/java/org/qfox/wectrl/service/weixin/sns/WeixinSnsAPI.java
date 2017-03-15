@@ -14,7 +14,7 @@ import org.qfox.wectrl.service.weixin.Language;
 public interface WeixinSnsAPI {
 
     WeixinSnsAPI WECHAT = Client.builder().setProtocol("https").setHost("api.weixin.qq.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinSnsAPI.class);
-    WeixinSnsAPI WXCTRL = Client.builder().setProtocol("https").setHost("api.wxctrl.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinSnsAPI.class);
+    WeixinSnsAPI WXCTRL = Client.builder().setProtocol("http").setHost("localhost").setPort(8081).setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinSnsAPI.class);
 
     @GET(value = "/oauth2/access_token", produces = "application/json; charset=UTF-8")
     Message<SnsAccessTokenApiResult> accessToken(@Query("appid") String appID, @Query("secret") String appSecret, @Query("code") String code, @Query("grant_type") SnsGrantType grantType);

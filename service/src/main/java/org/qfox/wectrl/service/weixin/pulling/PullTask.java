@@ -1,17 +1,14 @@
 package org.qfox.wectrl.service.weixin.pulling;
 
+import org.qfox.jestful.client.Message;
 import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.transaction.SessionProvider;
 import org.qfox.wectrl.service.weixin.Language;
-import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.UserService;
-import org.qfox.wectrl.service.weixin.cgi_bin.PullApiResult;
-import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
-import org.qfox.wectrl.service.weixin.cgi_bin.UserInfoApiResult;
-import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
+import org.qfox.wectrl.service.weixin.cgi_bin.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -32,7 +29,6 @@ public class PullTask implements Callable<PullResult> {
 
     private final Application application;
     private final ApplicationService applicationServiceBean;
-    private final TokenService tokenServiceBean;
     private final UserService userServiceBean;
     private final SessionProvider sessionProvider;
     private final PullResult result = new PullResult(-1, 0, 0);
@@ -40,12 +36,10 @@ public class PullTask implements Callable<PullResult> {
 
     public PullTask(Application application,
                     ApplicationService applicationServiceBean,
-                    TokenService tokenServiceBean,
                     UserService userServiceBean,
                     SessionProvider sessionProvider) {
         this.application = application;
         this.applicationServiceBean = applicationServiceBean;
-        this.tokenServiceBean = tokenServiceBean;
         this.userServiceBean = userServiceBean;
         this.sessionProvider = sessionProvider;
     }
@@ -56,11 +50,19 @@ public class PullTask implements Callable<PullResult> {
             try {
                 String nextID = "";
                 while (nextID != null) {
-                    TokenApiResult token = tokenServiceBean.getApplicationAccessToken(application.getAppID());
+                    Message<TokenApiResult> msg = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, application.getAppID(), application.getSecret());
+                    if (msg == null || !msg.isSuccess()) {
+                        break;
+                    }
+                    TokenApiResult token = msg.getEntity();
                     if (!token.isSuccess()) {
                         break;
                     }
-                    PullApiResult pull = WeixinCgiBinAPI.WECHAT.pull(token.getAccess_token(), "".equals(nextID) ? null : nextID);
+                    Message<PullApiResult> message = WeixinCgiBinAPI.WECHAT.pull(token.getAccess_token(), "".equals(nextID) ? null : nextID);
+                    if (message == null || !message.isSuccess()) {
+                        break;
+                    }
+                    PullApiResult pull = message.getEntity();
                     if (!pull.isSuccess()) {
                         break;
                     }
@@ -71,11 +73,19 @@ public class PullTask implements Callable<PullResult> {
                 }
 
                 for (String openID : openIDs) {
-                    TokenApiResult token = tokenServiceBean.getApplicationAccessToken(application.getAppID());
+                    Message<TokenApiResult> msg = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, application.getAppID(), application.getSecret());
+                    if (msg == null || !msg.isSuccess()) {
+                        break;
+                    }
+                    TokenApiResult token = msg.getEntity();
                     if (!token.isSuccess()) {
                         break;
                     }
-                    UserInfoApiResult info = WeixinCgiBinAPI.WECHAT.userInfo(token.getAccess_token(), openID, Language.zh_CN);
+                    Message<UserInfoApiResult> message = WeixinCgiBinAPI.WECHAT.userInfo(token.getAccess_token(), openID, Language.zh_CN);
+                    if (message == null || !message.isSuccess()) {
+                        continue;
+                    }
+                    UserInfoApiResult info = message.getEntity();
                     if (!info.isSuccess() || !info.isSubscribe()) {
                         continue;
                     }

@@ -32,7 +32,7 @@ public class Token extends Domain {
         return (int) ((timeExpired - System.currentTimeMillis()) / 1000L);
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String getValue() {
         return value;
     }

@@ -16,4 +16,6 @@ public interface TokenService extends GenericService<Token, Long> {
 
     Page<Token> getPagedApplicationTokens(String appID, int pagination, int capacity);
 
+    Token getTokenByValue(String value);
+
 }
