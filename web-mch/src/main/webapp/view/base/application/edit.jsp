@@ -55,11 +55,25 @@
                 <ol class="breadcrumb">
                     <li><a href="/"> 我的应用</a></li>
                     <li><a href="/applications/${app.appID}/index"> ${app.appName}</a></li>
-                    <li class="active"> 编辑</li>
+                    <li class="active"> 详细</li>
                 </ol>
             </div>
         </div><!-- /.row -->
         <form role="form" action="/applications/${app.appID}" method="PUT" onsubmit="javascript: return onSubmitButtomTap(this);">
+            <div class="col-lg-12">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">中控服务器 App Secret</h3>
+                    </div>
+                    <div class="panel-body">
+                        <span id="wxctrl-secret" class="text-danger">${app.secret}</span>
+                        <a class="text-danger" href="javascript: onSecretResetButtonTap('${app.appID}');">重设</a>
+                    </div>
+                    <div class="panel-body">
+                        <p class="text-danger">为了防止微信公众号的真正AppSecret在调用中控服务器API时造成泄露, 请使用该AppSecret代替.</p>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-4">
                 <h3>基本配置</h3>
                 <div class="form-group">
@@ -181,6 +195,31 @@
     $("input[name='appID']").change(function(){
         $("input[name='pushURL']").val("http://" + this.value + ".wectrl.com/message");
     });
+
+    function onSecretResetButtonTap(appID) {
+        $.confirm("确定重设AppSecret?这将使公众号暂时无法正常使用!", "注意", function () {
+            $.showLoading("正在重设...");
+            $.ajax({
+                type: "POST",
+                url: "/applications/" + appID + "/secret",
+                success: function (res) {
+                    $.hideLoading();
+                    if (res.success) {
+                        $("#wxctrl-secret").text(res.entity);
+                        $.toast("重设成功", "success", null);
+                    } else {
+                        $.alert(res.message ? res.message : "重设失败", "注意");
+                    }
+                },
+                error: function (res) {
+                    $.hideLoading();
+                    $.alert("重设失败", "注意");
+                }
+            });
+        }, function () {
+
+        });
+    }
 
     function onSubmitButtomTap(form) {
         $.showLoading("请稍候...");

@@ -31,6 +31,7 @@ public class Application extends Domain {
     private Date dateVerified;
 
     private boolean pulling; // 正在同步用户
+    private String secret; // 为了屏蔽真正的微信公众号appSecret传输 调用中控服务器时用服务器为每个app生成的secret代替真正的appSecret
 
     @Column(unique = true, nullable = false, length = 36, updatable = false)
     public String getAppID() {
@@ -175,4 +176,11 @@ public class Application extends Domain {
         this.pulling = pulling;
     }
 
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 }

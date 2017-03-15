@@ -1,5 +1,6 @@
 package org.qfox.wectrl.web.mch;
 
+import org.apache.commons.codec.binary.Hex;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.jestful.server.annotation.Session;
 import org.qfox.wectrl.common.base.ApplicationType;
@@ -14,8 +15,11 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by yangchangpei on 17/3/2.
@@ -51,7 +55,7 @@ public class ApplicationController {
                            @Body("appName") String appName,
                            @Body("appNumber") String appNumber,
                            @Body("type") ApplicationType type,
-                           @Body("originalID") String originalID) {
+                           @Body("originalID") String originalID) throws NoSuchAlgorithmException {
 
         List<String> errors = new ArrayList<>();
         if (StringUtils.isEmpty(appID)) {
@@ -110,6 +114,12 @@ public class ApplicationController {
 
         Mch mch = new Mch(merchant);
         app.setMerchant(mch);
+        // 生成中控服务器的应用密钥
+        String uuid = UUID.randomUUID().toString();
+        byte[] md5 = MessageDigest.getInstance("md5").digest(uuid.getBytes());
+        String hex = Hex.encodeHexString(md5);
+        app.setSecret(hex);
+
         applicationServiceBean.merge(app);
 
         return new JsonResult("/applications/" + appID + "/index");
@@ -186,11 +196,22 @@ public class ApplicationController {
         return new JsonResult("/applications/" + appID + "/index");
     }
 
-    @DELETE("/{appID:\\w+}")
+    @DELETE(value = "/{appID:\\w+}", produces = "application/json")
     public JsonResult delete(@Path("appID") String appID) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
         applicationServiceBean.delete(app);
         return JsonResult.OK;
     }
 
+    @POST(value = "/{appID:\\w+}/secret", produces = "application/json")
+    public JsonResult secret(@Path("appID") String appID) throws NoSuchAlgorithmException {
+        Application app = applicationServiceBean.getApplicationByAppID(appID);
+        // 生成中控服务器的应用密钥
+        String uuid = UUID.randomUUID().toString();
+        byte[] md5 = MessageDigest.getInstance("md5").digest(uuid.getBytes());
+        String hex = Hex.encodeHexString(md5);
+        app.setSecret(hex);
+        int count = applicationServiceBean.merge(app, "secret");
+        return count == 2 ? new JsonResult(hex) : JsonResult.FAIL;
+    }
 }
