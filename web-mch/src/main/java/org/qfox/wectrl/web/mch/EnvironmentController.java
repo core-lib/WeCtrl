@@ -4,6 +4,7 @@ import org.qfox.jestful.client.Client;
 import org.qfox.jestful.core.annotation.*;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.common.Randoms;
+import org.qfox.wectrl.common.Regexes;
 import org.qfox.wectrl.common.weixin.aes.AesException;
 import org.qfox.wectrl.common.weixin.aes.SHA1;
 import org.qfox.wectrl.core.base.App;
@@ -75,14 +76,14 @@ public class EnvironmentController {
         }
         if (StringUtils.isEmpty(domain)) {
             errors.add("网页授权回调域名不能为空");
-        } else if (!domain.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?$")) {
+        } else if (!domain.matches(Regexes.DOMAIN_REGEX)) {
             errors.add("网页授权回调域名格式不正确");
         }
         if (StringUtils.isEmpty(pushURL)) {
             errors.add("消息推送URL不能为空");
         }
         // TODO 有可能被指向到自己造成死递归!!!!!!!!!
-        else if (!pushURL.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$")) {
+        else if (!pushURL.matches(Regexes.PUSH_URL_REGEX)) {
             errors.add("消息推送URL格式不正确 请填写完整的网页地址 且不能包含'?' 和 '#'");
         }
         if (environmentServiceBean.isApplicationEnvKeyExisted(appID, envKey)) {
@@ -143,14 +144,14 @@ public class EnvironmentController {
         }
         if (StringUtils.isEmpty(domain)) {
             errors.add("网页授权回调域名不能为空");
-        } else if (!domain.matches("^http(s)?://[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*$")) {
+        } else if (!domain.matches(Regexes.DOMAIN_REGEX)) {
             errors.add("网页授权回调域名格式不正确");
         }
         if (StringUtils.isEmpty(pushURL)) {
             errors.add("消息推送URL不能为空");
         }
         // TODO 有可能被指向到自己造成死递归!!!!!!!!!
-        else if (!pushURL.matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$")) {
+        else if (!pushURL.matches(Regexes.PUSH_URL_REGEX)) {
             errors.add("消息推送URL格式不正确 请填写完整的网页地址 且不能包含'?' 和 '#'");
         }
         Application application = applicationServiceBean.getApplicationByAppID(appID);
