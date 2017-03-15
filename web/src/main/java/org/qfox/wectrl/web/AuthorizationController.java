@@ -1,11 +1,13 @@
 package org.qfox.wectrl.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.qfox.jestful.client.Message;
 import org.qfox.jestful.core.annotation.GET;
 import org.qfox.jestful.core.annotation.Jestful;
 import org.qfox.jestful.core.annotation.Query;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.State;
+import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.service.weixin.StateService;
 import org.qfox.wectrl.service.weixin.UserService;
 import org.qfox.wectrl.service.weixin.sns.SnsAccessTokenApiResult;
@@ -43,6 +45,7 @@ public class AuthorizationController {
         State s = new State();
         s.setRedirectURI(redirectURI);
         s.setValue(state);
+        s.setResponseType(responseType);
         stateServiceBean.save(s);
 
         String scheme = HTTPKit.getClosestScheme(request, "http");
@@ -63,16 +66,46 @@ public class AuthorizationController {
     @GET("/authorization")
     public String authorize(@Query("code") String code,
                             @Query("state") Long stateId,
-                            Application app) {
+                            Application app) throws UnsupportedEncodingException {
 
-        SnsAccessTokenApiResult result = WeixinSnsAPI.INSTANCE.accessToken(app.getAppID(), app.getAppSecret(), code, SnsGrantType.authorization_code);
-        result.getOpenid();
+        String appID = app.getAppID();
+        String appSecret = app.getAppSecret();
 
+        Message<SnsAccessTokenApiResult> message = WeixinSnsAPI.INSTANCE.accessToken(appID, appSecret, code, SnsGrantType.authorization_code);
+        // 如果用户信息获取不成功
+        if (message == null || !message.isSuccess()) {
+            return "forward:/view/fail.jsp";
+        }
 
-        State state = stateServiceBean.get(stateId);
+        SnsAccessTokenApiResult result = message.getEntity();
+        if (result == null || !result.isSuccess()) {
+            return "forward:/view/fail.jsp";
+        }
 
-        return null;
+        String openID = result.getOpenid();
+        User user = userServiceBean.getUserWithEnvironment(appID, openID);
+        // 没有默认的应用环境
+        if (user == null || user.getEnvironment() == null) {
+            return "forward:/view/fail.jsp";
+        }
+
+        String domain = user.getEnvironment().getDomain();
+        State s = stateServiceBean.get(stateId);
+        String redirectURI = s.getRedirectURI();
+        String path = redirectURI.replaceFirst("http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/", "");
+        String redirectURL = domain + (path.startsWith("/") ? "" : "/") + path;
+        String responseType = s.getResponseType();
+        String state = s.getValue();
+
+        String redirect = "https://open.weixin.qq.com/connect/oauth2/authorize"
+                + "?appid=" + appID
+                + "&redirect_uri=" + URLEncoder.encode(redirectURL, "UTF-8")
+                + "&response_type=" + responseType
+                + "&scope=" + result.getScope()
+                + "&state=" + URLEncoder.encode(state, "UTF-8")
+                + "#wechat_redirect";
+
+        return "redirect:" + redirect;
     }
-
 
 }

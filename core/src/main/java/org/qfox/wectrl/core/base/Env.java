@@ -13,6 +13,8 @@ public class Env implements Serializable {
     private Long id;
     private String envName;
     private String envKey;
+    private String domain;
+    private String pushURL;
 
     public Env() {
     }
@@ -21,6 +23,8 @@ public class Env implements Serializable {
         this.id = environment.getId();
         this.envName = environment.getEnvName();
         this.envKey = environment.getEnvKey();
+        this.domain = environment.getDomain();
+        this.pushURL = environment.getPushURL();
     }
 
     public Long getId() {
@@ -45,5 +49,21 @@ public class Env implements Serializable {
 
     public void setEnvKey(String envKey) {
         this.envKey = envKey;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public String getPushURL() {
+        return pushURL;
+    }
+
+    public void setPushURL(String pushURL) {
+        this.pushURL = pushURL;
     }
 }

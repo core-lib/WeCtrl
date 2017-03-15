@@ -15,6 +15,7 @@ public class State extends Domain {
 
     private String redirectURI;
     private String value;
+    private String responseType;
 
     public String getRedirectURI() {
         return redirectURI;
@@ -30,5 +31,13 @@ public class State extends Domain {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(String responseType) {
+        this.responseType = responseType;
     }
 }

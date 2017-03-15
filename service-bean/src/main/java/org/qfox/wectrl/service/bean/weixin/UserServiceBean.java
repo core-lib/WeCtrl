@@ -51,4 +51,8 @@ public class UserServiceBean extends GenericServiceBean<User, Long> implements U
         return userDAO.setUserToEnvironment(appID, openID, envKey);
     }
 
+    @Override
+    public User getUserWithEnvironment(String appID, String openID) {
+        return userDAO.getUserWithEnvironment(appID, openID);
+    }
 }

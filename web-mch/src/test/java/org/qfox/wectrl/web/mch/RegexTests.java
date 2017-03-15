@@ -9,7 +9,11 @@ public class RegexTests {
 
     @Test
     public void testRegex() {
-        System.out.println("http://localhost:8080/fffsd.res/sdfsd.res".matches("^http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/[^?#]+$"));
+        String domain = "http://rxhclothes.d.qfoxtech.com";
+        String redirectURI = "https://baidu.com//login";
+        String path = redirectURI.replaceFirst("http(s)?://[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)*(:\\d+)?/", "");
+        String redirectURL = domain + (path.startsWith("/") ? "" : "/") + path;
+        System.out.println(redirectURL);
     }
 
 }

@@ -15,4 +15,6 @@ public interface UserService extends GenericService<User, Long> {
 
     int setUserToEnvironment(String appID, String openID, String envKey);
 
+    User getUserWithEnvironment(String appID, String openID);
+
 }
