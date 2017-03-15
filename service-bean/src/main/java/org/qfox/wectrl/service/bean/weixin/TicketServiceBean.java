@@ -83,7 +83,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                         result.setErrmsg(token.getErrmsg());
                         return result;
                     }
-                    TicketApiResult result = WeixinCgiBinAPI.INSTANCE.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+                    TicketApiResult result = WeixinCgiBinAPI.WECHAT.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
                     if (result.isSuccess()) {
                         ticket = new Ticket();
                         ticket.setApplication(new App(application));
@@ -115,7 +115,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                 result.setErrmsg(token.getErrmsg());
                 return result;
             }
-            TicketApiResult result = WeixinCgiBinAPI.INSTANCE.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+            TicketApiResult result = WeixinCgiBinAPI.WECHAT.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
             if (result.isSuccess()) {
                 Criteria criteria = ticketDAO.createCriteria();
                 criteria.add(Restrictions.eq("application.appID", appID));
@@ -176,7 +176,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                         result.setErrmsg(token.getErrmsg());
                         return result;
                     }
-                    TicketApiResult result = WeixinCgiBinAPI.INSTANCE.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+                    TicketApiResult result = WeixinCgiBinAPI.WECHAT.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
                     if (result.isSuccess()) {
                         ticket = new Ticket();
                         ticket.setApplication(new App(application));
@@ -208,7 +208,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                 result.setErrmsg(token.getErrmsg());
                 return result;
             }
-            TicketApiResult result = WeixinCgiBinAPI.INSTANCE.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+            TicketApiResult result = WeixinCgiBinAPI.WECHAT.ticket(token.getAccess_token(), org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
             if (result.isSuccess()) {
                 Criteria criteria = ticketDAO.createCriteria();
                 criteria.add(Restrictions.eq("application.appID", appID));

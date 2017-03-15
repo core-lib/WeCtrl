@@ -12,7 +12,8 @@ import org.qfox.wectrl.service.weixin.cgi_bin.msg.Msg;
 @Jestful("/cgi-bin")
 public interface WeixinCgiBinAPI {
 
-    WeixinCgiBinAPI INSTANCE = Client.builder().setProtocol("https").setHost("api.weixin.qq.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinCgiBinAPI.class);
+    WeixinCgiBinAPI WECHAT = Client.builder().setProtocol("https").setHost("api.weixin.qq.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinCgiBinAPI.class);
+    WeixinCgiBinAPI WXCTRL = Client.builder().setProtocol("https").setHost("api.wxctrl.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WeixinCgiBinAPI.class);
 
     @GET(value = "/token", produces = "application/json; charset=UTF-8")
     TokenApiResult token(@Query("grant_type") TokenType grantType, @Query("appid") String appId, @Query("secret") String appSecret);

@@ -60,7 +60,7 @@ public class PullTask implements Callable<PullResult> {
                     if (!token.isSuccess()) {
                         break;
                     }
-                    PullApiResult pull = WeixinCgiBinAPI.INSTANCE.pull(token.getAccess_token(), "".equals(nextID) ? null : nextID);
+                    PullApiResult pull = WeixinCgiBinAPI.WECHAT.pull(token.getAccess_token(), "".equals(nextID) ? null : nextID);
                     if (!pull.isSuccess()) {
                         break;
                     }
@@ -75,7 +75,7 @@ public class PullTask implements Callable<PullResult> {
                     if (!token.isSuccess()) {
                         break;
                     }
-                    UserInfoApiResult info = WeixinCgiBinAPI.INSTANCE.userInfo(token.getAccess_token(), openID, Language.zh_CN);
+                    UserInfoApiResult info = WeixinCgiBinAPI.WECHAT.userInfo(token.getAccess_token(), openID, Language.zh_CN);
                     if (!info.isSuccess() || !info.isSubscribe()) {
                         continue;
                     }

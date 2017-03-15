@@ -309,7 +309,7 @@ public class MessageController implements ApplicationContextAware {
                 .filter(msg -> msg != null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.INSTANCE.message(tokenServiceBean.getApplicationAccessToken(message.getAppId()).getAccess_token(), msg)));
+                .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.WECHAT.message(tokenServiceBean.getApplicationAccessToken(message.getAppId()).getAccess_token(), msg)));
     }
 
     private void fire(final Event event) {
@@ -320,7 +320,7 @@ public class MessageController implements ApplicationContextAware {
                 .filter(msg -> msg != null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.INSTANCE.message(tokenServiceBean.getApplicationAccessToken(event.getAppId()).getAccess_token(), msg)));
+                .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.WECHAT.message(tokenServiceBean.getApplicationAccessToken(event.getAppId()).getAccess_token(), msg)));
     }
 
     private void bind(MessageHandler handler) {

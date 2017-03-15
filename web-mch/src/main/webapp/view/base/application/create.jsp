@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group">
                     <label>App Secret</label>
-                    <input class="form-control" name="appSecret" value="${app.appSecret}">
+                    <input type="password" class="form-control" name="appSecret" value="${app.appSecret}">
                     <p class="help-block">公众号基本配置AppSecret(应用密钥)</p>
                 </div>
                 <div class="form-group">

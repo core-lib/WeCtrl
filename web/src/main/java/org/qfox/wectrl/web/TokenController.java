@@ -40,7 +40,7 @@ public class TokenController {
             return result;
         }
 
-        return WeixinCgiBinAPI.INSTANCE.token(grantType, app.getAppID(), app.getAppSecret());
+        return WeixinCgiBinAPI.WECHAT.token(grantType, app.getAppID(), app.getAppSecret());
     }
 
 }

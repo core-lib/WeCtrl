@@ -93,7 +93,7 @@ public class AuthorizationController {
         String appID = app.getAppID();
         String appSecret = app.getAppSecret();
 
-        Message<SnsAccessTokenApiResult> message = WeixinSnsAPI.INSTANCE.accessToken(appID, appSecret, code, SnsGrantType.authorization_code);
+        Message<SnsAccessTokenApiResult> message = WeixinSnsAPI.WECHAT.accessToken(appID, appSecret, code, SnsGrantType.authorization_code);
         // 如果用户信息获取不成功
         if (message == null || !message.isSuccess()) {
             return "forward:/view/fail.jsp";

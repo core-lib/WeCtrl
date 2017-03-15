@@ -4,7 +4,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.qfox.jestful.client.Client;
 import org.qfox.wectrl.common.Page;
 import org.qfox.wectrl.common.weixin.WhyInvalid;
 import org.qfox.wectrl.core.base.App;
@@ -71,7 +70,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                     }
                     Application application = applicationServiceBean.getApplicationByAppID(appID);
                     String appSecret = application.getAppSecret();
-                    TokenApiResult result = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
+                    TokenApiResult result = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
                     if (result.isSuccess()) {
                         token = new Token();
                         token.setApplication(new App(application));
@@ -96,7 +95,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         synchronized (appID.intern()) {
             Application application = applicationServiceBean.getApplicationByAppID(appID);
             String appSecret = application.getAppSecret();
-            TokenApiResult result = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
+            TokenApiResult result = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
             if (result.isSuccess()) {
                 Criteria criteria = tokenDAO.createCriteria();
                 criteria.add(Restrictions.eq("application.appID", appID));
