@@ -127,7 +127,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                 if (token != null) {
                     token.setInvalid(true);
                     token.setDateInvalid(new Date());
-                    token.setWhyInvalid(WhyInvalid.RESET);
+                    token.setWhyInvalid(WhyInvalid.REFRESHED);
                     tokenServiceBean.update(token);
                 }
 

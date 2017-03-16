@@ -44,7 +44,7 @@ public class TicketController {
             return result;
         }
         // 重设后超过五分钟不可用
-        if (token.isInvalid() && token.getWhyInvalid() == WhyInvalid.RESET && (System.currentTimeMillis() - token.getDateInvalid().getTime() > 5L * 60L * 1000L)) {
+        if (token.isInvalid() && token.getWhyInvalid() == WhyInvalid.REFRESHED && (System.currentTimeMillis() - token.getDateInvalid().getTime() > 5L * 60L * 1000L)) {
             TicketApiResult result = new TicketApiResult();
             result.setErrcode(40014);
             result.setErrmsg("invalid access_token");
@@ -86,7 +86,7 @@ public class TicketController {
             return result;
         }
         // 重设后超过五分钟不可用
-        if (token.isInvalid() && token.getWhyInvalid() == WhyInvalid.RESET && (System.currentTimeMillis() - token.getDateInvalid().getTime() > 5L * 60L * 1000L)) {
+        if (token.isInvalid() && token.getWhyInvalid() == WhyInvalid.REFRESHED && (System.currentTimeMillis() - token.getDateInvalid().getTime() > 5L * 60L * 1000L)) {
             TicketApiResult result = new TicketApiResult();
             result.setErrcode(40014);
             result.setErrmsg("invalid access_token");

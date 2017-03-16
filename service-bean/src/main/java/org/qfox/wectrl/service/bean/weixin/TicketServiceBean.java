@@ -147,7 +147,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                 if (ticket != null) {
                     ticket.setInvalid(true);
                     ticket.setDateInvalid(new Date());
-                    ticket.setWhyInvalid(WhyInvalid.RESET);
+                    ticket.setWhyInvalid(WhyInvalid.REFRESHED);
                     ticketServiceBean.update(ticket);
                 }
 
@@ -256,7 +256,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                 if (ticket != null) {
                     ticket.setInvalid(true);
                     ticket.setDateInvalid(new Date());
-                    ticket.setWhyInvalid(WhyInvalid.RESET);
+                    ticket.setWhyInvalid(WhyInvalid.REFRESHED);
                     ticketServiceBean.update(ticket);
                 }
 
