@@ -29,30 +29,14 @@ public class TicketController {
 
     @GET(value = "/cgi-bin/ticket/getticket", produces = "application/json; charset=UTF-8")
     public TicketApiResult get(@Query("access_token") String accessToken, @Query("type") TicketType type) {
-        if (StringUtils.isEmpty(accessToken)) {
-            TicketApiResult result = new TicketApiResult();
-            result.setErrcode(41001);
-            result.setErrmsg("缺少access_token参数");
-            return result;
-        }
-        Token token = tokenServiceBean.getTokenByValue(accessToken);
-        if (token == null || token.isExpired() || token.isInvalid()) {
-            TicketApiResult result = new TicketApiResult();
-            result.setErrcode(40014);
-            result.setErrmsg("invalid access_token");
-            return result;
-        }
-        if (type == null) {
-            TicketApiResult result = new TicketApiResult();
-            result.setErrcode(400);
-            result.setErrmsg("未指定 ticket type");
-            return result;
-        }
+        TicketApiResult apiResult = check(accessToken, type);
+        if (apiResult != null) return apiResult;
+
         switch (type) {
             case jsapi:
-                return ticketServiceBean.getApplicationJSAPITicket(token.getApplication().getAppID());
+                return ticketServiceBean.getApplicationJSAPITicket(accessToken);
             case wx_card:
-                return ticketServiceBean.getApplicationWXCardTicket(token.getApplication().getAppID());
+                return ticketServiceBean.getApplicationWXCardTicket(accessToken);
             default:
                 TicketApiResult result = new TicketApiResult();
                 result.setErrcode(400);
@@ -63,6 +47,23 @@ public class TicketController {
 
     @POST(value = "/cgi-bin/ticket/getticket", produces = "application/json; charset=UTF-8")
     public TicketApiResult post(@Query("access_token") String accessToken, @Query("type") TicketType type) {
+        TicketApiResult apiResult = check(accessToken, type);
+        if (apiResult != null) return apiResult;
+
+        switch (type) {
+            case jsapi:
+                return ticketServiceBean.newApplicationJSAPITicket(accessToken);
+            case wx_card:
+                return ticketServiceBean.newApplicationWXCardTicket(accessToken);
+            default:
+                TicketApiResult result = new TicketApiResult();
+                result.setErrcode(400);
+                result.setErrmsg("未知 ticket type");
+                return result;
+        }
+    }
+
+    private TicketApiResult check(@Query("access_token") String accessToken, @Query("type") TicketType type) {
         if (StringUtils.isEmpty(accessToken)) {
             TicketApiResult result = new TicketApiResult();
             result.setErrcode(41001);
@@ -82,17 +83,7 @@ public class TicketController {
             result.setErrmsg("未指定 ticket type");
             return result;
         }
-        switch (type) {
-            case jsapi:
-                return ticketServiceBean.newApplicationJSAPITicket(token.getApplication().getAppID());
-            case wx_card:
-                return ticketServiceBean.newApplicationWXCardTicket(token.getApplication().getAppID());
-            default:
-                TicketApiResult result = new TicketApiResult();
-                result.setErrcode(400);
-                result.setErrmsg("未知 ticket type");
-                return result;
-        }
+        return null;
     }
 
 }

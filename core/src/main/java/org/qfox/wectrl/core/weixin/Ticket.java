@@ -3,7 +3,6 @@ package org.qfox.wectrl.core.weixin;
 import org.qfox.wectrl.common.weixin.TicketType;
 import org.qfox.wectrl.common.weixin.WhyInvalid;
 import org.qfox.wectrl.core.Domain;
-import org.qfox.wectrl.core.base.App;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,8 +20,8 @@ public class Ticket extends Domain {
     private boolean invalid;
     private Date dateInvalid;
     private WhyInvalid whyInvalid;
-    private App application;
     private TicketType type;
+    private String accessToken;
 
     @Transient
     public boolean isExpired() {
@@ -78,20 +77,6 @@ public class Ticket extends Domain {
         this.whyInvalid = whyInvalid;
     }
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "application_id")),
-            @AttributeOverride(name = "appID", column = @Column(name = "application_appID")),
-            @AttributeOverride(name = "appName", column = @Column(name = "application_appName"))
-    })
-    public App getApplication() {
-        return application;
-    }
-
-    public void setApplication(App application) {
-        this.application = application;
-    }
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public TicketType getType() {
@@ -100,5 +85,14 @@ public class Ticket extends Domain {
 
     public void setType(TicketType type) {
         this.type = type;
+    }
+
+    @Column(nullable = false)
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

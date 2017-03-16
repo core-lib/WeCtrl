@@ -12,13 +12,13 @@ import org.qfox.wectrl.service.weixin.cgi_bin.TicketApiResult;
  */
 public interface TicketService extends GenericService<Ticket, Long> {
 
-    TicketApiResult getApplicationJSAPITicket(String appID);
+    TicketApiResult getApplicationJSAPITicket(String accessToken);
 
-    TicketApiResult newApplicationJSAPITicket(String appID);
+    TicketApiResult newApplicationJSAPITicket(String accessToken);
 
-    TicketApiResult getApplicationWXCardTicket(String appID);
+    TicketApiResult getApplicationWXCardTicket(String accessToken);
 
-    TicketApiResult newApplicationWXCardTicket(String appID);
+    TicketApiResult newApplicationWXCardTicket(String accessToken);
 
     Page<Ticket> getPagedApplicationTickets(String appID, TicketType type, int pagination, int capacity);
 
