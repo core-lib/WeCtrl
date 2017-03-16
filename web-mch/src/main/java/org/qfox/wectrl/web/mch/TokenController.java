@@ -9,7 +9,7 @@ import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.weixin.TokenService;
 import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
 import org.qfox.wectrl.service.weixin.cgi_bin.TokenType;
-import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
+import org.qfox.wectrl.service.weixin.cgi_bin.WxCtrlCgiBinAPI;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -48,7 +48,7 @@ public class TokenController {
     @POST("/")
     public JsonResult refresh(@Path("appID") String appID) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
-        Message<TokenApiResult> message = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, app.getAppID(), app.getSecret());
+        Message<TokenApiResult> message = WxCtrlCgiBinAPI.INSTANCE.newToken(TokenType.client_credential, app.getAppID(), app.getSecret());
         if (message == null || !message.isSuccess()) {
             return JsonResult.FAIL;
         }

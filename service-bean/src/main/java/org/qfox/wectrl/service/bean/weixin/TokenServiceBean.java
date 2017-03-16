@@ -71,7 +71,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                     }
                     Application application = applicationServiceBean.getApplicationByAppID(appID);
                     String appSecret = application.getAppSecret();
-                    Message<TokenApiResult> message = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
+                    Message<TokenApiResult> message = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
                     TokenApiResult result = null;
                     if (message != null && message.isSuccess()) {
                         result = message.getEntity();
@@ -105,7 +105,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         synchronized (appID.intern()) {
             Application application = applicationServiceBean.getApplicationByAppID(appID);
             String appSecret = application.getAppSecret();
-            Message<TokenApiResult> message = WeixinCgiBinAPI.WECHAT.token(TokenType.client_credential, appID, appSecret);
+            Message<TokenApiResult> message = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
             TokenApiResult result = null;
             if (message != null && message.isSuccess()) {
                 result = message.getEntity();

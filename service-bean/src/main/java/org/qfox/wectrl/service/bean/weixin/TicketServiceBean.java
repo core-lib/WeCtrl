@@ -63,7 +63,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                         ticket.setWhyInvalid(WhyInvalid.EXPIRED);
                         ticketServiceBean.update(ticket);
                     }
-                    Message<TicketApiResult> message = WeixinCgiBinAPI.WECHAT.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+                    Message<TicketApiResult> message = WeixinCgiBinAPI.INSTANCE.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
                     TicketApiResult result = null;
                     if (message != null && message.isSuccess()) {
                         result = message.getEntity();
@@ -95,7 +95,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
     @Override
     public TicketApiResult newApplicationJSAPITicket(String accessToken) {
         synchronized (accessToken.intern()) {
-            Message<TicketApiResult> message = WeixinCgiBinAPI.WECHAT.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+            Message<TicketApiResult> message = WeixinCgiBinAPI.INSTANCE.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
             TicketApiResult result = null;
             if (message != null && message.isSuccess()) {
                 result = message.getEntity();
@@ -156,7 +156,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
                         ticket.setWhyInvalid(WhyInvalid.EXPIRED);
                         ticketServiceBean.update(ticket);
                     }
-                    Message<TicketApiResult> message = WeixinCgiBinAPI.WECHAT.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
+                    Message<TicketApiResult> message = WeixinCgiBinAPI.INSTANCE.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
                     TicketApiResult result = null;
                     if (message != null && message.isSuccess()) {
                         result = message.getEntity();
@@ -188,7 +188,7 @@ public class TicketServiceBean extends GenericServiceBean<Ticket, Long> implemen
     @Override
     public TicketApiResult newApplicationWXCardTicket(String accessToken) {
         synchronized (accessToken.intern()) {
-            Message<TicketApiResult> message = WeixinCgiBinAPI.WECHAT.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
+            Message<TicketApiResult> message = WeixinCgiBinAPI.INSTANCE.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
             TicketApiResult result = null;
             if (message != null && message.isSuccess()) {
                 result = message.getEntity();

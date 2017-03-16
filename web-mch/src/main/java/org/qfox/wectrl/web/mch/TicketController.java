@@ -11,7 +11,7 @@ import org.qfox.wectrl.service.weixin.TicketService;
 import org.qfox.wectrl.service.weixin.cgi_bin.TicketApiResult;
 import org.qfox.wectrl.service.weixin.cgi_bin.TokenApiResult;
 import org.qfox.wectrl.service.weixin.cgi_bin.TokenType;
-import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
+import org.qfox.wectrl.service.weixin.cgi_bin.WxCtrlCgiBinAPI;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -55,20 +55,20 @@ public class TicketController {
             return new JsonResult(false, "type is required", null);
         }
         Application app = applicationServiceBean.getApplicationByAppID(appID);
-        Message<TokenApiResult> token = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, app.getAppID(), app.getSecret());
+        Message<TokenApiResult> token = WxCtrlCgiBinAPI.INSTANCE.getToken(TokenType.client_credential, app.getAppID(), app.getSecret());
         if (token == null || !token.isSuccess()) {
             return JsonResult.FAIL;
         }
         String accessToken = token.getEntity().getAccess_token();
         switch (type) {
             case JSAPI:
-                Message<TicketApiResult> jsapi = WeixinCgiBinAPI.WXCTRL.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
+                Message<TicketApiResult> jsapi = WxCtrlCgiBinAPI.INSTANCE.newTicket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.jsapi);
                 if (jsapi == null || !jsapi.isSuccess()) {
                     return JsonResult.FAIL;
                 }
                 return new JsonResult(jsapi.getEntity());
             case WX_CARD:
-                Message<TicketApiResult> wxcard = WeixinCgiBinAPI.WXCTRL.ticket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
+                Message<TicketApiResult> wxcard = WxCtrlCgiBinAPI.INSTANCE.newTicket(accessToken, org.qfox.wectrl.service.weixin.cgi_bin.TicketType.wx_card);
                 if (wxcard == null || !wxcard.isSuccess()) {
                     return JsonResult.FAIL;
                 }

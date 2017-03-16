@@ -50,7 +50,7 @@ public class PullTask implements Callable<PullResult> {
             try {
                 String nextID = "";
                 while (nextID != null) {
-                    Message<TokenApiResult> msg = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, application.getAppID(), application.getSecret());
+                    Message<TokenApiResult> msg = WxCtrlCgiBinAPI.INSTANCE.getToken(TokenType.client_credential, application.getAppID(), application.getSecret());
                     if (msg == null || !msg.isSuccess()) {
                         break;
                     }
@@ -58,7 +58,7 @@ public class PullTask implements Callable<PullResult> {
                     if (!token.isSuccess()) {
                         break;
                     }
-                    Message<PullApiResult> message = WeixinCgiBinAPI.WECHAT.pull(token.getAccess_token(), "".equals(nextID) ? null : nextID);
+                    Message<PullApiResult> message = WeixinCgiBinAPI.INSTANCE.pull(token.getAccess_token(), "".equals(nextID) ? null : nextID);
                     if (message == null || !message.isSuccess()) {
                         break;
                     }
@@ -73,7 +73,7 @@ public class PullTask implements Callable<PullResult> {
                 }
 
                 for (String openID : openIDs) {
-                    Message<TokenApiResult> msg = WeixinCgiBinAPI.WXCTRL.token(TokenType.client_credential, application.getAppID(), application.getSecret());
+                    Message<TokenApiResult> msg = WxCtrlCgiBinAPI.INSTANCE.getToken(TokenType.client_credential, application.getAppID(), application.getSecret());
                     if (msg == null || !msg.isSuccess()) {
                         break;
                     }
@@ -81,7 +81,7 @@ public class PullTask implements Callable<PullResult> {
                     if (!token.isSuccess()) {
                         break;
                     }
-                    Message<UserInfoApiResult> message = WeixinCgiBinAPI.WECHAT.userInfo(token.getAccess_token(), openID, Language.zh_CN);
+                    Message<UserInfoApiResult> message = WeixinCgiBinAPI.INSTANCE.userInfo(token.getAccess_token(), openID, Language.zh_CN);
                     if (message == null || !message.isSuccess()) {
                         continue;
                     }
