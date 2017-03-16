@@ -2,6 +2,7 @@ package org.qfox.wectrl.web;
 
 import org.qfox.jestful.core.annotation.GET;
 import org.qfox.jestful.core.annotation.Jestful;
+import org.qfox.jestful.core.annotation.POST;
 import org.qfox.jestful.core.annotation.Query;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.service.base.ApplicationService;
@@ -28,7 +29,19 @@ public class TokenController {
 
     @Authorized(required = false)
     @GET(value = "/cgi-bin/token", produces = "application/json; charset=UTF-8")
-    public TokenApiResult token(@Query("grant_type") TokenType grantType, @Query("appid") String appID, @Query("secret") String secret) {
+    public TokenApiResult get(@Query("grant_type") TokenType grantType, @Query("appid") String appID, @Query("secret") String secret) {
+        TokenApiResult result = check(appID, secret);
+        return result != null ? result : tokenServiceBean.getApplicationAccessToken(appID);
+    }
+
+    @Authorized(required = false)
+    @POST(value = "/cgi-bin/token", produces = "application/json; charset=UTF-8")
+    public TokenApiResult post(@Query("grant_type") TokenType grantType, @Query("appid") String appID, @Query("secret") String secret) {
+        TokenApiResult result = check(appID, secret);
+        return result != null ? result : tokenServiceBean.newApplicationAccessToken(appID);
+    }
+
+    private TokenApiResult check(@Query("appid") String appID, @Query("secret") String secret) {
         Application app = applicationServiceBean.getApplicationByAppID(appID);
 
         if (app == null) {
@@ -45,7 +58,7 @@ public class TokenController {
             return result;
         }
 
-        return tokenServiceBean.getApplicationAccessToken(appID);
+        return null;
     }
 
 }
