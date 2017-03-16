@@ -79,7 +79,7 @@ public class Token extends Domain {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "id", column = @Column(name = "application_id")),
-            @AttributeOverride(name = "appID", column = @Column(name = "application_appID")),
+            @AttributeOverride(name = "appID", column = @Column(name = "application_appID", length = 36)),
             @AttributeOverride(name = "appName", column = @Column(name = "application_appName"))
     })
     public App getApplication() {
