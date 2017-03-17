@@ -55,8 +55,8 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         public TokenHolder(Token token) {
             this.token = token;
             // 一分钟过期 因为刷新后的Access Token 仍有5分钟有效期 主要是考虑 集群环境中另外的服务器刷新了Access Token 但当前机器不知道 所以一分钟就需要到数据库拿最新的
-            // 就即便我现在拿到的可用的Access Token 下一秒就被刷新了 我拿到的也仍有5分钟有效期 我用1分钟做缓存 留4分钟给客户端使用
-            this.timeExpired = System.currentTimeMillis() + 1L * 60L * 1000L;
+            // 就即便我现在拿到的可用的Access Token 下一秒就被刷新了 我拿到的也仍有5分钟有效期 我用2分钟做缓存 留3分钟给客户端使用
+            this.timeExpired = System.currentTimeMillis() + 2L * 60L * 1000L;
         }
 
         public final boolean isExpired() {
