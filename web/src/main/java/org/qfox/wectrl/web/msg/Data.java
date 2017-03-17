@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * Created by yangchangpei on 17/2/22.
  */
-public class Data implements Serializable {
+public class Data implements Serializable, Cloneable {
     private static final long serialVersionUID = 1435968761683273492L;
 
     private String receiver;
@@ -37,6 +37,14 @@ public class Data implements Serializable {
     private BigDecimal precision;
 
     private String encrypt;
+
+    public Data clone() {
+        try {
+            return (Data) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @JsonProperty("ToUserName")
     public String getReceiver() {

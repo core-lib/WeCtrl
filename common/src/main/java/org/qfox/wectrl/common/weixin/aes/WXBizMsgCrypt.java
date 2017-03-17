@@ -113,7 +113,7 @@ public class WXBizMsgCrypt {
      * @return 加密后base64编码的字符串
      * @throws AesException aes加密失败
      */
-    String encrypt(String randomString, String text) throws AesException {
+    public String encrypt(String randomString, String text) throws AesException {
         ByteGroup byteCollector = new ByteGroup();
         byte[] randomStrBytes = randomString.getBytes(CHARSET);
         byte[] textBytes = text.getBytes(CHARSET);
@@ -160,7 +160,7 @@ public class WXBizMsgCrypt {
      * @return 解密得到的明文
      * @throws AesException aes解密失败
      */
-    String decrypt(String text) throws AesException {
+    public String decrypt(String text) throws AesException {
         byte[] original;
         try {
             // 设置解密模式为AES的CBC模式

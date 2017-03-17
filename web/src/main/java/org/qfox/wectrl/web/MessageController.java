@@ -1,17 +1,24 @@
 package org.qfox.wectrl.web;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.qfox.jestful.client.Client;
+import org.qfox.jestful.client.scheduler.Callback;
 import org.qfox.jestful.core.annotation.*;
+import org.qfox.wectrl.common.weixin.aes.SHA1;
+import org.qfox.wectrl.common.weixin.aes.WXBizMsgCrypt;
 import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.base.Verification;
+import org.qfox.wectrl.core.weixin.User;
 import org.qfox.wectrl.core.weixin.message.*;
 import org.qfox.wectrl.service.base.ApplicationService;
 import org.qfox.wectrl.service.base.VerificationService;
 import org.qfox.wectrl.service.transaction.SessionProvider;
 import org.qfox.wectrl.service.weixin.TokenService;
+import org.qfox.wectrl.service.weixin.UserService;
 import org.qfox.wectrl.service.weixin.WeixinMessageService;
 import org.qfox.wectrl.service.weixin.cgi_bin.WeixinCgiBinAPI;
-import org.qfox.wectrl.common.weixin.aes.SHA1;
 import org.qfox.wectrl.web.handler.EventHandler;
 import org.qfox.wectrl.web.handler.MessageHandler;
 import org.qfox.wectrl.web.msg.Data;
@@ -26,8 +33,10 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import javax.annotation.Resource;
+import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +66,23 @@ public class MessageController implements ApplicationContextAware {
     private TokenService tokenServiceBean;
 
     @Resource
+    private UserService userServiceBean;
+
+    @Resource
     private SessionProvider defaultSessionProvider;
+
+    private final XmlMapper mapper = new XmlMapper() {
+        {
+            this.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
+            this.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
+            this.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
+            this.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+            this.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
+            this.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, false);
+            this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            this.configure(DeserializationFeature.FAIL_ON_UNRESOLVED_OBJECT_IDS, false);
+        }
+    };
 
     @GET("/")
     public String verify(@Query("signature") String signature,
@@ -73,7 +98,7 @@ public class MessageController implements ApplicationContextAware {
             }
 
             String sign = SHA1.sign(app.getToken(), timestamp, nonce);
-            if (!signature.equals(sign)) {
+            if (!sign.equals(signature)) {
                 throw new IllegalArgumentException("incorrect signature");
             }
 
@@ -115,12 +140,51 @@ public class MessageController implements ApplicationContextAware {
             throw new IllegalArgumentException("signature/timestamp/nonce must not be null or empty");
         }
 
-        String sign = SHA1.sign(app.getToken(), timestamp, nonce);
-        if (!signature.equals(sign)) {
-            throw new IllegalArgumentException("incorrect signature");
+        {
+            String sign = SHA1.sign(app.getToken(), timestamp, nonce);
+            if (!sign.equals(signature)) {
+                throw new IllegalArgumentException("incorrect signature");
+            }
+        }
+
+        Data clone = data.clone();
+
+        if ("aes".equalsIgnoreCase(encryptType)) {
+            String sign = SHA1.sign(app.getToken(), timestamp, nonce, data.getEncrypt());
+            if (!sign.equals(msgSignature)) {
+                throw new IllegalArgumentException("incorrect message signature");
+            }
+            WXBizMsgCrypt crypt = new WXBizMsgCrypt(app.getToken(), app.getEncoding().getPassword(), app.getAppID());
+            String decrypted = crypt.decrypt(data.getEncrypt());
+            data = mapper.readValue(new StringReader(decrypted), Data.class);
         }
 
         String appID = app.getAppID();
+        String openID = data.getSender();
+        User user = userServiceBean.getUserWithEnvironment(appID, openID);
+        // 没有默认的应用环境
+        if (user == null || user.getEnvironment() == null) {
+            throw new IllegalStateException("未配置默认应用环境");
+        }
+        String pushURL = user.getEnvironment().getPushURL();
+        Client client = Client.builder().setEndpoint(new URL(pushURL)).setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build();
+        MessageAPI messageAPI = client.create(MessageAPI.class);
+        messageAPI.push(signature, timestamp, nonce, encryptType, msgSignature, clone, new Callback<String>() {
+            @Override
+            public void onCompleted(boolean success, String result, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+
+            }
+
+            @Override
+            public void onFail(Throwable throwable) {
+
+            }
+        });
 
         switch (data.getType()) {
             case UNKNOWN:
