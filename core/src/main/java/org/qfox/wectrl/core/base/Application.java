@@ -31,6 +31,7 @@ public class Application extends Domain {
     private Date dateVerified;
 
     private boolean pulling; // 正在同步用户
+    private boolean refreshing; // 正在刷新Access Token
     private String secret; // 为了屏蔽真正的微信公众号appSecret传输 调用中控服务器时用服务器为每个app生成的secret代替真正的appSecret
 
     @Column(unique = true, nullable = false, length = 36, updatable = false)
@@ -174,6 +175,14 @@ public class Application extends Domain {
 
     public void setPulling(boolean pulling) {
         this.pulling = pulling;
+    }
+
+    public boolean isRefreshing() {
+        return refreshing;
+    }
+
+    public void setRefreshing(boolean refreshing) {
+        this.refreshing = refreshing;
     }
 
     @Column(nullable = false, length = 36)

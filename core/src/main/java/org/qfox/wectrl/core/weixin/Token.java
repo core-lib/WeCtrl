@@ -22,14 +22,22 @@ public class Token extends Domain {
     private WhyInvalid whyInvalid;
     private App application;
 
+    // 实际上失效 离微信服务器端失效还有3分钟
     @Transient
-    public boolean isExpired() {
-        return value == null || value.isEmpty() || timeExpired == null || timeExpired <= System.currentTimeMillis();
+    public boolean isExpiredActually() {
+        return value == null || value.isEmpty() || timeExpired == null || (timeExpired - 3L * 60L * 1000L) <= System.currentTimeMillis() || invalid;
     }
 
+    // 逻辑上失效 离微信服务器端失效还有6分钟
     @Transient
-    public int getSecondsExpired() {
-        return (int) ((timeExpired - System.currentTimeMillis()) / 1000L);
+    public boolean isExpiredLogically() {
+        return value == null || value.isEmpty() || timeExpired == null || (timeExpired - 6L * 60L * 1000L) <= System.currentTimeMillis() || invalid;
+    }
+
+    // 剩余秒数
+    @Transient
+    public int getValidSeconds() {
+        return (int) ((timeExpired - 3L * 60L * 1000L - System.currentTimeMillis()) / 1000L);
     }
 
     @Column(nullable = false, unique = true)

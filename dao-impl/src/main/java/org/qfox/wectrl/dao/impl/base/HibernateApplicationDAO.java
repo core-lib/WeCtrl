@@ -53,6 +53,46 @@ public class HibernateApplicationDAO extends HibernateGenericDAO<Application, Lo
     }
 
     @Override
+    public boolean startRefreshing(String appID) {
+        StringBuilder SQL = new StringBuilder();
+        SQL.append(" UPDATE");
+        SQL.append("     base_application_tbl");
+        SQL.append(" SET");
+        SQL.append("     refreshing = TRUE");
+        SQL.append(" WHERE");
+        SQL.append("     appID = :appID");
+        SQL.append(" AND");
+        SQL.append("     refreshing = FALSE");
+
+        SQLQuery query = currentSession().createSQLQuery(SQL.toString());
+        query.setParameter("appID", appID);
+
+        int count = query.executeUpdate();
+
+        return count == 1;
+    }
+
+    @Override
+    public boolean endRefreshing(String appID) {
+        StringBuilder SQL = new StringBuilder();
+        SQL.append(" UPDATE");
+        SQL.append("     base_application_tbl");
+        SQL.append(" SET");
+        SQL.append("     refreshing = FALSE");
+        SQL.append(" WHERE");
+        SQL.append("     appID = :appID");
+        SQL.append(" AND");
+        SQL.append("     refreshing = TRUE");
+
+        SQLQuery query = currentSession().createSQLQuery(SQL.toString());
+        query.setParameter("appID", appID);
+
+        int count = query.executeUpdate();
+
+        return count == 1;
+    }
+
+    @Override
     public int updateToVerified(String appID) {
         StringBuilder SQL = new StringBuilder();
         SQL.append(" UPDATE");

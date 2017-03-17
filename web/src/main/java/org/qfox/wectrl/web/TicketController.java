@@ -37,7 +37,7 @@ public class TicketController {
             return result;
         }
         Token token = tokenServiceBean.getTokenByValue(accessToken);
-        if (token == null || token.isExpired()) {
+        if (token == null || token.isExpiredActually()) {
             TicketApiResult result = new TicketApiResult();
             result.setErrcode(40014);
             result.setErrmsg("invalid access_token");
@@ -79,7 +79,7 @@ public class TicketController {
             return result;
         }
         Token token = tokenServiceBean.getTokenByValue(accessToken);
-        if (token == null || token.isExpired()) {
+        if (token == null || token.isExpiredActually()) {
             TicketApiResult result = new TicketApiResult();
             result.setErrcode(40014);
             result.setErrmsg("invalid access_token");

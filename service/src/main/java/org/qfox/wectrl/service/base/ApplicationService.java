@@ -21,6 +21,10 @@ public interface ApplicationService extends GenericService<Application, Long> {
 
     boolean endPulling(String appID);
 
+    boolean startRefreshing(String appID);
+
+    boolean endRefreshing(String appID);
+
     int updateToVerified(String appID);
 
 }

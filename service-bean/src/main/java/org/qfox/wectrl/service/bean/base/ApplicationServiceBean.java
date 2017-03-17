@@ -108,6 +108,18 @@ public class ApplicationServiceBean extends GenericServiceBean<Application, Long
 
     @Transactional
     @Override
+    public boolean startRefreshing(String appID) {
+        return applicationDAO.startRefreshing(appID);
+    }
+
+    @Transactional
+    @Override
+    public boolean endRefreshing(String appID) {
+        return applicationDAO.endRefreshing(appID);
+    }
+
+    @Transactional
+    @Override
     public int updateToVerified(String appID) {
         return applicationDAO.updateToVerified(appID);
     }
