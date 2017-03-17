@@ -6,6 +6,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.qfox.jestful.client.Message;
 import org.qfox.wectrl.common.Page;
+import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.Token;
 import org.qfox.wectrl.dao.GenericDAO;
@@ -95,6 +96,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                 token.setInvalid(false);
                 token.setWhyInvalid(null);
                 token.setDateInvalid(null);
+                token.setApplication(new App(application));
                 tokenServiceBean.save(token);
 
                 TokenHolder holder = new TokenHolder(token);
