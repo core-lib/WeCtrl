@@ -17,7 +17,7 @@ public class User extends Domain {
     private static final long serialVersionUID = -4162990839957654501L;
 
     private App application;
-    private boolean subscribed;
+    private Boolean subscribed;
     private String openID;
     private String nickname;
     private Gender gender;
@@ -46,11 +46,11 @@ public class User extends Domain {
         this.application = application;
     }
 
-    public boolean isSubscribed() {
+    public Boolean isSubscribed() {
         return subscribed;
     }
 
-    public void setSubscribed(boolean subscribed) {
+    public void setSubscribed(Boolean subscribed) {
         this.subscribed = subscribed;
     }
 
