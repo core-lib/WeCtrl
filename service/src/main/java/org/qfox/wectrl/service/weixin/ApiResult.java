@@ -10,8 +10,8 @@ import java.io.Serializable;
 public class ApiResult implements Serializable {
     private static final long serialVersionUID = -4249110104199105203L;
 
-    private int errcode;
-    private String errmsg;
+    protected int errcode;
+    protected String errmsg;
 
     public int getErrcode() {
         return errcode;

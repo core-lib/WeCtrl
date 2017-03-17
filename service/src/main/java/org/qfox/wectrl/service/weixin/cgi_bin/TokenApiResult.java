@@ -12,6 +12,21 @@ public class TokenApiResult extends ApiResult {
     private String access_token;
     private int expires_in;
 
+    public TokenApiResult() {
+
+    }
+
+    public TokenApiResult(int errcode, String errmsg) {
+        this.errcode = errcode;
+        this.errmsg = errmsg;
+    }
+
+    public TokenApiResult(String access_token, int expires_in) {
+        this(0, "OK");
+        this.access_token = access_token;
+        this.expires_in = expires_in;
+    }
+
     public String getAccess_token() {
         return access_token;
     }

@@ -6,6 +6,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.qfox.jestful.client.Message;
 import org.qfox.wectrl.common.Page;
+import org.qfox.wectrl.common.weixin.WhyInvalid;
 import org.qfox.wectrl.core.base.App;
 import org.qfox.wectrl.core.base.Application;
 import org.qfox.wectrl.core.weixin.Token;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,14 +55,14 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         private final Token token;
         private final long timeExpired;
 
-        public TokenHolder(Token token) {
+        TokenHolder(Token token) {
             this.token = token;
-            // 一分钟过期 因为刷新后的Access Token 仍有5分钟有效期 主要是考虑 集群环境中另外的服务器刷新了Access Token 但当前机器不知道 所以一分钟就需要到数据库拿最新的
+            // 2分钟过期 因为刷新后的Access Token 仍有5分钟有效期 主要是考虑 集群环境中另外的服务器刷新了Access Token 但当前机器不知道 所以2分钟后就需要到数据库拿最新的
             // 就即便我现在拿到的可用的Access Token 下一秒就被刷新了 我拿到的也仍有5分钟有效期 我用2分钟做缓存 留3分钟给客户端使用
             this.timeExpired = System.currentTimeMillis() + 2L * 60L * 1000L;
         }
 
-        public final boolean isExpired() {
+        final boolean isExpired() {
             return System.currentTimeMillis() > timeExpired;
         }
     }
@@ -84,10 +86,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
             String appSecret = application.getAppSecret();
             Message<TokenApiResult> message = WeixinCgiBinAPI.INSTANCE.token(TokenType.client_credential, appID, appSecret);
             if (!message.isSuccess()) {
-                TokenApiResult result = new TokenApiResult();
-                result.setErrcode(500);
-                result.setErrmsg("未知错误");
-                return result;
+                return new TokenApiResult(500, "未知错误");
             } else {
                 TokenApiResult result = message.getEntity();
                 Token token = new Token();
@@ -105,10 +104,7 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
             }
         } catch (Exception e) {
             logger.error("getting access token from weixin fail", e);
-            TokenApiResult result = new TokenApiResult();
-            result.setErrcode(500);
-            result.setErrmsg("未知错误");
-            return result;
+            return new TokenApiResult(500, "未知错误");
         } finally {
             applicationServiceBean.endRefreshing(appID);
         }
@@ -127,18 +123,21 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                 boolean permission = applicationServiceBean.startRefreshing(appID);
                 // 4. 如果获取到了权限
                 if (permission) {
+                    if (token != null) {
+                        token.setInvalid(true);
+                        token.setWhyInvalid(WhyInvalid.EXPIRED);
+                        token.setDateInvalid(new Date());
+                        tokenServiceBean.update(token);
+                    }
                     return getWeixinAccessToken(appID);
                 } else {
                     try {
                         // 休眠1秒钟再尝试获取
-                        Thread.sleep(1L * 1000L);
+                        Thread.sleep(1000L);
                         return getApplicationAccessToken(appID);
                     } catch (InterruptedException e) {
                         logger.error("getting access token fail", e);
-                        TokenApiResult result = new TokenApiResult();
-                        result.setErrcode(500);
-                        result.setErrmsg("未知错误");
-                        return result;
+                        return new TokenApiResult(500, "未知错误");
                     }
                 }
             }
@@ -146,14 +145,14 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
             else if (token.isExpiredLogically()) {
                 boolean permission = applicationServiceBean.startRefreshing(appID);
                 if (permission) {
+                    token.setInvalid(true);
+                    token.setWhyInvalid(WhyInvalid.EXPIRED);
+                    token.setDateInvalid(new Date());
+                    tokenServiceBean.update(token);
+
                     return getWeixinAccessToken(appID);
                 } else {
-                    TokenApiResult result = new TokenApiResult();
-                    result.setErrcode(0);
-                    result.setErrmsg("OK");
-                    result.setAccess_token(token.getValue());
-                    result.setExpires_in(token.getValidSeconds());
-                    return result;
+                    return new TokenApiResult(token.getValue(), token.getValidSeconds());
                 }
             }
             // 6. 如果数据库中的Access Token 就是可用的 但是内存中没有 缓存之 这种情况一般是在集群环境中或者服务器重启了
@@ -161,22 +160,12 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
                 holder = new TokenHolder(token);
                 cache.put(appID, holder);
 
-                TokenApiResult result = new TokenApiResult();
-                result.setErrcode(0);
-                result.setErrmsg("OK");
-                result.setAccess_token(token.getValue());
-                result.setExpires_in(token.getValidSeconds());
-                return result;
+                return new TokenApiResult(token.getValue(), token.getValidSeconds());
             }
         }
         // 7. 如果缓存中就是可用的
         else {
-            TokenApiResult result = new TokenApiResult();
-            result.setErrcode(0);
-            result.setErrmsg("OK");
-            result.setAccess_token(holder.token.getValue());
-            result.setExpires_in(holder.token.getValidSeconds());
-            return result;
+            return new TokenApiResult(holder.token.getValue(), holder.token.getValidSeconds());
         }
     }
 
@@ -186,20 +175,24 @@ public class TokenServiceBean extends GenericServiceBean<Token, Long> implements
         boolean permission = applicationServiceBean.startRefreshing(appID);
         // 获取到到权限的负责去刷新
         if (permission) {
+            Token token = getDatabaseAccessToken(appID);
+            if (token != null) {
+                token.setInvalid(true);
+                token.setWhyInvalid(WhyInvalid.REFRESHED);
+                token.setDateInvalid(new Date());
+                tokenServiceBean.update(token);
+            }
             return getWeixinAccessToken(appID);
         }
         // 没有获取到的等待刷新线程结束
         else {
             try {
                 // 休眠1秒钟再尝试获取
-                Thread.sleep(1L * 1000L);
+                Thread.sleep(1000L);
                 return newApplicationAccessToken(appID);
             } catch (InterruptedException e) {
                 logger.error("getting access token fail", e);
-                TokenApiResult result = new TokenApiResult();
-                result.setErrcode(500);
-                result.setErrmsg("未知错误");
-                return result;
+                return new TokenApiResult(500, "未知错误");
             }
         }
     }

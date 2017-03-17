@@ -28,7 +28,7 @@ public class Token extends Domain {
         return value == null || value.isEmpty() || timeExpired == null || (timeExpired - 3L * 60L * 1000L) <= System.currentTimeMillis() || invalid;
     }
 
-    // 逻辑上失效 离微信服务器端失效还有6分钟
+    // 逻辑上失效 离微信服务器端失效还有6分钟 减去缓存的2分钟 离微信服务器端失效都还有4分钟
     @Transient
     public boolean isExpiredLogically() {
         return value == null || value.isEmpty() || timeExpired == null || (timeExpired - 6L * 60L * 1000L) <= System.currentTimeMillis() || invalid;
@@ -40,7 +40,7 @@ public class Token extends Domain {
         return (int) ((timeExpired - 3L * 60L * 1000L - System.currentTimeMillis()) / 1000L);
     }
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     public String getValue() {
         return value;
     }
@@ -49,7 +49,7 @@ public class Token extends Domain {
         this.value = value;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     public Long getTimeExpired() {
         return timeExpired;
     }
@@ -86,9 +86,9 @@ public class Token extends Domain {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "id", column = @Column(name = "application_id")),
-            @AttributeOverride(name = "appID", column = @Column(name = "application_appID", length = 36)),
-            @AttributeOverride(name = "appName", column = @Column(name = "application_appName"))
+            @AttributeOverride(name = "id", column = @Column(name = "application_id", updatable = false)),
+            @AttributeOverride(name = "appID", column = @Column(name = "application_appID", length = 36, updatable = false)),
+            @AttributeOverride(name = "appName", column = @Column(name = "application_appName", updatable = false))
     })
     public App getApplication() {
         return application;
