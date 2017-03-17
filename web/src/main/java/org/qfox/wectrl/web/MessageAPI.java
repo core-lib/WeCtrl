@@ -13,7 +13,7 @@ import org.qfox.wectrl.web.msg.Data;
 @Jestful("/")
 public interface MessageAPI {
 
-    @POST(value = "/", consumes = "text/xml")
+    @POST(value = "/", consumes = "application/xml")
     void push(@Query("signature") String signature,
               @Query("timestamp") String timestamp,
               @Query("nonce") String nonce,
