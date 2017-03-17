@@ -13,7 +13,7 @@ import org.qfox.jestful.core.annotation.Query;
 @Jestful("/cgi-bin")
 public interface WxCtrlCgiBinAPI {
 
-    WxCtrlCgiBinAPI INSTANCE = Client.builder().setProtocol("http").setHost("localhost").setPort(8081).setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WxCtrlCgiBinAPI.class);
+    WxCtrlCgiBinAPI INSTANCE = Client.builder().setProtocol("http").setHost("api.wujiexiankeji.com").setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build().create(WxCtrlCgiBinAPI.class);
 
     @GET(value = "/token", produces = "application/json; charset=UTF-8")
     Message<TokenApiResult> getToken(@Query("grant_type") TokenType grantType, @Query("appid") String appId, @Query("secret") String appSecret);
