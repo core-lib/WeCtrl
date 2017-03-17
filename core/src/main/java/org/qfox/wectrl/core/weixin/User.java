@@ -46,7 +46,7 @@ public class User extends Domain {
         this.application = application;
     }
 
-    public Boolean isSubscribed() {
+    public Boolean getSubscribed() {
         return subscribed;
     }
 
