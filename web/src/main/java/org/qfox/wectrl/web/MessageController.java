@@ -387,10 +387,6 @@ public class MessageController implements ApplicationContextAware {
                 .subscribe(msg -> defaultSessionProvider.execute(() -> WeixinCgiBinAPI.INSTANCE.message(tokenServiceBean.getApplicationAccessToken(event.getAppId()).getAccess_token(), msg)));
     }
 
-    private void bind(MessageHandler handler) {
-
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         {
@@ -447,16 +443,6 @@ public class MessageController implements ApplicationContextAware {
                     clazz = clazz.getSuperclass();
                 }
             }
-        }
-    }
-
-    private static class HandlerEntry<M extends Message> {
-        private final MessageHandler<M> handler;
-        private final Type[] genericInterfaces;
-
-        public HandlerEntry(MessageHandler<M> handler, Type[] genericInterfaces) {
-            this.handler = handler;
-            this.genericInterfaces = genericInterfaces;
         }
     }
 
