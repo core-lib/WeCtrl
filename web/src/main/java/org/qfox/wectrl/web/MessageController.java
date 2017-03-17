@@ -298,7 +298,7 @@ public class MessageController implements ApplicationContextAware {
                 break;
         }
 
-        return "@:";
+        return "@:success";
     }
 
     private void fire(final Message message) {

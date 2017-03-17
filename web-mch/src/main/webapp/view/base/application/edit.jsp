@@ -193,7 +193,7 @@
 
 <script>
     $("input[name='appID']").change(function(){
-        $("input[name='pushURL']").val("http://" + this.value + ".wectrl.com/message");
+        $("input[name='pushURL']").val("http://" + this.value + ".wujiexiankeji.com/message");
     });
 
     function onSecretResetButtonTap(appID) {

@@ -97,7 +97,7 @@ public class ApplicationController {
         Application app = new Application();
         app.setAppID(appID);
         app.setAppSecret(appSecret);
-        app.setPushURL("https://" + appID + ".wectrl.com/message");
+        app.setPushURL("https://" + appID + ".wujiexiankeji.com/message");
         app.setToken(token);
 
         Encoding encoding = new Encoding();
