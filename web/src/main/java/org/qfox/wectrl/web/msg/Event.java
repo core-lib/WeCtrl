@@ -8,7 +8,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum Event {
 
-    UNKNOWN, SUBSCRIBE, UNSUBSCRIBE, SCAN, LOCATION, CLICK, VIEW;
+    UNKNOWN("UNKNOWN"), SUBSCRIBE("subscribe"), UNSUBSCRIBE("unsubscribe"), SCAN("SCAN"), LOCATION("LOCATION"), CLICK("CLICK"), VIEW("VIEW"), WIFICONNECTED("WifiConnected");
+
+    private final String value;
+
+    Event(String value) {
+        this.value = value;
+    }
 
     @JsonCreator
     public static Event constantOf(String name) {
@@ -20,9 +26,7 @@ public enum Event {
     }
 
     @JsonValue
-    @Override
-    public String toString() {
-        return name().toLowerCase();
+    public String getValue() {
+        return value;
     }
-
 }

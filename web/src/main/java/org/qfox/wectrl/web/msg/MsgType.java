@@ -8,7 +8,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum MsgType {
 
-    UNKNOWN, TEXT, IMAGE, VOICE, VIDEO, SHORTVIDEO, LOCATION, LINK, EVENT;
+    UNKNOWN("UNKNOWN"), TEXT("text"), IMAGE("image"), VOICE("voice"), VIDEO("video"), SHORTVIDEO("shortvideo"), LOCATION("location"), LINK("link"), EVENT("event");
+
+    private final String value;
+
+    MsgType(String value) {
+        this.value = value;
+    }
 
     @JsonCreator
     public static MsgType constantOf(String name) {
@@ -20,8 +26,7 @@ public enum MsgType {
     }
 
     @JsonValue
-    @Override
-    public String toString() {
-        return name().toLowerCase();
+    public String getValue() {
+        return value;
     }
 }
