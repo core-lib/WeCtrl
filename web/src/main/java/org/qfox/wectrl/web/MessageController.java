@@ -36,7 +36,6 @@ import javax.annotation.Resource;
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +69,8 @@ public class MessageController implements ApplicationContextAware {
 
     @Resource
     private SessionProvider defaultSessionProvider;
+
+    private final Client client = Client.builder().setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build();
 
     private final XmlMapper mapper = new XmlMapper() {
         {
@@ -166,9 +167,9 @@ public class MessageController implements ApplicationContextAware {
         if (user == null || user.getEnvironment() == null) {
             throw new IllegalStateException("未配置默认应用环境");
         }
-        String pushURL = user.getEnvironment().getPushURL();
-        Client client = Client.builder().setEndpoint(new URL(pushURL)).setContentCharsets("UTF-8").addPlugins("characterEncodingPlugin; charset=UTF-8").build();
-        MessageAPI messageAPI = client.create(MessageAPI.class);
+        String endpoint = user.getEnvironment().getPushURL();
+
+        MessageAPI messageAPI = client.create(MessageAPI.class, endpoint);
         messageAPI.push(signature, timestamp, nonce, encryptType, msgSignature, clone, new Callback<String>() {
             @Override
             public void onCompleted(boolean success, String result, Throwable throwable) {
