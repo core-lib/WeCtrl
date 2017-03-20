@@ -176,7 +176,7 @@
 
 <script>
     $("input[name='appID']").change(function(){
-        $("input[name='pushURL']").val("http://" + this.value + ".wujiexiankeji.com/message");
+        $("input[name='pushURL']").val("http://" + this.value + ".wxctrl.qfoxtech.com/message");
     });
 
     function onSubmitButtomTap(form) {
